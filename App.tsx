@@ -7,8 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { VideoView, useVideoPlayer } from 'expo-video';
 import * as React from 'react';
-import { Dimensions, Image, ImageBackground, Modal, ScrollView, Share, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { WebView } from 'react-native-webview';
+import { Alert, Dimensions, Image, ImageBackground, Linking, Modal, ScrollView, Share, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Language, setLanguage, t } from './translations';
 
 const Stack = createNativeStackNavigator();
@@ -23,10 +22,31 @@ const continueData = [
 ];
 
 const audiobooks = [
-  { id: 1, title: 'Messager d\'Allah', titleAr: 'رسول الله', color: '#2d6a4f', locked: false },
-  { id: 2, title: 'Tafsir du Coran Vol. 1', titleAr: 'في رياض التفسير', color: '#8b6f47', locked: false },
-  { id: 3, title: 'Histoires des Prophètes', titleAr: 'قصص الأنبياء', color: '#5a7c65', locked: false },
-  { id: 4, title: 'Les 99 Noms d\'Allah', titleAr: 'أسماء الله الحسنى', color: '#8b6f47', locked: true },
+  { id: 1, title: 'Messager d\'Allah', titleAr: 'رسول الله', color: '#0F5132', locked: false },
+  { id: 2, title: 'Tafsir du Coran Vol. 1', titleAr: 'في رياض التفسير', color: '#0B3C5D', locked: false },
+  { id: 3, title: 'Histoires des Prophètes', titleAr: 'قصص الأنبياء', color: '#C9A24D', locked: false },
+  { id: 4, title: 'Les 99 Noms d\'Allah', titleAr: 'أسماء الله الحسنى', color: '#0F5132', locked: true },
+];
+
+// Fichiers Coran depuis le dossier assets/coran
+const coranTracks = [
+  { id: 1, title: 'Al-Fatiha', titleAr: 'الفاتحة', reciter: 'Abu Bakr Al-Shatri', file: require('./assets/coran/abu-bakr-al-shatri-001-al-fatiha-3656-9635.mp3'), duration: '03:05' },
+  { id: 2, title: 'Al-Ma\'un', titleAr: 'الماعون', reciter: 'Abu Bakr Al-Shatri', file: require('./assets/coran/abu-bakr-al-shatri-107-al-maun-3729-4093.mp3'), duration: '02:15' },
+  { id: 3, title: 'Al-Kauther', titleAr: 'الكوثر', reciter: 'Abu Bakr Al-Shatri', file: require('./assets/coran/abu-bakr-al-shatri-108-al-kauther-3730-4460.mp3'), duration: '01:15' },
+  { id: 4, title: 'Al-Kafiroon', titleAr: 'الكافرون', reciter: 'Abu Bakr Al-Shatri', file: require('./assets/coran/abu-bakr-al-shatri-109-al-kafiroon-3731-7397.mp3'), duration: '02:28' },
+  { id: 5, title: 'An-Nasr', titleAr: 'النصر', reciter: 'Abu Bakr Al-Shatri', file: require('./assets/coran/abu-bakr-al-shatri-110-an-nasr-3732-2998.mp3'), duration: '01:00' },
+  { id: 6, title: 'Al-Masadd', titleAr: 'المسد', reciter: 'Abu Bakr Al-Shatri', file: require('./assets/coran/abu-bakr-al-shatri-111-al-masadd-3733-4614.mp3'), duration: '01:17' },
+  { id: 7, title: 'Al-Ikhlas', titleAr: 'الإخلاص', reciter: 'Abu Bakr Al-Shatri', file: require('./assets/coran/abu-bakr-al-shatri-112-al-ikhlas-3734-5801.mp3'), duration: '01:36' },
+  { id: 8, title: 'Al-Falaq', titleAr: 'الفلق', reciter: 'Abu Bakr Al-Shatri', file: require('./assets/coran/abu-bakr-al-shatri-113-al-falaq-3735-978.mp3'), duration: '00:16' },
+  { id: 9, title: 'An-Nas', titleAr: 'الناس', reciter: 'Abu Bakr Al-Shatri', file: require('./assets/coran/abu-bakr-al-shatri-114-an-nas-3736-8725.mp3'), duration: '01:27' },
+];
+
+// Zikr & Music Snippets
+const zikrTracks = [
+  { id: 101, title: 'Dhikr du Matin', titleAr: 'أذكار الصباح', artist: 'Sheikh Hassan Cisse', duration: '15:30', type: 'zikr' },
+  { id: 102, title: 'Dhikr du Soir', titleAr: 'أذكار المساء', artist: 'Sheikh Hassan Cisse', duration: '12:45', type: 'zikr' },
+  { id: 103, title: 'Salat al-Fatih', titleAr: 'صلاة الفاتح', artist: 'Cheikh Seydi Ali Cisse', duration: '05:20', type: 'zikr' },
+  { id: 104, title: 'Jawharat al-Kamal', titleAr: 'جوهرة الكمال', artist: 'Sheikh Hassan', duration: '08:15', type: 'zikr' },
 ];
 
 const musicTracks = [
@@ -243,7 +263,7 @@ function HomeScreen({ navigation }: any) {
       
       {/* Header moderne avec gradient */}
       <LinearGradient
-        colors={darkMode ? ['#1a4d2e', '#2d6a4f'] : ['#f8f9fa', '#ffffff']}
+        colors={darkMode ? ['#0B3C5D', '#0F5132'] : ['#F8F9F6', '#ffffff']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.headerModern}
@@ -266,8 +286,8 @@ function HomeScreen({ navigation }: any) {
         >
           <LinearGradient
             colors={darkMode 
-              ? ['rgba(26, 77, 46, 0.92)', 'rgba(45, 106, 79, 0.88)', 'rgba(26, 77, 46, 0.95)']
-              : ['rgba(45, 106, 79, 0.90)', 'rgba(26, 77, 46, 0.85)', 'rgba(45, 106, 79, 0.92)']
+              ? ['rgba(11, 60, 93, 0.92)', 'rgba(15, 81, 50, 0.88)', 'rgba(11, 60, 93, 0.95)']
+              : ['rgba(15, 81, 50, 0.90)', 'rgba(11, 60, 93, 0.85)', 'rgba(15, 81, 50, 0.92)']
             }
             style={styles.heroGradientModern}
           >
@@ -320,7 +340,7 @@ function HomeScreen({ navigation }: any) {
               }}
             >
               <LinearGradient
-                colors={['#2d6a4f', '#1a4d2e', '#2d6a4f']}
+                colors={['#0F5132', '#0B3C5D', '#0F5132']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.continueIconGradientModern}
@@ -374,7 +394,7 @@ function HomeScreen({ navigation }: any) {
               }}
             >
               <LinearGradient
-                colors={['#2d6a4f', '#1a4d2e', '#2d6a4f']}
+                colors={['#0F5132', '#0B3C5D', '#0F5132']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.musicIconGradientModern}
@@ -482,7 +502,7 @@ function BooksScreen({ navigation }: any) {
       
       {/* Header moderne */}
       <LinearGradient
-        colors={darkMode ? ['#1a4d2e', '#2d6a4f'] : ['#f8f9fa', '#ffffff']}
+        colors={darkMode ? ['#0B3C5D', '#0F5132'] : ['#F8F9F6', '#ffffff']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.headerModern}
@@ -531,7 +551,7 @@ function BooksScreen({ navigation }: any) {
                   onPress={() => handleBookPress(book)}
                 >
                   <LinearGradient
-                    colors={['#2d6a4f', '#1a4d2e', '#2d6a4f']}
+                    colors={['#0F5132', '#0B3C5D', '#0F5132']}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
                     style={styles.bookCoverModern}
@@ -573,7 +593,7 @@ function BooksScreen({ navigation }: any) {
               {selectedBook && (
                 <>
                   <LinearGradient
-                    colors={['#2d6a4f', '#1a4d2e']}
+                    colors={['#0F5132', '#0B3C5D']}
                     style={styles.modalHeaderModern}
                   >
                     <View style={styles.modalHeaderContent}>
@@ -619,7 +639,7 @@ function BooksScreen({ navigation }: any) {
                     activeOpacity={0.9}
                   >
                     <LinearGradient
-                      colors={['#2d6a4f', '#1a4d2e']}
+                      colors={['#0F5132', '#0B3C5D']}
                       style={styles.openButtonGradient}
                     >
                       <Text style={styles.openButtonTextModern}>{t('modal.readBook')}</Text>
@@ -730,14 +750,14 @@ function MusicScreen({ navigation }: any) {
 
   const getMusicColor = (id: number): [string, string] => {
     const colors: [string, string][] = [
-      ['#2d6a4f', '#1a4d2e'],
-      ['#8b6f47', '#6b5637'],
-      ['#5a7c65', '#4a6c55'],
-      ['#2d6a4f', '#1a4d2e'],
-      ['#8b6f47', '#6b5637'],
-      ['#5a7c65', '#4a6c55'],
-      ['#2d6a4f', '#1a4d2e'],
-      ['#8b6f47', '#6b5637'],
+      ['#0F5132', '#0B3C5D'],
+      ['#0F5132', '#0B3C5D'],
+      ['#0B3C5D', '#0F5132'],
+      ['#C9A24D', '#0F5132'],
+      ['#0F5132', '#0B3C5D'],
+      ['#0B3C5D', '#C9A24D'],
+      ['#C9A24D', '#0B3C5D'],
+      ['#0F5132', '#0B3C5D'],
     ];
     return colors[(id - 1) % colors.length];
   };
@@ -748,7 +768,7 @@ function MusicScreen({ navigation }: any) {
       
       {/* Header avec gradient élégant */}
       <LinearGradient
-        colors={darkMode ? ['#1a4d2e', '#2d6a4f'] : ['#f8f9fa', '#ffffff']}
+        colors={darkMode ? ['#0B3C5D', '#0F5132'] : ['#F8F9F6', '#ffffff']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.musicHeaderModern}
@@ -761,7 +781,7 @@ function MusicScreen({ navigation }: any) {
             <View>
               <Text style={[styles.musicHeaderTitle, { color: theme.text }]}>{t('music.title')}</Text>
               <Text style={[styles.musicHeaderSubtitle, { color: theme.textSecondary }]}>
-                {musicTracks.length} pistes {t('library.available').split(' ')[1]}
+                {zikrTracks.length + coranTracks.length + musicTracks.length} pistes {t('library.available').split(' ')[1]}
               </Text>
             </View>
           </View>
@@ -774,84 +794,270 @@ function MusicScreen({ navigation }: any) {
         contentContainerStyle={[styles.musicScrollContentNew, currentPlayer?.type === 'music' && { paddingBottom: 220 }]}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.musicGridNew}>
-          {musicTracks.map((track, index) => {
-            const musicColors = getMusicColor(track.id);
-            const isPlaying = currentPlayer?.type === 'music' && currentPlayer.item?.id === track.id;
-            
-            return (
-              <TouchableOpacity
-                key={track.id}
-                style={[
-                  styles.musicCardNew,
-                  { 
-                    backgroundColor: theme.surface,
-                    borderLeftWidth: 4,
-                    borderLeftColor: musicColors[0],
-                  },
-                  isPlaying && styles.musicCardPlaying
-                ]}
-                activeOpacity={0.85}
-                onPress={() => {
-                  setSelectedTrack(track);
-                  setCurrentPlayer({ item: track, type: 'music' });
-                }}
-              >
-                <LinearGradient
-                  colors={musicColors}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={styles.musicIconNew}
-                >
-                  <Text style={styles.musicIconTextNew}>🎵</Text>
-                </LinearGradient>
-                
-                <View style={styles.musicInfoNew}>
-                  <View style={styles.musicTitleRow}>
-                    <Text style={[styles.musicTitleNew, { color: theme.text }]} numberOfLines={2}>
-                      {track.title}
-                    </Text>
-                    {isPlaying && (
-                      <View style={[styles.musicPlayingBadge, { backgroundColor: musicColors[0] }]}>
-                        <Text style={styles.musicPlayingIcon}>♪</Text>
-                      </View>
-                    )}
-                  </View>
-                  <Text style={[styles.musicArtistNew, { color: theme.textSecondary }]} numberOfLines={1}>
-                    👤 {t('player.artist')}: {track.artist}
-                  </Text>
-                  <View style={styles.musicMetaNew}>
-                    <View style={[styles.musicDurationBadge, { backgroundColor: musicColors[0] + '15' }]}>
-                      <Text style={styles.musicDurationIcon}>⏱️</Text>
-                      <Text style={[styles.musicDurationText, { color: musicColors[0] }]}>
-                        {track.duration}
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-
+        {/* Section 1: Zikr & Music Snippets */}
+        <View style={styles.musicSection}>
+          <View style={styles.sectionHeaderModern}>
+            <View style={styles.sectionTitleContainerModern}>
+              <View style={styles.sectionIconContainer}>
+                <Text style={styles.sectionIconModern}>🕌</Text>
+              </View>
+              <View>
+                <Text style={[styles.sectionTitleModern, { color: theme.text }]}>Zikr & Music Snippets</Text>
+                <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>{zikrTracks.length} pistes</Text>
+              </View>
+            </View>
+          </View>
+          <View style={styles.musicGridNew}>
+            {zikrTracks.map((track) => {
+              const musicColors = getMusicColor(track.id);
+              const isPlaying = currentPlayer?.type === 'music' && currentPlayer.item?.id === track.id;
+              
+              return (
                 <TouchableOpacity
-                  style={[styles.musicPlayButtonNew, { backgroundColor: musicColors[0] }]}
-                  activeOpacity={0.9}
+                  key={track.id}
+                  style={[
+                    styles.musicCardNew,
+                    { 
+                      backgroundColor: theme.surface,
+                      borderLeftWidth: 4,
+                      borderLeftColor: musicColors[0],
+                    },
+                    isPlaying && styles.musicCardPlaying
+                  ]}
+                  activeOpacity={0.85}
                   onPress={() => {
                     setSelectedTrack(track);
                     setCurrentPlayer({ item: track, type: 'music' });
                   }}
                 >
-                  <Text style={styles.musicPlayIconNew}>
-                    {isPlaying ? '⏸' : '▶'}
-                  </Text>
+                  <LinearGradient
+                    colors={musicColors}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.musicIconNew}
+                  >
+                    <Text style={styles.musicIconTextNew}>🕌</Text>
+                  </LinearGradient>
+                  
+                  <View style={styles.musicInfoNew}>
+                    <View style={styles.musicTitleRow}>
+                      <Text style={[styles.musicTitleNew, { color: theme.text }]} numberOfLines={2}>
+                        {track.title}
+                      </Text>
+                      {isPlaying && (
+                        <View style={[styles.musicPlayingBadge, { backgroundColor: musicColors[0] }]}>
+                          <Text style={styles.musicPlayingIcon}>♪</Text>
+                        </View>
+                      )}
+                    </View>
+                    <Text style={[styles.musicArtistNew, { color: theme.textSecondary }]} numberOfLines={1}>
+                      👤 {track.artist}
+                    </Text>
+                    <View style={styles.musicMetaNew}>
+                      <View style={[styles.musicDurationBadge, { backgroundColor: musicColors[0] + '15' }]}>
+                        <Text style={styles.musicDurationIcon}>⏱️</Text>
+                        <Text style={[styles.musicDurationText, { color: musicColors[0] }]}>
+                          {track.duration}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+
+                  <TouchableOpacity
+                    style={[styles.musicPlayButtonNew, { backgroundColor: musicColors[0] }]}
+                    activeOpacity={0.9}
+                    onPress={() => {
+                      setSelectedTrack(track);
+                      setCurrentPlayer({ item: track, type: 'music' });
+                    }}
+                  >
+                    <Text style={styles.musicPlayIconNew}>{isPlaying ? '⏸' : '▶'}</Text>
+                  </TouchableOpacity>
                 </TouchableOpacity>
-              </TouchableOpacity>
-            );
-          })}
+              );
+            })}
+          </View>
+        </View>
+
+        {/* Section 2: Coran */}
+        <View style={styles.musicSection}>
+          <View style={styles.sectionHeaderModern}>
+            <View style={styles.sectionTitleContainerModern}>
+              <View style={styles.sectionIconContainer}>
+                <Text style={styles.sectionIconModern}>📿</Text>
+              </View>
+              <View>
+                <Text style={[styles.sectionTitleModern, { color: theme.text }]}>Coran</Text>
+                <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>{coranTracks.length} sourates</Text>
+              </View>
+            </View>
+          </View>
+          <View style={styles.musicGridNew}>
+            {coranTracks.map((track) => {
+              const musicColors = getMusicColor(track.id);
+              const isPlaying = currentPlayer?.type === 'music' && currentPlayer.item?.id === track.id;
+              
+              return (
+                <TouchableOpacity
+                  key={track.id}
+                  style={[
+                    styles.musicCardNew,
+                    { 
+                      backgroundColor: theme.surface,
+                      borderLeftWidth: 4,
+                      borderLeftColor: musicColors[0],
+                    },
+                    isPlaying && styles.musicCardPlaying
+                  ]}
+                  activeOpacity={0.85}
+                  onPress={() => {
+                    setSelectedTrack(track);
+                    setCurrentPlayer({ item: track, type: 'music' });
+                  }}
+                >
+                  <LinearGradient
+                    colors={musicColors}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.musicIconNew}
+                  >
+                    <Text style={styles.musicIconTextNew}>📿</Text>
+                  </LinearGradient>
+                  
+                  <View style={styles.musicInfoNew}>
+                    <View style={styles.musicTitleRow}>
+                      <Text style={[styles.musicTitleNew, { color: theme.text }]} numberOfLines={2}>
+                        {track.title}
+                      </Text>
+                      {isPlaying && (
+                        <View style={[styles.musicPlayingBadge, { backgroundColor: musicColors[0] }]}>
+                          <Text style={styles.musicPlayingIcon}>♪</Text>
+                        </View>
+                      )}
+                    </View>
+                    <Text style={[styles.musicArtistNew, { color: theme.textSecondary }]} numberOfLines={1}>
+                      👤 {track.reciter}
+                    </Text>
+                    <View style={styles.musicMetaNew}>
+                      <View style={[styles.musicDurationBadge, { backgroundColor: musicColors[0] + '15' }]}>
+                        <Text style={styles.musicDurationIcon}>⏱️</Text>
+                        <Text style={[styles.musicDurationText, { color: musicColors[0] }]}>
+                          {track.duration}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+
+                  <TouchableOpacity
+                    style={[styles.musicPlayButtonNew, { backgroundColor: musicColors[0] }]}
+                    activeOpacity={0.9}
+                    onPress={() => {
+                      setSelectedTrack(track);
+                      setCurrentPlayer({ item: track, type: 'music' });
+                    }}
+                  >
+                    <Text style={styles.musicPlayIconNew}>
+                      {isPlaying ? '⏸' : '▶'}
+                    </Text>
+                  </TouchableOpacity>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+
+        {/* Section 3: Music */}
+        <View style={styles.musicSection}>
+          <View style={styles.sectionHeaderModern}>
+            <View style={styles.sectionTitleContainerModern}>
+              <View style={styles.sectionIconContainer}>
+                <Text style={styles.sectionIconModern}>🎵</Text>
+              </View>
+              <View>
+                <Text style={[styles.sectionTitleModern, { color: theme.text }]}>Music</Text>
+                <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>{musicTracks.length} pistes</Text>
+              </View>
+            </View>
+          </View>
+          <View style={styles.musicGridNew}>
+            {musicTracks.map((track) => {
+              const musicColors = getMusicColor(track.id);
+              const isPlaying = currentPlayer?.type === 'music' && currentPlayer.item?.id === track.id;
+              
+              return (
+                <TouchableOpacity
+                  key={track.id}
+                  style={[
+                    styles.musicCardNew,
+                    { 
+                      backgroundColor: theme.surface,
+                      borderLeftWidth: 4,
+                      borderLeftColor: musicColors[0],
+                    },
+                    isPlaying && styles.musicCardPlaying
+                  ]}
+                  activeOpacity={0.85}
+                  onPress={() => {
+                    setSelectedTrack(track);
+                    setCurrentPlayer({ item: track, type: 'music' });
+                  }}
+                >
+                  <LinearGradient
+                    colors={musicColors}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.musicIconNew}
+                  >
+                    <Text style={styles.musicIconTextNew}>🎵</Text>
+                  </LinearGradient>
+                  
+                  <View style={styles.musicInfoNew}>
+                    <View style={styles.musicTitleRow}>
+                      <Text style={[styles.musicTitleNew, { color: theme.text }]} numberOfLines={2}>
+                        {track.title}
+                      </Text>
+                      {isPlaying && (
+                        <View style={[styles.musicPlayingBadge, { backgroundColor: musicColors[0] }]}>
+                          <Text style={styles.musicPlayingIcon}>♪</Text>
+                        </View>
+                      )}
+                    </View>
+                    <Text style={[styles.musicArtistNew, { color: theme.textSecondary }]} numberOfLines={1}>
+                      👤 {t('player.artist')}: {track.artist}
+                    </Text>
+                    <View style={styles.musicMetaNew}>
+                      <View style={[styles.musicDurationBadge, { backgroundColor: musicColors[0] + '15' }]}>
+                        <Text style={styles.musicDurationIcon}>⏱️</Text>
+                        <Text style={[styles.musicDurationText, { color: musicColors[0] }]}>
+                          {track.duration}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+
+                  <TouchableOpacity
+                    style={[styles.musicPlayButtonNew, { backgroundColor: musicColors[0] }]}
+                    activeOpacity={0.9}
+                    onPress={() => {
+                      setSelectedTrack(track);
+                      setCurrentPlayer({ item: track, type: 'music' });
+                    }}
+                  >
+                    <Text style={styles.musicPlayIconNew}>
+                      {isPlaying ? '⏸' : '▶'}
+                    </Text>
+                  </TouchableOpacity>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
         </View>
       </ScrollView>
 
       {/* Lecteur audio intégré en bas - Moderne */}
       {currentPlayer?.type === 'music' && currentPlayer.item && (
         <LinearGradient
-          colors={darkMode ? ['#1a4d2e', '#2d6a4f'] : ['#ffffff', '#f8f9fa']}
+          colors={darkMode ? ['#0B3C5D', '#0F5132'] : ['#ffffff', '#F8F9F6']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.musicPlayerContainerModern}
@@ -894,7 +1100,7 @@ function MusicScreen({ navigation }: any) {
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={['#2d6a4f', '#1a4d2e']}
+                colors={['#0F5132', '#0B3C5D']}
                 style={styles.musicPlayerPlayBtnGradient}
               >
                 <Text style={styles.musicPlayerPlayIconModern}>{isPlaying ? '⏸️' : '▶️'}</Text>
@@ -921,9 +1127,9 @@ function MusicScreen({ navigation }: any) {
                   console.log('Erreur seek:', error);
                 }
               }}
-              minimumTrackTintColor="#2d6a4f"
+              minimumTrackTintColor="#0F5132"
               maximumTrackTintColor="#e0e0e0"
-              thumbTintColor="#2d6a4f"
+              thumbTintColor="#0F5132"
             />
             <View style={styles.musicPlayerTimeContainerModern}>
               <Text style={[styles.musicPlayerTimeTextModern, { color: theme.textSecondary }]}>
@@ -1041,11 +1247,11 @@ function PodcastsScreen({ navigation }: any) {
 
   const getPodcastColor = (id: number): [string, string] => {
     const colors: [string, string][] = [
-      ['#2d6a4f', '#1a4d2e'],
-      ['#8b6f47', '#6b5637'],
-      ['#5a7c65', '#4a6c55'],
-      ['#2d6a4f', '#1a4d2e'],
-      ['#8b6f47', '#6b5637'],
+      ['#0F5132', '#0B3C5D'],
+      ['#0F5132', '#0B3C5D'],
+      ['#0B3C5D', '#0F5132'],
+      ['#C9A24D', '#0F5132'],
+      ['#0F5132', '#0B3C5D'],
     ];
     return colors[(id - 1) % colors.length];
   };
@@ -1056,7 +1262,7 @@ function PodcastsScreen({ navigation }: any) {
       
       {/* Header avec gradient élégant */}
       <LinearGradient
-        colors={darkMode ? ['#1a4d2e', '#2d6a4f'] : ['#f8f9fa', '#ffffff']}
+        colors={darkMode ? ['#0B3C5D', '#0F5132'] : ['#F8F9F6', '#ffffff']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.podcastsHeaderModern}
@@ -1182,7 +1388,7 @@ function PodcastsScreen({ navigation }: any) {
       {/* Lecteur audio intégré en bas - Moderne */}
       {currentPlayer?.type === 'podcast' && currentPlayer.item && (
         <LinearGradient
-          colors={darkMode ? ['#1a4d2e', '#2d6a4f'] : ['#ffffff', '#f8f9fa']}
+          colors={darkMode ? ['#0B3C5D', '#0F5132'] : ['#ffffff', '#F8F9F6']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.musicPlayerContainerModern}
@@ -1225,7 +1431,7 @@ function PodcastsScreen({ navigation }: any) {
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={['#2d6a4f', '#1a4d2e']}
+                colors={['#0F5132', '#0B3C5D']}
                 style={styles.musicPlayerPlayBtnGradient}
               >
                 <Text style={styles.musicPlayerPlayIconModern}>{isPlaying ? '⏸️' : '▶️'}</Text>
@@ -1252,9 +1458,9 @@ function PodcastsScreen({ navigation }: any) {
                   console.log('Erreur seek:', error);
                 }
               }}
-              minimumTrackTintColor="#2d6a4f"
+              minimumTrackTintColor="#0F5132"
               maximumTrackTintColor="#e0e0e0"
-              thumbTintColor="#2d6a4f"
+              thumbTintColor="#0F5132"
             />
             <View style={styles.musicPlayerTimeContainerModern}>
               <Text style={[styles.musicPlayerTimeTextModern, { color: theme.textSecondary }]}>
@@ -1291,11 +1497,11 @@ function LibraryScreen({ navigation }: any) {
 
   const getCourseColor = (id: number): [string, string] => {
     const colors: [string, string][] = [
-      ['#2d6a4f', '#1a4d2e'],
-      ['#8b6f47', '#6b5637'],
-      ['#5a7c65', '#4a6c55'],
-      ['#2d6a4f', '#1a4d2e'],
-      ['#8b6f47', '#6b5637'],
+      ['#0F5132', '#0B3C5D'],
+      ['#0F5132', '#0B3C5D'],
+      ['#0B3C5D', '#0F5132'],
+      ['#C9A24D', '#0F5132'],
+      ['#0F5132', '#0B3C5D'],
     ];
     return colors[(id - 1) % colors.length];
   };
@@ -1306,7 +1512,7 @@ function LibraryScreen({ navigation }: any) {
       
       {/* Header avec gradient élégant */}
       <LinearGradient
-        colors={darkMode ? ['#1a4d2e', '#2d6a4f'] : ['#f8f9fa', '#ffffff']}
+        colors={darkMode ? ['#0B3C5D', '#0F5132'] : ['#F8F9F6', '#ffffff']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.libraryHeaderModern}
@@ -1477,146 +1683,24 @@ function LibraryScreen({ navigation }: any) {
   );
 }
 
-// Lecteur PDF/HTML
+// Écran simple pour ouvrir le livre avec le lecteur par défaut
 function PDFReaderScreen({ route, navigation }: any) {
   const { book } = route.params;
-  const [loading, setLoading] = React.useState(true);
   const { darkMode } = React.useContext(AppContext);
   const theme = darkMode ? darkTheme : lightTheme;
 
-  // Si le livre a un fichier HTML, utiliser directement le contenu HTML
-  if (book.htmlFile === 'diawahir-al-maani.html' || (book.id === 13 && book.htmlFile)) {
-    const imageUri = Image.resolveAssetSource(require('./assets/thierno.png')).uri;
-    
-    const htmlViewerContent = `<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diawahir al Ma'ani</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Georgia', serif; line-height: 1.8; color: #2c3e50; background: #f8f6f0; }
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 0; }
-        .header { position: relative; width: 100%; min-height: 400px; overflow: visible; 
-                 background: linear-gradient(135deg, #1a4d2e 0%, #2d6a4f 100%); 
-                 display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .header-image { max-width: 100%; max-height: 100%; width: auto; height: auto; 
-                       object-fit: contain; opacity: 0.95; border-radius: 10px; 
-                       box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .header-overlay { position: absolute; bottom: 0; left: 0; right: 0; 
-                         background: linear-gradient(to top, rgba(26, 77, 46, 0.95), transparent); 
-                         padding: 30px; color: white; z-index: 10; }
-        .header-title { font-size: 42px; font-weight: bold; margin-bottom: 10px; 
-                       text-shadow: 2px 2px 4px rgba(0,0,0,0.3); color: #d4af37; }
-        .header-subtitle { font-size: 24px; color: #f4e5c3; margin-bottom: 5px; }
-        .header-author { font-size: 18px; color: #fff; font-style: italic; }
-        .content { padding: 50px 40px; }
-        .section { margin-bottom: 40px; }
-        h1 { font-size: 32px; color: #1a4d2e; margin-bottom: 20px; 
-             padding-bottom: 10px; border-bottom: 3px solid #d4af37; }
-        h2 { font-size: 26px; color: #2d6a4f; margin-top: 30px; margin-bottom: 15px; }
-        p { margin-bottom: 15px; text-align: justify; font-size: 15px; }
-        .intro { font-size: 18px; font-style: italic; color: #555; margin-bottom: 30px; 
-                padding: 20px; background: #f8f6f0; border-left: 4px solid #d4af37; }
-        .bismillah { text-align: center; font-size: 24px; color: #1a4d2e; 
-                    margin: 30px 0; font-weight: bold; }
-        .arabic { direction: rtl; text-align: right; font-family: 'Arial', sans-serif; 
-                 font-size: 18px; color: #1a4d2e; margin: 15px 0; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <img src="${imageUri}" alt="Cheikh Ahmed Tijani" class="header-image">
-            <div class="header-overlay">
-                <div class="header-title">${book.title || ''}</div>
-                <div class="header-subtitle">${book.titleAr || ''}</div>
-                <div class="header-author">Par ${book.author || ''}</div>
-            </div>
-        </div>
-        <div class="content">
-            <div class="bismillah">بسم الله الرحمن الرحيم</div>
-            <div class="section">
-                <div class="intro">${book.description || ''}</div>
-            </div>
-            <div class="section">
-                <h1>Introduction Complète</h1>
-                <p>Diawahir al Ma'ani (Les Perles Précieuses - جواهر المعاني) est l'ouvrage fondamental de la Tariqa Tijaniyya, compilé par Cheikh Ahmed Tijani (RTA).</p>
-            </div>
-        </div>
-    </div>
-</body>
-</html>`;
+  React.useEffect(() => {
+    // Retourner automatiquement après un court délai
+    // Le fichier sera ouvert par le système par défaut
+    const timer = setTimeout(() => {
+      navigation.goBack();
+    }, 1000);
 
-    return (
-      <View style={styles.pdfReaderScreen}>
-        <View style={styles.pdfReaderHeader}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={styles.pdfReaderClose}>✕</Text>
-          </TouchableOpacity>
-          <Text style={styles.pdfReaderTitle} numberOfLines={1}>{book.title || 'Livre'}</Text>
-          <View style={{width: 40}} />
-        </View>
-        {loading && (
-          <View style={styles.pdfLoading}>
-            <Text style={styles.pdfLoadingText}>Chargement du contenu...</Text>
-          </View>
-        )}
-        <WebView
-          source={{ html: htmlViewerContent }}
-          style={styles.pdfWebView}
-          onLoadEnd={() => setLoading(false)}
-          showsVerticalScrollIndicator={true}
-          javaScriptEnabled={true}
-        />
-      </View>
-    );
-  }
-
-  // Pour les autres livres avec htmlFile (comme generate-pdf.html)
-  const imageUri = Image.resolveAssetSource(require('./assets/thierno.png')).uri;
-  const pdfHtmlContent = `<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${book.title}</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Georgia', serif; line-height: 1.8; color: #2c3e50; background: #f8f6f0; }
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 0; }
-        .header { position: relative; width: 100%; min-height: 400px; 
-                 background: linear-gradient(135deg, #1a4d2e 0%, #2d6a4f 100%); 
-                 display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .header-image { max-width: 100%; max-height: 100%; object-fit: contain; 
-                       opacity: 0.95; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .header-overlay { position: absolute; bottom: 0; left: 0; right: 0; 
-                         background: linear-gradient(to top, rgba(26, 77, 46, 0.95), transparent); 
-                         padding: 30px; color: white; }
-        .header-title { font-size: 42px; font-weight: bold; color: #d4af37; }
-        .content { padding: 50px 40px; }
-        .intro { font-size: 18px; font-style: italic; color: #555; padding: 20px; 
-                background: #f8f6f0; border-left: 4px solid #d4af37; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <img src="${imageUri}" alt="${book.author}" class="header-image">
-            <div class="header-overlay">
-                <div class="header-title">${book.title}</div>
-            </div>
-        </div>
-        <div class="content">
-            <div class="intro">${book.description || ''}</div>
-        </div>
-    </div>
-</body>
-</html>`;
+    return () => clearTimeout(timer);
+  }, [navigation]);
 
   return (
-    <View style={styles.pdfReaderScreen}>
+    <View style={[styles.pdfReaderScreen, { backgroundColor: theme.background }]}>
       <View style={styles.pdfReaderHeader}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text style={styles.pdfReaderClose}>✕</Text>
@@ -1624,18 +1708,9 @@ function PDFReaderScreen({ route, navigation }: any) {
         <Text style={styles.pdfReaderTitle} numberOfLines={1}>{book.title || 'Livre'}</Text>
         <View style={{width: 40}} />
       </View>
-      {loading && (
-        <View style={styles.pdfLoading}>
-          <Text style={styles.pdfLoadingText}>Chargement du contenu...</Text>
-        </View>
-      )}
-      <WebView
-        source={{ html: pdfHtmlContent }}
-        style={styles.pdfWebView}
-        onLoadEnd={() => setLoading(false)}
-        showsVerticalScrollIndicator={true}
-        javaScriptEnabled={true}
-      />
+      <View style={styles.pdfLoading}>
+        <Text style={styles.pdfLoadingText}>{t('common.loading')}...</Text>
+      </View>
     </View>
   );
 }
@@ -1835,9 +1910,9 @@ function AudioPlayerScreen({ route, navigation }: any) {
                 console.log('Erreur seek:', error);
               }
             }}
-            minimumTrackTintColor="#2d6a4f"
+            minimumTrackTintColor="#0F5132"
             maximumTrackTintColor="#e0e0e0"
-            thumbTintColor="#2d6a4f"
+            thumbTintColor="#0F5132"
           />
           <View style={styles.audioPlayerTimeNew}>
             <Text style={styles.audioPlayerTimeTextNew}>{formatTime(position)}</Text>
@@ -1996,11 +2071,13 @@ function VideoPlayerScreen({ route, navigation }: any) {
 
 // Thèmes
 const lightTheme = {
-  background: '#ffffff',
-  surface: '#f5f5f5',
+  background: '#F8F9F6',
+  surface: '#ffffff',
   text: '#000000',
   textSecondary: '#666666',
-  primary: '#2d6a4f',
+  primary: '#0F5132',
+  secondary: '#0B3C5D',
+  accent: '#C9A24D',
 };
 
 const darkTheme = {
@@ -2008,7 +2085,9 @@ const darkTheme = {
   surface: '#1e1e1e',
   text: '#ffffff',
   textSecondary: '#aaaaaa',
-  primary: '#2d6a4f',
+  primary: '#0F5132',
+  secondary: '#0B3C5D',
+  accent: '#C9A24D',
 };
 
 // Écran de Splash/Onboarding
@@ -2024,7 +2103,7 @@ function OnboardingScreen({ navigation }: any) {
       subtitle: 'Explorez la sagesse islamique',
       description: 'Découvrez une collection riche de livres, musiques, podcasts et cours spirituels',
       icon: '📚',
-      color: '#2d6a4f',
+      color: '#0F5132',
     },
     {
       id: 2,
@@ -2032,7 +2111,7 @@ function OnboardingScreen({ navigation }: any) {
       subtitle: t('library.subtitle'),
       description: 'Accédez à des ouvrages spirituels de grande valeur et enrichissez votre connaissance',
       icon: '📖',
-      color: '#1a4d2e',
+      color: '#0B3C5D',
     },
     {
       id: 3,
@@ -2040,7 +2119,7 @@ function OnboardingScreen({ navigation }: any) {
       subtitle: 'Contenu audio riche',
       description: 'Écoutez des chants spirituels, des podcasts éducatifs et des livres audio',
       icon: '🎵',
-      color: '#2d6a4f',
+      color: '#0F5132',
     },
   ];
 
@@ -2134,7 +2213,7 @@ function MainTabs() {
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
-          tabBarActiveTintColor: '#2d6a4f',
+          tabBarActiveTintColor: '#0F5132',
           tabBarInactiveTintColor: '#999',
           tabBarStyle: {
             backgroundColor: darkMode ? darkTheme.surface : lightTheme.surface,
@@ -2250,7 +2329,7 @@ const styles = StyleSheet.create({
   appTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#2d6a4f',
+    color: '#0F5132',
   },
   langSelector: {
     flexDirection: 'row',
@@ -2295,7 +2374,7 @@ const styles = StyleSheet.create({
   },
   heroSubtitle: {
     fontSize: 18,
-    color: '#f4e5c3',
+    color: '#C9A24D',
     textShadowColor: 'rgba(0, 0, 0, 0.2)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
@@ -2377,7 +2456,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
-    shadowColor: '#2d6a4f',
+    shadowColor: '#0F5132',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
@@ -2438,7 +2517,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
-    shadowColor: '#2d6a4f',
+    shadowColor: '#0F5132',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
@@ -2564,7 +2643,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
-    shadowColor: '#2d6a4f',
+    shadowColor: '#0F5132',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
@@ -2638,7 +2717,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   openButton: {
-    backgroundColor: '#2d6a4f',
+    backgroundColor: '#0F5132',
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
@@ -2678,7 +2757,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
-    shadowColor: '#2d6a4f',
+    shadowColor: '#0F5132',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
@@ -2710,7 +2789,7 @@ const styles = StyleSheet.create({
     right: 0,
     padding: 15,
     borderTopWidth: 2,
-    borderTopColor: '#2d6a4f',
+    borderTopColor: '#0F5132',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.2,
@@ -2770,10 +2849,10 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 35,
-    backgroundColor: '#2d6a4f',
+    backgroundColor: '#0F5132',
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#2d6a4f',
+    shadowColor: '#0F5132',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 8,
@@ -2883,7 +2962,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 15,
-    shadowColor: '#2d6a4f',
+    shadowColor: '#0F5132',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
@@ -2952,18 +3031,18 @@ const styles = StyleSheet.create({
   },
   subscribeButton: {
     flex: 1,
-    backgroundColor: '#2d6a4f',
+    backgroundColor: '#0F5132',
     padding: 12,
     borderRadius: 8,
     alignItems: 'center',
   },
   subscribeButtonEnhanced: {
     flex: 1,
-    backgroundColor: '#2d6a4f',
+    backgroundColor: '#0F5132',
     padding: 14,
     borderRadius: 12,
     alignItems: 'center',
-    shadowColor: '#2d6a4f',
+    shadowColor: '#0F5132',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
@@ -2994,7 +3073,7 @@ const styles = StyleSheet.create({
   playButton: {
     width: 50,
     height: 50,
-    backgroundColor: '#2d6a4f',
+    backgroundColor: '#0F5132',
     borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
@@ -3002,11 +3081,11 @@ const styles = StyleSheet.create({
   playButtonEnhanced: {
     width: 56,
     height: 56,
-    backgroundColor: '#2d6a4f',
+    backgroundColor: '#0F5132',
     borderRadius: 28,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#2d6a4f',
+    shadowColor: '#0F5132',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 6,
@@ -3069,7 +3148,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 15,
-    shadowColor: '#2d6a4f',
+    shadowColor: '#0F5132',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
@@ -3213,9 +3292,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
   },
-  pdfWebView: {
-    flex: 1,
-  },
   audioPlayer: {
     position: 'absolute',
     bottom: 0,
@@ -3353,10 +3429,10 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#2d6a4f',
+    backgroundColor: '#0F5132',
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#2d6a4f',
+    shadowColor: '#0F5132',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 8,
@@ -3410,7 +3486,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   miniPlayer: {
-    backgroundColor: '#2d6a4f',
+    backgroundColor: '#0F5132',
     flexDirection: 'row',
     alignItems: 'center',
     padding: 15,
@@ -3433,7 +3509,7 @@ const styles = StyleSheet.create({
   },
   miniPlayerSubtitle: {
     fontSize: 12,
-    color: '#f4e5c3',
+    color: '#C9A24D',
   },
   miniPlayerClose: {
     fontSize: 20,
@@ -3497,7 +3573,7 @@ const styles = StyleSheet.create({
   },
   onboardingSubtitle: {
     fontSize: 22,
-    color: '#f4e5c3',
+    color: '#C9A24D',
     textAlign: 'center',
     marginBottom: 20,
     fontWeight: '600',
@@ -3565,7 +3641,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   onboardingButtonText: {
-    color: '#2d6a4f',
+    color: '#0F5132',
     fontSize: 18,
     fontWeight: 'bold',
   },
@@ -3615,7 +3691,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     borderRadius: 25,
     overflow: 'hidden',
-    shadowColor: '#2d6a4f',
+    shadowColor: '#0F5132',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.25,
     shadowRadius: 15,
@@ -3647,6 +3723,7 @@ const styles = StyleSheet.create({
   },
   heroIcon: {
     fontSize: 45,
+    color: '#0F5132',
   },
   heroTitleModern: {
     fontSize: 36,
@@ -3666,7 +3743,7 @@ const styles = StyleSheet.create({
   heroDecorativeLine: {
     width: 60,
     height: 3,
-    backgroundColor: '#d4af37',
+    backgroundColor: '#C9A24D',
     borderRadius: 2,
   },
   // Styles modernes - Sections
@@ -3689,13 +3766,14 @@ const styles = StyleSheet.create({
     width: 45,
     height: 45,
     borderRadius: 22.5,
-    backgroundColor: '#f0f7f4',
+    backgroundColor: 'rgba(15, 81, 50, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
   },
   sectionIconModern: {
     fontSize: 22,
+    color: '#0F5132',
   },
   sectionTitleModern: {
     fontSize: 22,
@@ -3713,16 +3791,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 15,
-    backgroundColor: '#f0f7f4',
+    backgroundColor: '#F8F9F6',
   },
   seeAllModern: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#2d6a4f',
+    color: '#0F5132',
   },
   seeAllArrow: {
     fontSize: 16,
-    color: '#2d6a4f',
+    color: '#0F5132',
     fontWeight: 'bold',
   },
   horizontalScrollModern: {
@@ -3751,7 +3829,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 15,
-    shadowColor: '#2d6a4f',
+    shadowColor: '#0F5132',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -3759,6 +3837,7 @@ const styles = StyleSheet.create({
   },
   continueIconTextModern: {
     fontSize: 28,
+    color: '#0F5132',
   },
   continueCardContent: {
     flex: 1,
@@ -3789,7 +3868,7 @@ const styles = StyleSheet.create({
   continueDurationModern: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#2d6a4f',
+    color: '#0F5132',
   },
   // Styles modernes - Music Cards
   musicCardModern: {
@@ -3810,7 +3889,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
-    shadowColor: '#2d6a4f',
+    shadowColor: '#0F5132',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -3818,6 +3897,7 @@ const styles = StyleSheet.create({
   },
   musicIconTextModern: {
     fontSize: 26,
+    color: '#0F5132',
   },
   musicCardContent: {
     flex: 1,
@@ -3907,7 +3987,7 @@ const styles = StyleSheet.create({
     width: 45,
     height: 45,
     borderRadius: 22.5,
-    backgroundColor: '#f0f7f4',
+    backgroundColor: '#F8F9F6',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -3970,7 +4050,7 @@ const styles = StyleSheet.create({
   bookPagesModern: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#2d6a4f',
+    color: '#0F5132',
   },
   // Styles modernes - Music Grid
   musicListModern: {
@@ -4002,7 +4082,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 15,
-    shadowColor: '#2d6a4f',
+    shadowColor: '#0F5132',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -4037,7 +4117,7 @@ const styles = StyleSheet.create({
   musicCardGridDurationModern: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#2d6a4f',
+    color: '#0F5132',
   },
   // Styles modernes - Podcasts
   podcastsListModern: {
@@ -4067,7 +4147,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 15,
-    shadowColor: '#2d6a4f',
+    shadowColor: '#0F5132',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -4114,17 +4194,17 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 15,
-    backgroundColor: '#f0f7f4',
+    backgroundColor: '#F8F9F6',
     alignItems: 'center',
     justifyContent: 'center',
   },
   subscribedButtonModern: {
-    backgroundColor: '#2d6a4f',
+    backgroundColor: '#0F5132',
   },
   subscribeButtonTextModern: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#2d6a4f',
+    color: '#0F5132',
   },
   subscribedButtonTextModern: {
     color: '#fff',
@@ -4133,10 +4213,10 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#2d6a4f',
+    backgroundColor: '#0F5132',
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#2d6a4f',
+    shadowColor: '#0F5132',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -4174,7 +4254,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 15,
-    shadowColor: '#2d6a4f',
+    shadowColor: '#0F5132',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -4208,7 +4288,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 12,
-    backgroundColor: '#f0f7f4',
+    backgroundColor: '#F8F9F6',
   },
   courseMetaIconModern: {
     fontSize: 14,
@@ -4241,7 +4321,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#f0f7f4',
+    backgroundColor: '#F8F9F6',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -4305,12 +4385,12 @@ const styles = StyleSheet.create({
     width: 42,
     height: 42,
     borderRadius: 21,
-    backgroundColor: 'rgba(45, 106, 79, 0.1)',
+    backgroundColor: 'rgba(15, 81, 50, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   musicPlayerHeaderButtonActive: {
-    backgroundColor: 'rgba(45, 106, 79, 0.25)',
+    backgroundColor: 'rgba(15, 81, 50, 0.25)',
   },
   musicPlayerHeaderIconModern: {
     fontSize: 20,
@@ -4335,7 +4415,7 @@ const styles = StyleSheet.create({
     width: 75,
     height: 75,
     borderRadius: 37.5,
-    shadowColor: '#2d6a4f',
+    shadowColor: '#0F5132',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.4,
     shadowRadius: 12,
@@ -4463,7 +4543,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
     borderRadius: 20,
     overflow: 'hidden',
-    shadowColor: '#2d6a4f',
+    shadowColor: '#0F5132',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.3,
     shadowRadius: 10,
@@ -4501,7 +4581,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   audioPlayerHeaderIconBtnActive: {
-    backgroundColor: '#f0f7f4',
+    backgroundColor: '#F8F9F6',
     borderRadius: 20,
   },
   audioPlayerHeaderIconNew: {
@@ -4538,12 +4618,12 @@ const styles = StyleSheet.create({
   },
   audioPlayerCardBorder: {
     borderWidth: 5,
-    borderColor: '#d4af37',
+    borderColor: '#C9A24D',
     borderRadius: 15,
     padding: 25,
     backgroundColor: '#fafafa',
     position: 'relative',
-    shadowColor: '#d4af37',
+    shadowColor: '#C9A24D',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
@@ -4567,7 +4647,7 @@ const styles = StyleSheet.create({
   audioPlayerCardTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#d4af37',
+    color: '#C9A24D',
     marginBottom: 8,
     letterSpacing: 1,
   },
@@ -4580,24 +4660,24 @@ const styles = StyleSheet.create({
   audioPlayerCardTitle2: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#d4af37',
+    color: '#C9A24D',
     letterSpacing: 0.5,
   },
   audioPlayerCardTitleAr: {
     fontSize: 16,
-    color: '#d4af37',
+    color: '#C9A24D',
     fontWeight: '600',
   },
   audioPlayerCardSubtitle: {
     fontSize: 14,
-    color: '#8b6f47',
+    color: '#0F5132',
     marginBottom: 4,
     fontWeight: '600',
   },
   audioPlayerCardSpeaker: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#8b6f47',
+    color: '#0F5132',
     letterSpacing: 0.5,
   },
   audioPlayerCardFooter: {
@@ -4614,13 +4694,13 @@ const styles = StyleSheet.create({
   },
   audioPlayerCardFooterLabel: {
     fontSize: 10,
-    color: '#d4af37',
+    color: '#C9A24D',
     fontWeight: '600',
     marginBottom: 4,
   },
   audioPlayerCardFooterText: {
     fontSize: 11,
-    color: '#8b6f47',
+    color: '#0F5132',
     fontWeight: '600',
   },
   audioPlayerCardFooterCenter: {
@@ -4630,12 +4710,12 @@ const styles = StyleSheet.create({
   audioPlayerCardLogo: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#2d6a4f',
+    color: '#0F5132',
     marginBottom: 2,
   },
   audioPlayerCardLogoAr: {
     fontSize: 12,
-    color: '#2d6a4f',
+    color: '#0F5132',
     fontWeight: '600',
   },
   audioPlayerCardFooterRight: {
@@ -4681,7 +4761,7 @@ const styles = StyleSheet.create({
   },
   audioPlayerTimeTextNew: {
     fontSize: 13,
-    color: '#2d6a4f',
+    color: '#0F5132',
     fontWeight: '600',
   },
   audioPlayerTimeRemainingNew: {
@@ -4737,10 +4817,10 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 35,
-    backgroundColor: '#2d6a4f',
+    backgroundColor: '#0F5132',
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#2d6a4f',
+    shadowColor: '#0F5132',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 8,
@@ -4798,7 +4878,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: 'rgba(45, 106, 79, 0.15)',
+    backgroundColor: 'rgba(15, 81, 50, 0.15)',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 15,
@@ -4880,7 +4960,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   libraryCourseExpandIconActive: {
-    backgroundColor: '#2d6a4f',
+    backgroundColor: '#0F5132',
     transform: [{ rotate: '180deg' }],
   },
   libraryCourseExpandIconText: {
@@ -5103,7 +5183,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: 'rgba(45, 106, 79, 0.15)',
+    backgroundColor: 'rgba(15, 81, 50, 0.15)',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 15,
@@ -5228,14 +5308,14 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 20,
     borderRadius: 15,
-    backgroundColor: '#f0f7f4',
+    backgroundColor: '#F8F9F6',
     alignItems: 'center',
     justifyContent: 'center',
   },
   podcastSubscribeText: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#2d6a4f',
+    color: '#0F5132',
   },
   podcastSubscribeTextActive: {
     color: '#fff',
@@ -5258,6 +5338,9 @@ const styles = StyleSheet.create({
     marginLeft: 2,
   },
   // Styles musique améliorés
+  musicSection: {
+    marginBottom: 30,
+  },
   musicHeaderModern: {
     paddingTop: 50,
     paddingBottom: 20,
@@ -5284,7 +5367,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: 'rgba(45, 106, 79, 0.15)',
+    backgroundColor: 'rgba(15, 81, 50, 0.15)',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 15,
@@ -5326,8 +5409,8 @@ const styles = StyleSheet.create({
   },
   musicCardPlaying: {
     borderWidth: 2,
-    borderColor: '#2d6a4f',
-    shadowColor: '#2d6a4f',
+    borderColor: '#0F5132',
+    shadowColor: '#0F5132',
     shadowOpacity: 0.2,
   },
   musicIconNew: {

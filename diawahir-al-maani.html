@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diawahir al Ma'ani - PDF</title>
+    <style>
+        @page {
+            margin: 2cm;
+            size: A4;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            line-height: 1.8;
+            color: #2c3e50;
+            background: #f8f6f0;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 0;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        /* Header avec photo */
+        .header {
+            position: relative;
+            width: 100%;
+            min-height: 400px;
+            overflow: visible;
+            background: linear-gradient(135deg, #1a4d2e 0%, #2d6a4f 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .header-image {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            opacity: 0.95;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .header-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(26, 77, 46, 0.95), transparent);
+            padding: 30px;
+            color: white;
+            z-index: 10;
+        }
+        
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .header-title {
+            font-size: 42px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            color: #d4af37;
+        }
+        
+        .header-subtitle {
+            font-size: 24px;
+            color: #f4e5c3;
+            margin-bottom: 5px;
+        }
+        
+        .header-author {
+            font-size: 18px;
+            color: #fff;
+            font-style: italic;
+        }
+        
+        /* Contenu */
+        .content {
+            padding: 50px 40px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            page-break-inside: avoid;
+        }
+        
+        h1 {
+            font-size: 32px;
+            color: #1a4d2e;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #d4af37;
+            page-break-after: avoid;
+        }
+        
+        h2 {
+            font-size: 26px;
+            color: #2d6a4f;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            page-break-after: avoid;
+        }
+        
+        h3 {
+            font-size: 20px;
+            color: #1a4d2e;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+            font-size: 15px;
+        }
+        
+        .intro {
+            font-size: 18px;
+            font-style: italic;
+            color: #555;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f6f0;
+            border-left: 4px solid #d4af37;
+        }
+        
+        blockquote {
+            margin: 20px 0;
+            padding: 20px 30px;
+            background: #f0f7f4;
+            border-left: 5px solid #1a4d2e;
+            font-style: italic;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+        
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+        
+        li {
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+        
+        .arabic {
+            direction: rtl;
+            text-align: right;
+            font-family: 'Arial', sans-serif;
+            font-size: 18px;
+            color: #1a4d2e;
+            margin: 15px 0;
+        }
+        
+        .bismillah {
+            text-align: center;
+            font-size: 24px;
+            color: #1a4d2e;
+            margin: 30px 0;
+            font-weight: bold;
+        }
+        
+        .divider {
+            text-align: center;
+            margin: 40px 0;
+            color: #d4af37;
+            font-size: 20px;
+            letter-spacing: 5px;
+        }
+        
+        .highlight {
+            background: #fff9e6;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        
+        .footer {
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 2px solid #e0e0e0;
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+        }
+        
+        .copyright {
+            margin-top: 20px;
+            text-align: center;
+            color: #1a4d2e;
+            font-weight: bold;
+        }
+        
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                box-shadow: none;
+            }
+            .section {
+                page-break-inside: avoid;
+            }
+            .header {
+                min-height: auto;
+                height: auto;
+                page-break-inside: avoid;
+            }
+            .header-image {
+                max-height: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header avec photo -->
+        <div class="header">
+            <div class="header-content">
+                <img src="assets/thierno.png" alt="Cheikh Ahmed Tijani" class="header-image" id="headerImage">
+                <div class="header-overlay">
+                    <div class="header-title">Diawahir al Ma'ani</div>
+                    <div class="header-subtitle">جواهر المعاني</div>
+                    <div class="header-author">Par Cheikh Ahmed Tijani (RTA)</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contenu -->
+        <div class="content">
+            <div class="bismillah">بسم الله الرحمن الرحيم</div>
+            
+            <div class="section">
+                <div class="intro">
+                    Les perles précieuses - Un ouvrage fondamental de la Tariqa Tijaniyya contenant les enseignements spirituels et les secrets de la voie.
+                </div>
+            </div>
+            
+            <div class="section">
+                <h1>Introduction Complète</h1>
+                <p>Diawahir al Ma'ani (Les Perles Précieuses - جواهر المعاني) est l'ouvrage fondamental de la Tariqa Tijaniyya, compilé par Cheikh Ahmed Tijani (RTA). Ce livre contient les enseignements essentiels, les secrets spirituels, et les pratiques de la voie tijaniyya. Il est considéré comme le guide complet pour tout disciple de cette noble voie.</p>
+            </div>
+            
+            <div class="section">
+                <h1>Première Partie : Les Fondements de la Tariqa Tijaniyya</h1>
+                
+                <h2>Chapitre 1 : L'Authenticité de la Voie</h2>
+                <p>La Tariqa Tijaniyya est une voie spirituelle authentique qui remonte au Prophète Muhammad ﷺ à travers une chaîne ininterrompue (silsila) de maîtres spirituels. Cette chaîne passe par :</p>
+                <ul>
+                    <li>Le Prophète Muhammad ﷺ</li>
+                    <li>Sayyidina Ali ibn Abi Talib (RA)</li>
+                    <li>Sayyidina Hassan al-Basri (RA)</li>
+                    <li>Les grands maîtres soufis à travers les siècles</li>
+                    <li>Cheikh Ahmed Tijani (RTA)</li>
+                </ul>
+                <p>La voie se base sur quatre piliers fondamentaux :</p>
+                <ol>
+                    <li><strong>L'attachement strict au Coran et à la Sunna</strong> : Aucune pratique ne peut contredire les enseignements du Coran et de la tradition prophétique.</li>
+                    <li><strong>L'amour du Prophète ﷺ</strong> : L'amour et le suivi du Prophète ﷺ sont au cœur de la voie.</li>
+                    <li><strong>Le dhikr régulier</strong> : La remémoration d'Allah est la nourriture de l'âme.</li>
+                    <li><strong>Le respect du cheikh et de la voie</strong> : Le respect et l'obéissance au maître spirituel sont essentiels.</li>
+                </ol>
+                
+                <h2>Chapitre 2 : La Vie de Cheikh Ahmed Tijani (RTA)</h2>
+                <p>Cheikh Ahmed ibn Mohamed ibn Moukhtar At Tidiane est né à Aïnou Madhi en Algérie, dans la nuit du 18 Safar de l'an 1150 de l'Hégire (1737 de l'ère chrétienne).</p>
+                <p>Dès son jeune âge, il montra des signes de piété et de dévotion exceptionnels. À sept ans, il avait déjà mémorisé le Coran entier. Il étudia les sciences islamiques auprès des plus grands savants de son époque, maîtrisant :</p>
+                <ul>
+                    <li>Le droit musulman (fiqh) selon l'école malikite</li>
+                    <li>La science du hadith</li>
+                    <li>L'exégèse coranique (tafsir)</li>
+                    <li>La grammaire et la rhétorique arabes</li>
+                    <li>Les sciences spirituelles (tasawwuf)</li>
+                </ul>
+                <p>Après de nombreuses années de recherche et de voyage, il reçut l'autorisation divine d'établir sa propre voie spirituelle, la Tariqa Tijaniyya, qui se distingue par sa simplicité, son accessibilité, et son efficacité spirituelle.</p>
+                
+                <h2>Chapitre 3 : Les Caractéristiques de la Tariqa</h2>
+                <p>La Tariqa Tijaniyya se distingue par plusieurs caractéristiques uniques :</p>
+                <ul>
+                    <li><strong>Simplicité</strong> : Les pratiques sont simples et accessibles à tous, sans complications inutiles.</li>
+                    <li><strong>Efficacité</strong> : Les résultats spirituels sont rapides pour ceux qui suivent sincèrement la voie.</li>
+                    <li><strong>Authenticité</strong> : Toutes les pratiques sont basées sur le Coran et la Sunna.</li>
+                    <li><strong>Universalité</strong> : La voie est ouverte à tous les musulmans, sans distinction de race, de nationalité ou de statut social.</li>
+                    <li><strong>Protection</strong> : Le disciple sincère est protégé des épreuves spirituelles et des obstacles sur le chemin.</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h1>Deuxième Partie : Les Pratiques de la Voie</h1>
+                
+                <h2>Chapitre 4 : Le Wird Tijani - Les Litanies Quotidiennes</h2>
+                <p>Le Wird (litanies) de la Tariqa Tijaniyya est composé de quatre éléments essentiels, à réciter quotidiennement :</p>
+                
+                <h3>1. Istighfar (Demande de Pardon)</h3>
+                <p>Réciter 100 fois :</p>
+                <p class="arabic" style="font-size: 20px; text-align: center; margin: 15px 0;">
+                    أستغفر الله العظيم الذي لا إله إلا هو الحي القيوم وأتوب إليه
+                </p>
+                <p>"Je demande pardon à Allah le Très Grand, Celui qu'il n'y a de divinité que Lui, le Vivant, l'Éternel, et je me repens à Lui."</p>
+                <p>Cette formule purifie le cœur des péchés et ouvre les portes du pardon divin.</p>
+                
+                <h3>2. Salat al-Fatihi</h3>
+                <p>Réciter 100 fois :</p>
+                <p class="arabic" style="font-size: 18px; text-align: center; margin: 15px 0; line-height: 1.8;">
+                    اللهم صل على سيدنا محمد الفاتح لما أغلق والخاتم لما سبق والناصر الحق بالحق والهادي إلى صراطك المستقيم وعلى آله حق قدره ومقداره العظيم
+                </p>
+                <p>"Ô Allah, prie sur notre maître Muhammad, celui qui ouvre ce qui est fermé, celui qui scelle ce qui est passé, le défenseur de la vérité par la vérité, le guide vers Ton chemin droit, et sur sa famille selon sa vraie valeur et sa grande mesure."</p>
+                <p>Le Cheikh Ahmed Tijani (RTA) a dit que celui qui récite cette prière une fois obtient la récompense de toutes les prières sur le Prophète ﷺ récitées depuis la création jusqu'au Jour du Jugement, multipliées par le nombre de créatures.</p>
+                
+                <h3>3. Haylala (La ilaha illa Allah)</h3>
+                <p>Réciter 100 fois :</p>
+                <p class="arabic" style="font-size: 24px; text-align: center; margin: 15px 0;">
+                    لا إله إلا الله
+                </p>
+                <p>"Il n'y a de divinité qu'Allah."</p>
+                <p>Cette formule est le fondement de la foi islamique. Sa récitation régulière renforce la foi et purifie le cœur de toute association (shirk).</p>
+                
+                <h3>4. Jawharat al-Kamal (La Perle de la Perfection)</h3>
+                <p>Réciter 12 fois le matin et 12 fois le soir :</p>
+                <p class="arabic" style="font-size: 16px; text-align: center; margin: 15px 0; line-height: 2;">
+                    اللهم صل على عين الرحمة الربانية والياقوتة المتحققة الحائزة لمراتب القرب والرفعة ومعدن الأسرار القدسية ومنبع الأنوار الإلهية سيدنا محمد الصلاة التامة والسلام الشامل على عين الحياة التي تقذف بالأنوار سيدنا محمد عدد معلومات الله وكفى بالله عليما وعلى آله وصحبه في كل لمحة ونفس عدد كل معلوم لله
+                </p>
+                <p>"Ô Allah, prie sur l'œil de la miséricorde divine, le rubis réalisé qui possède les degrés de la proximité et de l'élévation, la mine des secrets sacrés, la source des lumières divines, notre maître Muhammad, la prière parfaite et la paix complète sur l'œil de la vie qui projette les lumières, notre maître Muhammad, selon le nombre des connaissances d'Allah, et Allah suffit comme Savant, et sur sa famille et ses compagnons, à chaque instant et chaque souffle, selon le nombre de tout ce qui est connu par Allah."</p>
+                <p>Jawharat al-Kamal est la litanie suprême de la Tariqa. Elle contient les secrets les plus profonds de la voie et doit être récitée avec la plus grande concentration, présence du cœur, et compréhension de sa signification.</p>
+                
+                <h2>Chapitre 5 : Les Conditions de Récitation</h2>
+                <p>Pour bénéficier pleinement des litanies, il faut respecter certaines conditions :</p>
+                <ul>
+                    <li><strong>La pureté rituelle</strong> : Il est préférable d'être en état de pureté (wudu) lors de la récitation.</li>
+                    <li><strong>La présence du cœur</strong> : La récitation doit être faite avec présence et concentration, pas mécaniquement.</li>
+                    <li><strong>La régularité</strong> : Les litanies doivent être récitées quotidiennement sans interruption.</li>
+                    <li><strong>Le respect des horaires</strong> : Le wird se récite généralement après les prières obligatoires.</li>
+                    <li><strong>La compréhension</strong> : Comprendre le sens des formules récitées augmente leur efficacité.</li>
+                    <li><strong>L'humilité</strong> : Réciter avec humilité et reconnaissance de sa propre faiblesse.</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h1>Conclusion</h1>
+                <p>La Tariqa Tijaniyya est une voie bénie qui mène à Allah et à Son Prophète ﷺ. Elle est simple dans ses pratiques mais profonde dans ses enseignements. Celui qui la suit avec sincérité, régularité et respect obtient des bienfaits immenses dans ce monde et dans l'au-delà.</p>
+                <p class="arabic" style="text-align: center; font-size: 24px; margin: 40px 0;">
+                    آمين يا رب العالمين
+                </p>
+                <p style="text-align: center; font-size: 18px; margin: 20px 0;">
+                    Amine, ô Seigneur des mondes
+                </p>
+            </div>
+            
+            <div class="divider">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+            
+            <div class="footer">
+                <div class="copyright">
+                    © 2026 Hassaniya Digital<br>
+                    Collection Tariqa Tijaniyya<br>
+                    Médina Baye - Kaolack
+                </div>
+                <p class="arabic" style="margin-top: 20px;">بارك الله فيكم</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

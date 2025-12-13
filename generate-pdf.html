@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laylatou Katmiya - PDF</title>
+    <style>
+        @page {
+            margin: 2cm;
+            size: A4;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            line-height: 1.8;
+            color: #2c3e50;
+            background: #f8f6f0;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 0;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        /* Header avec photo */
+        .header {
+            position: relative;
+            width: 100%;
+            min-height: 400px;
+            overflow: visible;
+            background: linear-gradient(135deg, #1a4d2e 0%, #2d6a4f 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .header-image {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            opacity: 0.95;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .header-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(26, 77, 46, 0.95), transparent);
+            padding: 30px;
+            color: white;
+            z-index: 10;
+        }
+        
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .header-title {
+            font-size: 42px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            color: #d4af37;
+        }
+        
+        .header-subtitle {
+            font-size: 24px;
+            color: #f4e5c3;
+            margin-bottom: 5px;
+        }
+        
+        .header-author {
+            font-size: 18px;
+            color: #fff;
+            font-style: italic;
+        }
+        
+        /* Contenu */
+        .content {
+            padding: 50px 40px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            page-break-inside: avoid;
+        }
+        
+        h1 {
+            font-size: 32px;
+            color: #1a4d2e;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #d4af37;
+            page-break-after: avoid;
+        }
+        
+        h2 {
+            font-size: 26px;
+            color: #2d6a4f;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            page-break-after: avoid;
+        }
+        
+        h3 {
+            font-size: 20px;
+            color: #1a4d2e;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+            font-size: 15px;
+        }
+        
+        .intro {
+            font-size: 18px;
+            font-style: italic;
+            color: #555;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f6f0;
+            border-left: 4px solid #d4af37;
+        }
+        
+        blockquote {
+            margin: 20px 0;
+            padding: 20px 30px;
+            background: #f0f7f4;
+            border-left: 5px solid #1a4d2e;
+            font-style: italic;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+        
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+        
+        li {
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+        
+        .arabic {
+            direction: rtl;
+            text-align: right;
+            font-family: 'Arial', sans-serif;
+            font-size: 18px;
+            color: #1a4d2e;
+            margin: 15px 0;
+        }
+        
+        .bismillah {
+            text-align: center;
+            font-size: 24px;
+            color: #1a4d2e;
+            margin: 30px 0;
+            font-weight: bold;
+        }
+        
+        .divider {
+            text-align: center;
+            margin: 40px 0;
+            color: #d4af37;
+            font-size: 20px;
+            letter-spacing: 5px;
+        }
+        
+        .highlight {
+            background: #fff9e6;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        
+        .footer {
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 2px solid #e0e0e0;
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+        }
+        
+        .copyright {
+            margin-top: 20px;
+            text-align: center;
+            color: #1a4d2e;
+            font-weight: bold;
+        }
+        
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                box-shadow: none;
+            }
+            .section {
+                page-break-inside: avoid;
+            }
+            .header {
+                min-height: auto;
+                height: auto;
+                page-break-inside: avoid;
+            }
+            .header-image {
+                max-height: 500px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header avec photo -->
+        <div class="header">
+            <div class="header-content">
+                <img src="assets/thierno.png" alt="Thierno Hassane Dème" class="header-image" id="headerImage">
+                <div class="header-overlay">
+                    <div class="header-title">Laylatou Katmiya</div>
+                    <div class="header-subtitle">ليلة الكتمية</div>
+                    <div class="header-author">Par Thierno Hassane Dème</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contenu -->
+        <div class="content">
+            <div class="bismillah">بسم الله الرحمن الرحيم</div>
+            
+            <div class="section">
+                <div class="intro">
+                    Médina Baye va célébrer la nuit dédiée à Cheikh Ahmed Tidiane Chérif par le biais de la famille de Thierno Hassane Dème. Il était grand érudit de l'Islam, un marabout, un éducateur, un soufi, l'un des plus distingués compagnons de Baye Niass.
+                </div>
+            </div>
+            
+            <div class="section">
+                <h1>Biographie de Thierno Hassane Dème</h1>
+                
+                <h2>Naissance et Enfance</h2>
+                <p>Il est né dans le village de <span class="highlight">Sinthiou-Dangthé</span> dans l'actuel Podor en <strong>1920</strong>, fils de Mouhamed Samba Moussa et de Fatoumata Kelly, fille d'Ilymâne Bôyil.</p>
+                <p>Il a grandi à Sinthiou-Dangthé jusqu'à l'âge de sept ans. À cet âge, il se rendit chez son grand-père Ilymâne Bôyil, où il entreprit ses études coraniques auprès de son oncle paternel El Hadj Abdoul Kelly.</p>
+                
+                <h2>Formation Auprès de Thierno Sa-îd Chu-arâ</h2>
+                <p>Il se rendit d'abord à <strong>Kanel</strong> où il rencontra un grand savant répondant au nom de <strong>Thierno Sa-îd Chu-arâ</strong>.</p>
+                <p>Il est resté à côté de lui, <strong>quatorze ans</strong> durant lesquels il apprit les sciences islamiques :</p>
+                <ul>
+                    <li>La loi islamique</li>
+                    <li>La littérature arabe</li>
+                    <li>La syntaxe et la morphologie</li>
+                    <li>Les fondements de la loi</li>
+                    <li>L'étymologie</li>
+                    <li>La logique</li>
+                    <li>La rhétorique</li>
+                </ul>
+                <p>Il se mit entièrement à son service. Ce dernier l'aimait d'un amour profond. Il se plaisait à le regarder longuement et lui disait :</p>
+                <blockquote>
+                    « J'espère que tu trouveras la grande ouverture (Al Fatha) et que tu accèderas à l'enceinte scellée du Seigneur (Al-wussûl). »
+                </blockquote>
+            </div>
+            
+            <div class="section">
+                <h1>Le Premier à Célébrer la Nuit du Katmiya</h1>
+                
+                <h2>Son Origine</h2>
+                <p>C'est une grande nuit dédiée à <strong>Cheikh Ahmed Tidiane Chérif</strong>. Une nuit qui célèbre la naissance de Cheikh Ahmed Tidiane Chérif (RTA) de son élévation à la katmiya, pôle caché dont la portée dépasse l'entendement humain.</p>
+                
+                <h2>Cheikh Ahmed Tidiane</h2>
+                <p>De son vrai nom <strong>Cheikh Ahmed Ibn Mohamed Ibn Moukhtar At Tidiane</strong>, est né à Aïnou Madhi (Algérie), dans la nuit du <strong>18 safar, en l'an 1150</strong>.</p>
+                <p>À sept ans, il memorisa le Coran et apprit le droit musulman à l'école Malikite.</p>
+                
+                <h2>La Katmiya - Le Pôle Caché</h2>
+                <p>Il disait :</p>
+                <blockquote>
+                    « Le maître de l'existence m'a informé de vive voix que je suis le <strong>pôle caché</strong>, celà à l'état de veille et non en rêve... et que tout saint ne boit et n'est abreuvé que de notre océan depuis la création jusqu'au jour où on soufflera sur la trompe... »
+                </blockquote>
+                <blockquote>
+                    « L'essence du prophète (ﷺ) irrigue les essences des messages et prophètes ; mon essence irrigue les pôles, les connaissants d'Allah et les walis depuis la prexistence et, ce jusqu'à l'éternité. »
+                </blockquote>
+                <p>Il s'y ajoute que :</p>
+                <blockquote>
+                    « Mes deux pieds que voici sont sur la nuque de chaque Wali. »
+                </blockquote>
+            </div>
+            
+            <div class="section">
+                <h1>Le Songe Prémonitoire</h1>
+                <p>Un jour, Thierno Sa'îd Chu'arâ partit à la Mecque en pèlerinage et laissa à Cheikh Al-Hassane Dème la charge des siens. Il s'occupa de ses affaires pendant des années.</p>
+                <p>Alors qu'il revenait du pèlerinage, il rendit l'âme dans un village appelé <strong>Umudurman</strong>.</p>
+                <p>La nouvelle de son décès attrista profondément Cheikh al-Hassane Dème. Il passa la première nuit à méditer : où pourrait-il bien trouver un maître semblable ?</p>
+                
+                <h2>La Vision</h2>
+                <p>Le sommeil le trouva dans cette expectative. Il vit alors en songe <strong>Chérif Mohamed Al Makhtar</strong>, un saint vertueux, qui lui donna trois poignées de mil.</p>
+                <p>Il trouva que le mil était comme du sucre. À la troisième poignée, il lui dit : « Ô Chérif prie pour moi ».</p>
+                <p>Il répondit : « Que voulez-vous ? »<br>
+                Il lui dit : « La science et la connaissance de Dieu (ma'rifa billah) ».</p>
+                <p>Apparut alors Thierno Sa'îd Chu'arâ, dans le même songe, dans des habits verts, très jeune. Il lui dit en souriant :</p>
+                <blockquote>
+                    « As-tu vu Mouhammad Al Makhtar ? A-t-il prié pour toi ? Moi aussi j'ai prié pour toi, pour que tu obtiennes tous les bienfaits ; celui que tu cherches se trouve dans l'Ouest. »
+                </blockquote>
+                <blockquote>
+                    « Vas à <strong>Kaolack</strong> pour y trouver <strong>Cheikh El Hadj Ibrahima Niass</strong> ; il n'y a pas sur la terre quelqu'un plus connaissant Dieu que lui. »
+                </blockquote>
+            </div>
+            
+            <div class="section">
+                <h1>La Rencontre avec Baye Niass</h1>
+                <p>Quand il se réveilla, il écrivit une lettre adressée à El Hadj Ibrahima Niass, avec pour toute adresse : <strong>Kaolack</strong>.</p>
+                <p>Il n'avait jamais entendu son nom auparavant et ne le connaissait pas du tout.</p>
+                <p>Celui-ci répondit en lui envoyant dans la lettre les litanies à réciter (zikr) avant leur rencontre. Il lui annonça beaucoup de choses que Dieu a réalisées par la suite.</p>
+                
+                <h2>Vingt-Huit Années de Compagnonnage</h2>
+                <p>Il quitta alors le Fouta pour Kaolack pour y rencontrer le Cheikh accompli, <strong>Cheikh Al Islam, El Hadji Ibrahim NIASS</strong>.</p>
+                <p>Il resta avec lui et fut son compagnon durant <strong>vingt-huit années</strong>.</p>
+                <p>Il reçut de sa part :</p>
+                <ul>
+                    <li>Des connaissances</li>
+                    <li>Des secrets</li>
+                    <li>Des lumières qui comblent tout pèlerin</li>
+                </ul>
+                <p>Il le servit de toutes les servitudes par la plume et par le chapelet.</p>
+            </div>
+            
+            <div class="section">
+                <h1>Les Retraites Spirituelles (Khalwa)</h1>
+                <p>Particulièrement, il s'occupait de retraites spirituelles (khalwa et riyâdhiyât).</p>
+                <p>Il lui fit :</p>
+                <ol>
+                    <li><strong>Khalwatul-ulyâ</strong> (8 jours) - La particulière des plus grandes</li>
+                    <li><strong>Khalwatul al-samdhaniyya al-kubrâ</strong> (72 jours) - La plus grande retraite éternelle</li>
+                    <li><strong>Khalwas régulières</strong> (40 jours) - Durant sept (7) ans</li>
+                </ol>
+                <p>Il répétait ces retraites au point qu'il était devenu comme un chameau libre se promenant dans les khalwas.</p>
+                
+                <h2>Les Fruits Spirituels</h2>
+                <p>Il obtient de ces retraites des visions que sa langue ne peut prononcer et que sa plume refuse d'écrire bien que son esprit ait voulu les dicter.</p>
+                <p>Dieu lui a gratifié de la <strong>grande ouverture</strong> et lui a ouvert :</p>
+                <ul>
+                    <li>✓ Les sciences et les gnoses</li>
+                    <li>✓ Les secrets</li>
+                    <li>✓ Les lumières</li>
+                    <li>✓ Les profusions</li>
+                    <li>✓ Les parfums divins</li>
+                </ul>
+                <p class="arabic">الحمد لله - Louange et remerciements à Dieu.</p>
+            </div>
+            
+            <div class="section">
+                <h1>Relations avec les Moukhadams</h1>
+                
+                <h2>Avec Cheikh Alioune CISSE</h2>
+                <p>Thierno entretenait de très bonnes relations avec tous les <strong>MOUKHADAMES</strong> de Cheikh Ibrahima Niass.</p>
+                <p>Avec Cheikh Alioune CISSE (1er Khalife et Père de Imam Assane CISSE), il avait une relation très étroite. Ils se rendaient visite régulièrement. À ces occasions, ils s'enfermaient souvent des heures.</p>
+                
+                <h2>Les Noms Symboliques</h2>
+                <p>Certains membres de la famille de Thierno portent des noms de la famille de Cheikh Alioune CISSE :</p>
+                <ul>
+                    <li><strong>Seyda Oumou DEME</strong> - nom de Seyda Oumou CISSE</li>
+                    <li><strong>Zahra DEME</strong> - nom de Seyda Fatoumata Zahra NIASSE</li>
+                    <li><strong>Alioune CISSE DEME</strong> - nom de Cheikh Alioune CISSE</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h1>Ses Voyages et Conférences</h1>
+                <p>Il commença ses voyages dans les différentes contrées et pays hors du Sénégal.</p>
+                
+                <h2>En Afrique de l'Ouest</h2>
+                <p><strong>Mali, Haute-Volta, Ghana</strong> : <strong>129 conférences</strong><br>
+                Dans leurs villages et villes.</p>
+                
+                <h2>Au Maghreb</h2>
+                <p>Il se rendit en visite auprès de Cheikh Ahmed Tijân à <strong>Fèz</strong>.</p>
+                <p>Il fit la ziyâra auprès de <strong>28 de ses compagnons</strong> :</p>
+                <ul>
+                    <li>À Fèz</li>
+                    <li>À Meknes</li>
+                    <li>À Musâwa</li>
+                    <li>À Casablanca</li>
+                </ul>
+                <p>Il a prié auprès de la tombe de chacun.</p>
+                
+                <h2>Autres Destinations</h2>
+                <p>Il a visité <strong>16 saints</strong> à :</p>
+                <ul>
+                    <li>Tunis</li>
+                    <li>Égypte</li>
+                    <li>Hijâz</li>
+                </ul>
+                <p>Il connaissait leurs noms et leurs histoires.</p>
+                <p>Il a visité la zâwiyya de Cheikh al-arabî al-sâ-ih à Rabat : <strong>4 conférences</strong><br>
+                Casablanca : <strong>1 conférence</strong><br>
+                Le Caire : <strong>1 conférence</strong><br>
+                Nigéria (Kano) : <strong>59 conférences</strong></p>
+                
+                <h2>Bilan Total</h2>
+                <p style="font-size: 20px; text-align: center; color: #1a4d2e; font-weight: bold; margin: 20px 0;">
+                    📊 201 conférences au total
+                </p>
+                <p>À travers : Maghreb, Tunisie, Égypte, Nigéria</p>
+                <p>Il a parlé de la <strong>Charî'a</strong> (loi islamique), de la <strong>Voie</strong> et de la <strong>haqîqa</strong>.</p>
+                <p>Le public fut très dense. Un grand nombre de personnes entrèrent dans la Voie.</p>
+            </div>
+            
+            <div class="section">
+                <h1>Conclusion</h1>
+                <p class="arabic">والله أعلم - Et Allah sait mieux</p>
+                <p>Que Dieu récompense ses pères et grand-pères dans cette voie de bienfaits.</p>
+                <p>Qu'Allah sanctifie le secret de Thierno Hassane Dème et nous fasse bénéficier de ses lumières spirituelles.</p>
+                <p class="arabic" style="text-align: center; font-size: 20px; margin: 30px 0;">آمين - Amine</p>
+            </div>
+            
+            <div class="divider">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+            
+            <div class="footer">
+                <div class="copyright">
+                    © 2026 Hassaniya Digital<br>
+                    Collection Biographies<br>
+                    Médina Baye - Kaolack
+                </div>
+                <p class="arabic" style="margin-top: 20px;">بارك الله فيكم</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
