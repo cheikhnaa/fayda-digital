@@ -1,6 +1,6 @@
-# Hassaniya Digital - Application Mobile
+# Fayda Digital - Application Mobile
 
-Application mobile React Native/Expo pour la plateforme Hassaniya Digital, offrant un accès à des contenus spirituels islamiques incluant des livres PDF, des podcasts, de la musique, des cours vidéo et des récitations de Zikr.
+Application mobile React Native/Expo pour la plateforme Fayda Digital, offrant un accès à des contenus spirituels islamiques incluant des livres PDF, des podcasts, de la musique, des cours vidéo et des récitations de Zikr.
 
 ## 🚀 Fonctionnalités
 
@@ -67,5 +67,5 @@ Ce projet est privé.
 
 ## 👤 Auteur
 
-Hassaniya Digital
+Fayda Digital
 
