@@ -68,40 +68,35 @@ const musicTracks = [
 const podcasts = [
   { 
     id: 1, 
-    title: 'Dawaawin as-Sit', 
-    titleAr: 'الدواوين الست',
-    subtitle: 'al-dawāwīn al-sitt',
-    host: 'Sheikh Hassan Cisse', 
+    title: 'Concealed Conversations - Sufism & the Tijani way', 
+    titleAr: 'محادثات مخفية',
+    subtitle: 'Sufism and the Tijani way',
+    host: 'Shaykh Hassan Cisse', 
     episodes: 60, 
     subscribers: 8500, 
     subscribed: false,
-    duration: '06:34',
+    duration: '02:00:39',
+    date: '27 August 2023',
     image: require('./assets/thierno.png'),
-    description: 'مناسب أهل الوداد في مدح خير العباد - الديوان السادس من الدواوين الست',
+    description: 'A collection of spiritual conversations about Sufism and the Tijani way.',
+    locked: false,
+    episodeType: 'Weekly',
   },
   { 
     id: 2, 
-    title: 'Alhaji Jibril Madaha', 
-    titleAr: 'مدح',
-    subtitle: 'Yaa Marhaba bi...',
-    host: 'Shaykh Jibril', 
-    episodes: 45, 
+    title: 'Shaykh Hassan Cisse Talks', 
+    titleAr: 'محاضرات الشيخ حسن سيسي',
+    subtitle: 'A collection of speeches and talks',
+    host: 'Shaykh Hassan Cisse', 
+    episodes: 10, 
     subscribers: 12300, 
     subscribed: false,
-    duration: '01:08',
+    duration: '01:30:00',
+    date: '26 August 2023',
     image: require('./assets/thierno.png'),
-  },
-  { 
-    id: 3, 
-    title: 'Shaykh al-Islam al', 
-    titleAr: 'تهنئة الربيع',
-    subtitle: 'Niasse Tania S',
-    host: 'Shaykh al-Islam', 
-    episodes: 38, 
-    subscribers: 6700, 
-    subscribed: false,
-    duration: '05:16',
-    image: require('./assets/thierno.png'),
+    description: 'A collection of speeches and talks of Imam Shaykh Hassan Cisse.',
+    locked: true,
+    episodeType: 'Episodes 1 - 10',
   },
 ];
 
@@ -871,291 +866,146 @@ function MusicScreen({ navigation }: any) {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <StatusBar style={darkMode ? 'light' : 'dark'} />
       
-      {/* Header avec gradient élégant */}
-      <LinearGradient
-        colors={darkMode ? ['#0B3C5D', '#0F5132'] : ['#F8F9F6', '#ffffff']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.musicHeaderModern}
-      >
-        <View style={styles.musicHeaderContent}>
-          <View style={styles.musicHeaderLeft}>
-            <View style={styles.musicHeaderIconContainer}>
-              <Text style={styles.musicHeaderIcon}>🎵</Text>
-            </View>
-            <View>
-              <Text style={[styles.musicHeaderTitle, { color: theme.text }]}>{t('music.title')}</Text>
-              <Text style={[styles.musicHeaderSubtitle, { color: theme.textSecondary }]}>
-                {zikrTracks.length + coranTracks.length + musicTracks.length} pistes {t('library.available').split(' ')[1]}
-              </Text>
-            </View>
-          </View>
-          <LanguageSelector />
-        </View>
-      </LinearGradient>
+      {/* Header simple */}
+      <View style={[styles.podcastsHeaderSimple, { backgroundColor: theme.surface }]}>
+        <Text style={[styles.podcastsHeaderTitleSimple, { color: '#0F5132' }]}>Musique</Text>
+        <LanguageSelector />
+      </View>
 
       <ScrollView 
-        style={styles.musicScrollNew} 
-        contentContainerStyle={[styles.musicScrollContentNew, currentPlayer?.type === 'music' && { paddingBottom: 220 }]}
+        style={styles.podcastsScrollNew} 
+        contentContainerStyle={[styles.podcastsScrollContentNew, currentPlayer?.type === 'music' && { paddingBottom: 220 }]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Section 1: Zikr & Music Snippets */}
-        <View style={styles.musicSection}>
-          <View style={styles.sectionHeaderModern}>
-            <View style={styles.sectionTitleContainerModern}>
-              <View style={styles.sectionIconContainer}>
-                <Text style={styles.sectionIconModern}>🕌</Text>
-              </View>
-              <View>
-                <Text style={[styles.sectionTitleModern, { color: theme.text }]}>Zikr & Music Snippets</Text>
-                <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>{zikrTracks.length} pistes</Text>
-              </View>
-            </View>
+        {/* Section Zikr & Music Snippets - Cartes horizontales */}
+        <View style={styles.podcastsSection}>
+          <View style={styles.podcastsSectionHeader}>
+            <Text style={[styles.podcastsSectionTitle, { color: '#0F5132' }]}>Zikr & Music Snippets</Text>
+            <TouchableOpacity style={styles.podcastsViewAllButton}>
+              <Text style={styles.podcastsViewAllText}>View all</Text>
+            </TouchableOpacity>
           </View>
-          <View style={styles.musicGridNew}>
-            {zikrTracks.map((track) => {
-              const musicColors = getMusicColor(track.id);
+          
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.podcastsHorizontalScroll}
+          >
+            {zikrTracks.slice(0, 3).map((track) => {
               const isPlaying = currentPlayer?.type === 'music' && currentPlayer.item?.id === track.id;
               
               return (
                 <TouchableOpacity
                   key={track.id}
-                  style={[
-                    styles.musicCardNew,
-                    { 
-                      backgroundColor: theme.surface,
-                      borderLeftWidth: 4,
-                      borderLeftColor: musicColors[0],
-                    },
-                    isPlaying && styles.musicCardPlaying
-                  ]}
-                  activeOpacity={0.85}
+                  style={styles.podcastCardHorizontal}
+                  activeOpacity={0.9}
                   onPress={() => {
-                    setSelectedTrack(track);
                     setCurrentPlayer({ item: track, type: 'music' });
                   }}
                 >
-                  <LinearGradient
-                    colors={musicColors}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.musicIconNew}
-                  >
-                    <Text style={styles.musicIconTextNew}>🕌</Text>
-                  </LinearGradient>
-                  
-                  <View style={styles.musicInfoNew}>
-                    <View style={styles.musicTitleRow}>
-                      <Text style={[styles.musicTitleNew, { color: theme.text }]} numberOfLines={2}>
-                        {track.title}
-                      </Text>
-                      {isPlaying && (
-                        <View style={[styles.musicPlayingBadge, { backgroundColor: musicColors[0] }]}>
-                          <Text style={styles.musicPlayingIcon}>♪</Text>
-                        </View>
-                      )}
-                    </View>
-                    <Text style={[styles.musicArtistNew, { color: theme.textSecondary }]} numberOfLines={1}>
-                      👤 {track.artist}
-                    </Text>
-                    <View style={styles.musicMetaNew}>
-                      <View style={[styles.musicDurationBadge, { backgroundColor: musicColors[0] + '15' }]}>
-                        <Text style={styles.musicDurationIcon}>⏱️</Text>
-                        <Text style={[styles.musicDurationText, { color: musicColors[0] }]}>
-                          {track.duration}
-                        </Text>
+                  {/* Image d'album avec texte */}
+                  <View style={styles.podcastAlbumContainer}>
+                    <Image 
+                      source={require('./assets/thierno.png')} 
+                      style={styles.podcastAlbumImage}
+                      resizeMode="cover"
+                    />
+                    <View style={styles.podcastAlbumOverlay}>
+                      <Text style={styles.podcastAlbumTextAr}>{track.titleAr}</Text>
+                      <Text style={styles.podcastAlbumTextLatin}>{track.title}</Text>
+                      <View style={styles.podcastAlbumLogo}>
+                        <Text style={styles.podcastAlbumLogoText}>فيضة FAYDA</Text>
                       </View>
                     </View>
                   </View>
-
-                  <TouchableOpacity
-                    style={[styles.musicPlayButtonNew, { backgroundColor: musicColors[0] }]}
-                    activeOpacity={0.9}
-                    onPress={() => {
-                      setSelectedTrack(track);
-                      setCurrentPlayer({ item: track, type: 'music' });
-                    }}
-                  >
-                    <Text style={styles.musicPlayIconNew}>{isPlaying ? '⏸' : '▶'}</Text>
-                  </TouchableOpacity>
+                  
+                  {/* Titre et infos */}
+                  <Text style={[styles.podcastCardTitle, { color: theme.text }]} numberOfLines={1}>
+                    {track.title}
+                  </Text>
+                  
+                  {/* Infos avec icônes */}
+                  <View style={styles.podcastCardInfo}>
+                    <View style={styles.podcastCardInfoItem}>
+                      <Text style={styles.podcastCardInfoIcon}>🎧</Text>
+                      <Text style={[styles.podcastCardInfoText, { color: theme.textSecondary }]}>
+                        {track.duration}
+                      </Text>
+                    </View>
+                    <TouchableOpacity 
+                      style={styles.podcastCardInfoButton}
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        setShowInfo(!showInfo);
+                      }}
+                    >
+                      <Text style={styles.podcastCardInfoIcon}>ℹ️</Text>
+                    </TouchableOpacity>
+                  </View>
                 </TouchableOpacity>
               );
             })}
-          </View>
+          </ScrollView>
         </View>
 
-        {/* Section 2: Coran */}
-        <View style={styles.musicSection}>
-          <View style={styles.sectionHeaderModern}>
-            <View style={styles.sectionTitleContainerModern}>
-              <View style={styles.sectionIconContainer}>
-                <Text style={styles.sectionIconModern}>📿</Text>
-              </View>
-              <View>
-                <Text style={[styles.sectionTitleModern, { color: theme.text }]}>Coran</Text>
-                <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>{coranTracks.length} sourates</Text>
-              </View>
-            </View>
+        {/* Section Zikr - Grande carte */}
+        <View style={styles.podcastsSection}>
+          <View style={styles.podcastsSectionHeader}>
+            <Text style={[styles.podcastsSectionTitle, { color: '#0F5132' }]}>Zikr</Text>
+            <TouchableOpacity style={styles.podcastsViewAllButton}>
+              <Text style={styles.podcastsViewAllText}>View all</Text>
+            </TouchableOpacity>
           </View>
-          <View style={styles.musicGridNew}>
-            {coranTracks.map((track) => {
-              const musicColors = getMusicColor(track.id);
-              const isPlaying = currentPlayer?.type === 'music' && currentPlayer.item?.id === track.id;
-              
-              return (
-                <TouchableOpacity
-                  key={track.id}
-                  style={[
-                    styles.musicCardNew,
-                    { 
-                      backgroundColor: theme.surface,
-                      borderLeftWidth: 4,
-                      borderLeftColor: musicColors[0],
-                    },
-                    isPlaying && styles.musicCardPlaying
-                  ]}
-                  activeOpacity={0.85}
-                  onPress={() => {
-                    setSelectedTrack(track);
-                    setCurrentPlayer({ item: track, type: 'music' });
-                  }}
-                >
-                  <LinearGradient
-                    colors={musicColors}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.musicIconNew}
-                  >
-                    <Text style={styles.musicIconTextNew}>📿</Text>
-                  </LinearGradient>
-                  
-                  <View style={styles.musicInfoNew}>
-                    <View style={styles.musicTitleRow}>
-                      <Text style={[styles.musicTitleNew, { color: theme.text }]} numberOfLines={2}>
-                        {track.title}
-                      </Text>
-                      {isPlaying && (
-                        <View style={[styles.musicPlayingBadge, { backgroundColor: musicColors[0] }]}>
-                          <Text style={styles.musicPlayingIcon}>♪</Text>
-                        </View>
-                      )}
-                    </View>
-                    <Text style={[styles.musicArtistNew, { color: theme.textSecondary }]} numberOfLines={1}>
-                      👤 {track.reciter}
-                    </Text>
-                    <View style={styles.musicMetaNew}>
-                      <View style={[styles.musicDurationBadge, { backgroundColor: musicColors[0] + '15' }]}>
-                        <Text style={styles.musicDurationIcon}>⏱️</Text>
-                        <Text style={[styles.musicDurationText, { color: musicColors[0] }]}>
-                          {track.duration}
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
-
-                  <TouchableOpacity
-                    style={[styles.musicPlayButtonNew, { backgroundColor: musicColors[0] }]}
-                    activeOpacity={0.9}
-                    onPress={() => {
-                      setSelectedTrack(track);
-                      setCurrentPlayer({ item: track, type: 'music' });
-                    }}
-                  >
-                    <Text style={styles.musicPlayIconNew}>
-                      {isPlaying ? '⏸' : '▶'}
-                    </Text>
-                  </TouchableOpacity>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
+          
+          <TouchableOpacity 
+            style={styles.podcastZikrCard}
+            activeOpacity={0.9}
+            onPress={() => {
+              setCurrentPlayer({ item: zikrTracks[0], type: 'music' });
+            }}
+          >
+            <LinearGradient
+              colors={['#0B3C5D', '#0F5132', '#0B3C5D']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.podcastZikrGradient}
+            >
+              <View style={styles.podcastZikrPattern}>
+                <Text style={styles.podcastZikrTextAr}>ذكر</Text>
+                <Text style={styles.podcastZikrTextLatin}>ZIKR</Text>
+              </View>
+            </LinearGradient>
+          </TouchableOpacity>
         </View>
 
-        {/* Section 3: Music */}
-        <View style={styles.musicSection}>
-          <View style={styles.sectionHeaderModern}>
-            <View style={styles.sectionTitleContainerModern}>
-              <View style={styles.sectionIconContainer}>
-                <Text style={styles.sectionIconModern}>🎵</Text>
-              </View>
-              <View>
-                <Text style={[styles.sectionTitleModern, { color: theme.text }]}>Music</Text>
-                <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>{musicTracks.length} pistes</Text>
-              </View>
-            </View>
+        {/* Section Music - Grande carte */}
+        <View style={styles.podcastsSection}>
+          <View style={styles.podcastsSectionHeader}>
+            <Text style={[styles.podcastsSectionTitle, { color: '#0F5132' }]}>Music</Text>
+            <TouchableOpacity style={styles.podcastsViewAllButton}>
+              <Text style={styles.podcastsViewAllText}>View all</Text>
+            </TouchableOpacity>
           </View>
-          <View style={styles.musicGridNew}>
-            {musicTracks.map((track) => {
-              const musicColors = getMusicColor(track.id);
-              const isPlaying = currentPlayer?.type === 'music' && currentPlayer.item?.id === track.id;
-              
-              return (
-                <TouchableOpacity
-                  key={track.id}
-                  style={[
-                    styles.musicCardNew,
-                    { 
-                      backgroundColor: theme.surface,
-                      borderLeftWidth: 4,
-                      borderLeftColor: musicColors[0],
-                    },
-                    isPlaying && styles.musicCardPlaying
-                  ]}
-                  activeOpacity={0.85}
-                  onPress={() => {
-                    setSelectedTrack(track);
-                    setCurrentPlayer({ item: track, type: 'music' });
-                  }}
-                >
-                  <LinearGradient
-                    colors={musicColors}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.musicIconNew}
-                  >
-                    <Text style={styles.musicIconTextNew}>🎵</Text>
-                  </LinearGradient>
-                  
-                  <View style={styles.musicInfoNew}>
-                    <View style={styles.musicTitleRow}>
-                      <Text style={[styles.musicTitleNew, { color: theme.text }]} numberOfLines={2}>
-                        {track.title}
-                      </Text>
-                      {isPlaying && (
-                        <View style={[styles.musicPlayingBadge, { backgroundColor: musicColors[0] }]}>
-                          <Text style={styles.musicPlayingIcon}>♪</Text>
-                        </View>
-                      )}
-                    </View>
-                    <Text style={[styles.musicArtistNew, { color: theme.textSecondary }]} numberOfLines={1}>
-                      👤 {t('player.artist')}: {track.artist}
-                    </Text>
-                    <View style={styles.musicMetaNew}>
-                      <View style={[styles.musicDurationBadge, { backgroundColor: musicColors[0] + '15' }]}>
-                        <Text style={styles.musicDurationIcon}>⏱️</Text>
-                        <Text style={[styles.musicDurationText, { color: musicColors[0] }]}>
-                          {track.duration}
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
-
-                  <TouchableOpacity
-                    style={[styles.musicPlayButtonNew, { backgroundColor: musicColors[0] }]}
-                    activeOpacity={0.9}
-                    onPress={() => {
-                      setSelectedTrack(track);
-                      setCurrentPlayer({ item: track, type: 'music' });
-                    }}
-                  >
-                    <Text style={styles.musicPlayIconNew}>
-                      {isPlaying ? '⏸' : '▶'}
-                    </Text>
-                  </TouchableOpacity>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
+          
+          <TouchableOpacity 
+            style={styles.podcastMusicCard}
+            activeOpacity={0.9}
+            onPress={() => {
+              setCurrentPlayer({ item: musicTracks[0], type: 'music' });
+            }}
+          >
+            <LinearGradient
+              colors={['#0F5132', '#0B3C5D', '#0F5132']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.podcastMusicGradient}
+            >
+              <View style={styles.podcastMusicPattern}>
+                <Text style={styles.podcastMusicTextAr}>موسيقى</Text>
+                <Text style={styles.podcastMusicTextLatin}>MUSIC</Text>
+              </View>
+            </LinearGradient>
+          </TouchableOpacity>
         </View>
       </ScrollView>
 
@@ -1361,14 +1211,52 @@ function PodcastsScreen({ navigation }: any) {
     return colors[(id - 1) % colors.length];
   };
 
+  const [selectedTab, setSelectedTab] = React.useState<'podcast' | 'knowledgecast'>('podcast');
+
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <StatusBar style={darkMode ? 'light' : 'dark'} />
       
-      {/* Header simple */}
-      <View style={[styles.podcastsHeaderSimple, { backgroundColor: theme.surface }]}>
-        <Text style={[styles.podcastsHeaderTitleSimple, { color: '#0F5132' }]}>Podcasts</Text>
-        <LanguageSelector />
+      {/* Header avec pills et icônes */}
+      <View style={[styles.podcastsHeaderNew, { backgroundColor: theme.surface }]}>
+        <TouchableOpacity style={styles.podcastsHeaderIconBtn}>
+          <Text style={[styles.podcastsHeaderIconNew, { color: theme.text }]}>⚙️</Text>
+        </TouchableOpacity>
+        
+        <View style={styles.podcastsHeaderPills}>
+          <TouchableOpacity
+            style={[
+              styles.podcastsHeaderPill,
+              selectedTab === 'podcast' && styles.podcastsHeaderPillActive
+            ]}
+            onPress={() => setSelectedTab('podcast')}
+          >
+            <Text style={[
+              styles.podcastsHeaderPillText,
+              selectedTab === 'podcast' && styles.podcastsHeaderPillTextActive
+            ]}>
+              Podcast
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.podcastsHeaderPill,
+              selectedTab === 'knowledgecast' && styles.podcastsHeaderPillActive
+            ]}
+            onPress={() => setSelectedTab('knowledgecast')}
+          >
+            <Text style={[
+              styles.podcastsHeaderPillText,
+              selectedTab === 'knowledgecast' && styles.podcastsHeaderPillTextActive
+            ]}>
+              KnowledgeCast
+            </Text>
+          </TouchableOpacity>
+        </View>
+        
+        <TouchableOpacity style={styles.podcastsHeaderIconBtn}>
+          <Text style={[styles.podcastsHeaderIconNew, { color: theme.text }]}>🔍</Text>
+        </TouchableOpacity>
       </View>
 
       <ScrollView 
@@ -1376,141 +1264,90 @@ function PodcastsScreen({ navigation }: any) {
         contentContainerStyle={[styles.podcastsScrollContentNew, currentPlayer?.type === 'podcast' && { paddingBottom: 220 }]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Section Zikr & Music Snippets - Cartes horizontales */}
-        <View style={styles.podcastsSection}>
-          <View style={styles.podcastsSectionHeader}>
-            <Text style={[styles.podcastsSectionTitle, { color: '#0F5132' }]}>Zikr & Music Snippets</Text>
-            <TouchableOpacity style={styles.podcastsViewAllButton}>
-              <Text style={styles.podcastsViewAllText}>View all</Text>
-            </TouchableOpacity>
-          </View>
-          
-          <ScrollView 
-            horizontal 
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.podcastsHorizontalScroll}
-          >
-            {podcasts.slice(0, 3).map((podcast) => {
-              const isPlaying = currentPlayer?.type === 'podcast' && currentPlayer.item?.id === podcast.id;
+        {podcasts.map((podcast) => (
+          <View key={podcast.id} style={styles.podcastCardNew}>
+            {/* Icône FAYDA avec date */}
+            <View style={styles.podcastCardHeader}>
+              <View style={styles.podcastFaydaIcon}>
+                <Text style={styles.podcastFaydaIconText}>فيضة</Text>
+              </View>
+              <Text style={[styles.podcastDate, { color: theme.textSecondary }]}>
+                {podcast.date}
+              </Text>
+            </View>
+
+            {/* Thumbnail avec overlay */}
+            <TouchableOpacity
+              style={styles.podcastThumbnailContainer}
+              activeOpacity={0.9}
+              onPress={() => {
+                setCurrentPlayer({ item: podcast, type: 'podcast' });
+              }}
+            >
+              <Image 
+                source={podcast.image || require('./assets/thierno.png')} 
+                style={styles.podcastThumbnail}
+                resizeMode="cover"
+              />
               
-              return (
-                <TouchableOpacity
-                  key={podcast.id}
-                  style={styles.podcastCardHorizontal}
-                  activeOpacity={0.9}
-                  onPress={() => {
-                    setCurrentPlayer({ item: podcast, type: 'podcast' });
-                  }}
-                >
-                  {/* Image d'album avec texte */}
-                  <View style={styles.podcastAlbumContainer}>
-                    <Image 
-                      source={podcast.image || require('./assets/thierno.png')} 
-                      style={styles.podcastAlbumImage}
-                      resizeMode="cover"
-                    />
-                    <View style={styles.podcastAlbumOverlay}>
-                      <Text style={styles.podcastAlbumTextAr}>{podcast.titleAr}</Text>
-                      <Text style={styles.podcastAlbumTextLatin}>{podcast.subtitle || podcast.title}</Text>
-                      <View style={styles.podcastAlbumLogo}>
-                        <Text style={styles.podcastAlbumLogoText}>فيضة FAYDA</Text>
-                      </View>
-                    </View>
-                  </View>
-                  
-                  {/* Titre et infos */}
-                  <Text style={[styles.podcastCardTitle, { color: theme.text }]} numberOfLines={1}>
-                    {podcast.title}
-                  </Text>
-                  {podcast.subtitle && (
-                    <Text style={[styles.podcastCardSubtitle, { color: theme.textSecondary }]} numberOfLines={1}>
-                      {podcast.subtitle}
-                    </Text>
-                  )}
-                  
-                  {/* Infos avec icônes */}
-                  <View style={styles.podcastCardInfo}>
-                    <View style={styles.podcastCardInfoItem}>
-                      <Text style={styles.podcastCardInfoIcon}>🎧</Text>
-                      <Text style={[styles.podcastCardInfoText, { color: theme.textSecondary }]}>
-                        {podcast.duration}
-                      </Text>
-                    </View>
-                    <TouchableOpacity 
-                      style={styles.podcastCardInfoButton}
-                      onPress={(e) => {
-                        e.stopPropagation();
-                        setShowInfo(!showInfo);
-                      }}
-                    >
-                      <Text style={styles.podcastCardInfoIcon}>ℹ️</Text>
-                    </TouchableOpacity>
-                  </View>
+              {/* Icône de cadenas si verrouillé */}
+              {podcast.locked && (
+                <View style={styles.podcastLockIcon}>
+                  <Text style={styles.podcastLockIconText}>🔒</Text>
+                </View>
+              )}
+              
+              {/* Overlay avec texte */}
+              <View style={styles.podcastThumbnailOverlay}>
+                <View style={styles.podcastThumbnailTextContainer}>
+                  <Text style={styles.podcastThumbnailTitle}>{podcast.title}</Text>
+                  <Text style={styles.podcastThumbnailSubtitle}>{podcast.subtitle}</Text>
+                  <Text style={styles.podcastThumbnailEpisodes}>Episodes - {podcast.episodeType}</Text>
+                </View>
+                
+                {/* Logo FAYDA DIGITAL avec waveform */}
+                <View style={styles.podcastThumbnailLogo}>
+                  <Text style={styles.podcastThumbnailLogoAr}>فيضة</Text>
+                  <Text style={styles.podcastThumbnailLogoText}>DIGITAL</Text>
+                  <Text style={styles.podcastThumbnailWaveform}>〰️</Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+
+            {/* Titre en dessous */}
+            <Text style={[styles.podcastCardTitleNew, { color: theme.text }]} numberOfLines={2}>
+              {podcast.title}
+            </Text>
+            
+            {/* Description si disponible */}
+            {podcast.description && (
+              <Text style={[styles.podcastCardDescription, { color: theme.textSecondary }]} numberOfLines={2}>
+                {podcast.description}
+              </Text>
+            )}
+
+            {/* Infos avec icônes */}
+            <View style={styles.podcastCardFooterNew}>
+              <View style={styles.podcastCardFooterLeft}>
+                <Text style={styles.podcastCardFooterIcon}>🎧</Text>
+                <Text style={[styles.podcastCardFooterText, { color: theme.textSecondary }]}>
+                  {podcast.duration}
+                </Text>
+              </View>
+              <View style={styles.podcastCardFooterRight}>
+                <TouchableOpacity style={styles.podcastCardFooterButton}>
+                  <Text style={styles.podcastCardFooterIcon}>🔖</Text>
                 </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
-        </View>
-
-        {/* Section Zikr - Grande carte */}
-        <View style={styles.podcastsSection}>
-          <View style={styles.podcastsSectionHeader}>
-            <Text style={[styles.podcastsSectionTitle, { color: '#0F5132' }]}>Zikr</Text>
-            <TouchableOpacity style={styles.podcastsViewAllButton}>
-              <Text style={styles.podcastsViewAllText}>View all</Text>
-            </TouchableOpacity>
-          </View>
-          
-          <TouchableOpacity 
-            style={styles.podcastZikrCard}
-            activeOpacity={0.9}
-            onPress={() => {
-              setCurrentPlayer({ item: podcasts[0], type: 'podcast' });
-            }}
-          >
-            <LinearGradient
-              colors={['#0B3C5D', '#0F5132', '#0B3C5D']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.podcastZikrGradient}
-            >
-              <View style={styles.podcastZikrPattern}>
-                <Text style={styles.podcastZikrTextAr}>ذكر</Text>
-                <Text style={styles.podcastZikrTextLatin}>ZIKR</Text>
+                <TouchableOpacity 
+                  style={styles.podcastCardFooterButton}
+                  onPress={() => setShowInfo(!showInfo)}
+                >
+                  <Text style={styles.podcastCardFooterIcon}>ℹ️</Text>
+                </TouchableOpacity>
               </View>
-            </LinearGradient>
-          </TouchableOpacity>
-        </View>
-
-        {/* Section Music - Grande carte */}
-        <View style={styles.podcastsSection}>
-          <View style={styles.podcastsSectionHeader}>
-            <Text style={[styles.podcastsSectionTitle, { color: '#0F5132' }]}>Music</Text>
-            <TouchableOpacity style={styles.podcastsViewAllButton}>
-              <Text style={styles.podcastsViewAllText}>View all</Text>
-            </TouchableOpacity>
+            </View>
           </View>
-          
-          <TouchableOpacity 
-            style={styles.podcastMusicCard}
-            activeOpacity={0.9}
-            onPress={() => {
-              navigation.navigate('Music');
-            }}
-          >
-            <LinearGradient
-              colors={['#0F5132', '#0B3C5D', '#0F5132']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.podcastMusicGradient}
-            >
-              <View style={styles.podcastMusicPattern}>
-                <Text style={styles.podcastMusicTextAr}>موسيقى</Text>
-                <Text style={styles.podcastMusicTextLatin}>MUSIC</Text>
-              </View>
-            </LinearGradient>
-          </TouchableOpacity>
-        </View>
+        ))}
       </ScrollView>
 
       {/* Lecteur audio intégré en bas - Moderne */}
@@ -3421,10 +3258,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 10,
     elevation: 6,
-  },
-  podcastCardHeader: {
-    flexDirection: 'row',
-    marginBottom: 20,
   },
   podcastIcon: {
     width: 50,
@@ -6067,7 +5900,7 @@ const styles = StyleSheet.create({
   },
   podcastMusicTextAr: {
     fontSize: 80,
-    color: '#C9A24D',
+    color: '#ffffff',
     fontWeight: 'bold',
     marginBottom: 10,
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
@@ -6076,7 +5909,7 @@ const styles = StyleSheet.create({
   },
   podcastMusicTextLatin: {
     fontSize: 32,
-    color: '#C9A24D',
+    color: '#ffffff',
     fontWeight: 'bold',
     letterSpacing: 4,
   },
@@ -6094,6 +5927,210 @@ const styles = StyleSheet.create({
   podcastsHeaderTitleSimple: {
     fontSize: 28,
     fontWeight: 'bold',
+  },
+  // Styles header nouveau design podcasts (avec pills)
+  podcastsHeaderNew: {
+    paddingTop: 50,
+    paddingBottom: 15,
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  podcastsHeaderIconBtn: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  podcastsHeaderIconNew: {
+    fontSize: 22,
+  },
+  podcastsHeaderPills: {
+    flexDirection: 'row',
+    gap: 10,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 25,
+    padding: 4,
+  },
+  podcastsHeaderPill: {
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  podcastsHeaderPillActive: {
+    backgroundColor: '#ffffff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  podcastsHeaderPillText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#666',
+  },
+  podcastsHeaderPillTextActive: {
+    color: '#0F5132',
+    fontWeight: 'bold',
+  },
+  // Styles cartes podcasts nouveau design
+  podcastCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+    paddingHorizontal: 4,
+  },
+  podcastFaydaIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#0F5132',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  podcastFaydaIconText: {
+    fontSize: 14,
+    color: '#C9A24D',
+    fontWeight: 'bold',
+  },
+  podcastDate: {
+    fontSize: 13,
+    fontWeight: '500',
+  },
+  podcastThumbnailContainer: {
+    width: '100%',
+    height: 280,
+    borderRadius: 16,
+    overflow: 'hidden',
+    marginBottom: 12,
+    position: 'relative',
+  },
+  podcastThumbnail: {
+    width: '100%',
+    height: '100%',
+  },
+  podcastLockIcon: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  podcastLockIconText: {
+    fontSize: 18,
+  },
+  podcastThumbnailOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    justifyContent: 'space-between',
+    padding: 20,
+  },
+  podcastThumbnailTextContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  podcastThumbnailTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    marginBottom: 8,
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+  },
+  podcastThumbnailSubtitle: {
+    fontSize: 16,
+    color: '#ffffff',
+    marginBottom: 6,
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+  },
+  podcastThumbnailEpisodes: {
+    fontSize: 13,
+    color: '#ffffff',
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+  },
+  podcastThumbnailLogo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-end',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    gap: 6,
+  },
+  podcastThumbnailLogoAr: {
+    fontSize: 14,
+    color: '#ffffff',
+    fontWeight: 'bold',
+  },
+  podcastThumbnailLogoText: {
+    fontSize: 12,
+    color: '#ffffff',
+    fontWeight: 'bold',
+    letterSpacing: 1,
+  },
+  podcastThumbnailWaveform: {
+    fontSize: 16,
+    color: '#ffffff',
+    marginLeft: 4,
+  },
+  podcastCardTitleNew: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 6,
+    paddingHorizontal: 4,
+  },
+  podcastCardDescription: {
+    fontSize: 14,
+    lineHeight: 20,
+    marginBottom: 12,
+    paddingHorizontal: 4,
+  },
+  podcastCardFooterNew: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 4,
+  },
+  podcastCardFooterLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  podcastCardFooterRight: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  podcastCardFooterIcon: {
+    fontSize: 18,
+  },
+  podcastCardFooterText: {
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  podcastCardFooterButton: {
+    width: 32,
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   // Styles musique améliorés
   musicSection: {
