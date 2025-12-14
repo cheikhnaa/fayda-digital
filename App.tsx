@@ -53,6 +53,142 @@ const zikrTracks = [
   { id: 104, title: 'Jawharat al-Kamal', titleAr: 'جوهرة الكمال', artist: 'Sheikh Hassan', duration: '08:15', type: 'zikr' },
 ];
 
+// Fichiers Zikr depuis le dossier assets/zikr
+const zikrFiles = [
+  { 
+    id: 1, 
+    title: 'Zikr Imam al-Fayda Shaykh Tijani Cisse', 
+    titleAr: 'ذكر إمام الفيض الشيخ التجاني سي',
+    subtitle: 'Zikr Imam al-Fayda Shaykh Tijani Cisse',
+    description: 'This beautiful Zikr is the heartfelt chant of the Imam of the Fayda, Shaykh Tijani Cisse, bringing peace and spiritual elevation.',
+    duration: '10:00',
+    tracks: null,
+    file: require('./assets/zikr/babacar-thiam-zikr-3.mp3'),
+    image: require('./assets/thierno.png'),
+  },
+  { 
+    id: 2, 
+    title: 'Secrets of Ziyara Rihla (2024)', 
+    titleAr: 'أسرار الزيارة',
+    subtitle: 'Secrets of Ziyara Soundtrack',
+    description: 'This Rihla drew us into an unending journey of divine presence, where we felt the closeness of the beloved Prophet and the saints.',
+    duration: null,
+    tracks: '4 tracks',
+    file: require('./assets/zikr/babacar-thiam-zikr-4.mp3'),
+    image: require('./assets/thierno.png'),
+  },
+  { 
+    id: 3, 
+    title: 'Shaykh Muhammad Sha\'ban', 
+    titleAr: 'الشيخ محمد شعبان',
+    subtitle: 'Qasidat al-Burdah (Poem - قصيدة البردة of the Mantle)',
+    description: 'The Burdah Qasida, formally known as Qasidat al-Burdah, is one of the most celebrated poems in praise of the Prophet Muhammad.',
+    duration: '58:14',
+    tracks: null,
+    file: require('./assets/zikr/gamou-babacar-thiam-1.mp3'),
+    image: require('./assets/thierno.png'),
+  },
+  { 
+    id: 4, 
+    title: 'Gamou Babacar Thiam 1', 
+    titleAr: 'جامع بابكر تيام 1',
+    subtitle: 'Zikr Collection',
+    description: 'A collection of beautiful Zikr recitations from Gamou celebrations.',
+    duration: '12:30',
+    tracks: null,
+    file: require('./assets/zikr/gamou-babacar-thiam-1.mp3'),
+    image: require('./assets/thierno.png'),
+  },
+  { 
+    id: 5, 
+    title: 'Gamou Babacar Thiam 3', 
+    titleAr: 'جامع بابكر تيام 3',
+    subtitle: 'Zikr Collection',
+    description: 'A collection of beautiful Zikr recitations from Gamou celebrations.',
+    duration: '15:20',
+    tracks: null,
+    file: require('./assets/zikr/gamou-babacar-thiam-3.mp3'),
+    image: require('./assets/thierno.png'),
+  },
+  { 
+    id: 6, 
+    title: 'Gamou Babacar Thiam 4', 
+    titleAr: 'جامع بابكر تيام 4',
+    subtitle: 'Zikr Collection',
+    description: 'A collection of beautiful Zikr recitations from Gamou celebrations.',
+    duration: '18:45',
+    tracks: null,
+    file: require('./assets/zikr/gamou-babacar-thiam-4.mp3'),
+    image: require('./assets/thierno.png'),
+  },
+  { 
+    id: 7, 
+    title: 'Gamou Babacar Thiam 5', 
+    titleAr: 'جامع بابكر تيام 5',
+    subtitle: 'Zikr Collection',
+    description: 'A collection of beautiful Zikr recitations from Gamou celebrations.',
+    duration: '14:10',
+    tracks: null,
+    file: require('./assets/zikr/gamou-babacar-thiam-5.mp3'),
+    image: require('./assets/thierno.png'),
+  },
+  { 
+    id: 8, 
+    title: 'Gamou Babacar Thiam 6', 
+    titleAr: 'جامع بابكر تيام 6',
+    subtitle: 'Zikr Collection',
+    description: 'A collection of beautiful Zikr recitations from Gamou celebrations.',
+    duration: '16:25',
+    tracks: null,
+    file: require('./assets/zikr/gamou-babacar-thiam-6.mp3'),
+    image: require('./assets/thierno.png'),
+  },
+  { 
+    id: 9, 
+    title: 'Maouloud 2008 Zikr 1', 
+    titleAr: 'مولود 2008 ذكر 1',
+    subtitle: 'Maouloud Celebration',
+    description: 'Beautiful Zikr from the Maouloud celebration of 2008.',
+    duration: '20:00',
+    tracks: null,
+    file: require('./assets/zikr/maouloud-2008-zikr-1.mp3'),
+    image: require('./assets/thierno.png'),
+  },
+  { 
+    id: 10, 
+    title: 'Maouloud 2008 Zikr 2', 
+    titleAr: 'مولود 2008 ذكر 2',
+    subtitle: 'Maouloud Celebration',
+    description: 'Beautiful Zikr from the Maouloud celebration of 2008.',
+    duration: '22:15',
+    tracks: null,
+    file: require('./assets/zikr/maouloud-2008-zikr-2.mp3'),
+    image: require('./assets/thierno.png'),
+  },
+  { 
+    id: 11, 
+    title: 'Babacar Thiam Zikr 3', 
+    titleAr: 'بابكر تيام ذكر 3',
+    subtitle: 'Zikr Collection',
+    description: 'A beautiful Zikr recitation by Babacar Thiam.',
+    duration: '11:40',
+    tracks: null,
+    file: require('./assets/zikr/babacar-thiam-zikr-3.mp3'),
+    image: require('./assets/thierno.png'),
+  },
+  { 
+    id: 12, 
+    title: 'Babacar Thiam Zikr 4', 
+    titleAr: 'بابكر تيام ذكر 4',
+    subtitle: 'Zikr Collection',
+    description: 'A beautiful Zikr recitation by Babacar Thiam.',
+    duration: '13:50',
+    tracks: null,
+    file: require('./assets/zikr/babacar-thiam-zikr-4.mp3'),
+    image: require('./assets/thierno.png'),
+  },
+];
+
 const musicTracks = [
   { id: 1, title: 'Salawat al-Fatihi', artist: 'Ensemble Tijani', duration: '45:23' },
   { id: 2, title: 'Qasida Burda', artist: 'Sheikh Mahmoud Al-Tohamy', duration: '28:15' },
@@ -298,8 +434,8 @@ const AppContext = React.createContext<{
   setLang: (lang: Language) => void;
   darkMode: boolean;
   setDarkMode: (dark: boolean) => void;
-  currentPlayer: { item: any; type: 'music' | 'podcast' | 'book' | null } | null;
-  setCurrentPlayer: (player: { item: any; type: 'music' | 'podcast' | 'book' | null } | null) => void;
+  currentPlayer: { item: any; type: 'music' | 'podcast' | 'book' | 'zikr' | null } | null;
+  setCurrentPlayer: (player: { item: any; type: 'music' | 'podcast' | 'book' | 'zikr' | null } | null) => void;
   audioState: { isPlaying: boolean; position: number; duration: number } | null;
   setAudioState: (state: { isPlaying: boolean; position: number; duration: number } | null) => void;
   currentRoute: string | null;
@@ -961,7 +1097,7 @@ function MusicScreen({ navigation }: any) {
             style={styles.podcastZikrCard}
             activeOpacity={0.9}
             onPress={() => {
-              setCurrentPlayer({ item: zikrTracks[0], type: 'music' });
+              navigation.navigate('Zikr');
             }}
           >
             <LinearGradient
@@ -1096,6 +1232,480 @@ function MusicScreen({ navigation }: any) {
             </View>
           </View>
         </LinearGradient>
+      )}
+    </View>
+  );
+}
+
+// Écran Zikr - Design selon l'image
+function ZikrScreen({ navigation }: any) {
+  const { language, darkMode, setCurrentPlayer, currentPlayer } = React.useContext(AppContext);
+  const theme = darkMode ? darkTheme : lightTheme;
+  const [isPlaying, setIsPlaying] = React.useState(false);
+  const [position, setPosition] = React.useState(0);
+  const [duration, setDuration] = React.useState(0);
+  const [showInfo, setShowInfo] = React.useState(false);
+  const [showCarMode, setShowCarMode] = React.useState(false);
+  const [playbackSpeed, setPlaybackSpeed] = React.useState(1.0);
+
+  // Utiliser expo-audio pour la lecture
+  const getAudioSource = () => {
+    if (currentPlayer?.type === 'zikr' && currentPlayer.item) {
+      if (currentPlayer.item.file) {
+        return currentPlayer.item.file;
+      }
+      return require('./assets/audio/audio.mp3');
+    }
+    return require('./assets/audio/audio.mp3');
+  };
+
+  const player = useAudioPlayer(getAudioSource());
+
+  React.useEffect(() => {
+    if (player && currentPlayer?.type === 'zikr') {
+      setPosition(0);
+      setDuration(0);
+      
+      // Démarrer automatiquement la lecture
+      const startPlayback = async () => {
+        try {
+          if (player && !player.playing) {
+            await player.play();
+            setIsPlaying(true);
+          }
+        } catch (error) {
+          console.log('Erreur démarrage automatique:', error);
+        }
+      };
+      
+      startPlayback();
+      
+      const updateStatus = () => {
+        try {
+          if (player) {
+            setIsPlaying(player.playing || false);
+            setPosition((player.currentTime || 0) * 1000);
+            const dur = (player.duration || 0) * 1000;
+            if (dur > 0) {
+              setDuration(dur);
+            }
+          }
+        } catch (error) {
+          console.log('Erreur mise à jour audio:', error);
+        }
+      };
+      const interval = setInterval(updateStatus, 500);
+      return () => clearInterval(interval);
+    } else {
+      setIsPlaying(false);
+      setPosition(0);
+      setDuration(0);
+    }
+  }, [player, currentPlayer]);
+
+  const togglePlay = async () => {
+    try {
+      if (player) {
+        if (player.playing) {
+          await player.pause();
+          setIsPlaying(false);
+        } else {
+          await player.play();
+          setIsPlaying(true);
+          if (duration === 0) {
+            setTimeout(() => {
+              if (player.duration) {
+                setDuration(player.duration * 1000);
+              }
+            }, 500);
+          }
+        }
+      }
+    } catch (error) {
+      console.log('Erreur toggle play:', error);
+      setIsPlaying(!isPlaying);
+      if (!isPlaying && duration === 0) {
+        setDuration(180000);
+      }
+    }
+  };
+
+  const formatTime = (ms: number) => {
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const formatRemainingTime = (current: number, total: number) => {
+    const remaining = total - current;
+    const totalSeconds = Math.floor(remaining / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `-${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const handleRewind = async () => {
+    try {
+      if (player) {
+        const currentTime = player.currentTime || 0;
+        const newTime = Math.max(0, currentTime - 30);
+        // Utiliser setPosition pour mettre à jour l'état, le player se mettra à jour automatiquement
+        setPosition(newTime * 1000);
+        // Forcer la mise à jour en relançant la lecture si nécessaire
+        if (player.playing) {
+          await player.pause();
+          await player.play();
+        }
+      }
+    } catch (error) {
+      console.log('Erreur rewind:', error);
+    }
+  };
+
+  const handleForward = async () => {
+    try {
+      if (player) {
+        const currentTime = player.currentTime || 0;
+        const maxTime = player.duration || 0;
+        const newTime = Math.min(maxTime, currentTime + 30);
+        // Utiliser setPosition pour mettre à jour l'état
+        setPosition(newTime * 1000);
+        // Forcer la mise à jour en relançant la lecture si nécessaire
+        if (player.playing) {
+          await player.pause();
+          await player.play();
+        }
+      }
+    } catch (error) {
+      console.log('Erreur forward:', error);
+    }
+  };
+
+  const handlePrevious = () => {
+    const currentIndex = zikrFiles.findIndex(z => z.id === currentPlayer?.item?.id);
+    if (currentIndex > 0) {
+      setCurrentPlayer({ item: zikrFiles[currentIndex - 1], type: 'zikr' });
+    }
+  };
+
+  const handleNext = () => {
+    const currentIndex = zikrFiles.findIndex(z => z.id === currentPlayer?.item?.id);
+    if (currentIndex < zikrFiles.length - 1) {
+      setCurrentPlayer({ item: zikrFiles[currentIndex + 1], type: 'zikr' });
+    }
+  };
+
+
+  const handleShare = async () => {
+    if (currentPlayer?.item) {
+      try {
+        await Share.share({
+          message: `Écoutez "${currentPlayer.item.title}" sur Hassaniya Digital`,
+          title: currentPlayer.item.title,
+        });
+      } catch (error) {
+        console.error('Erreur partage:', error);
+      }
+    }
+  };
+
+  const handleClosePlayer = () => {
+    setCurrentPlayer(null);
+    if (player) {
+      player.pause();
+    }
+  };
+
+  const handleSpeedChange = () => {
+    const speeds = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
+    const currentIndex = speeds.indexOf(playbackSpeed);
+    const nextIndex = (currentIndex + 1) % speeds.length;
+    const newSpeed = speeds[nextIndex];
+    setPlaybackSpeed(newSpeed);
+    // Note: La vitesse de lecture peut être implémentée avec expo-av si nécessaire
+    // Pour l'instant, on garde juste l'affichage
+  };
+
+  return (
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <StatusBar style={darkMode ? 'light' : 'dark'} />
+      
+      {/* Header avec bouton retour */}
+      <View style={[styles.zikrHeader, { backgroundColor: theme.surface }]}>
+        <TouchableOpacity 
+          onPress={() => navigation.goBack()}
+          style={styles.zikrBackButton}
+        >
+          <Text style={[styles.zikrBackIcon, { color: theme.text }]}>←</Text>
+        </TouchableOpacity>
+        <Text style={[styles.zikrHeaderTitle, { color: '#0F5132' }]}>Zikr</Text>
+        <View style={styles.zikrHeaderSpacer} />
+      </View>
+
+      <ScrollView 
+        style={styles.zikrScrollView} 
+        contentContainerStyle={[styles.zikrScrollContent, currentPlayer?.type === 'zikr' && { paddingBottom: 220 }]}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Banner Zikr en haut */}
+        <View style={styles.zikrBannerContainer}>
+          <LinearGradient
+            colors={['#0B3C5D', '#0F5132', '#0B3C5D']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.zikrBannerGradient}
+          >
+            <View style={styles.zikrBannerPattern}>
+              <Text style={styles.zikrBannerTextAr}>ذكر</Text>
+              <Text style={styles.zikrBannerTextLatin}>ZIKR</Text>
+            </View>
+          </LinearGradient>
+        </View>
+
+        {/* Section Header */}
+        <View style={styles.zikrSectionHeader}>
+          <Text style={[styles.zikrSectionTitle, { color: theme.text }]}>Zikr</Text>
+          <Text style={[styles.zikrSectionSubtitle, { color: theme.textSecondary }]}>
+            {zikrFiles.length} tracks
+          </Text>
+        </View>
+
+        {/* Liste des fichiers Zikr */}
+        {zikrFiles.map((zikr) => {
+          const isPlaying = currentPlayer?.type === 'zikr' && currentPlayer.item?.id === zikr.id;
+          
+          return (
+            <TouchableOpacity
+              key={zikr.id}
+              style={[styles.zikrCard, { backgroundColor: theme.surface }]}
+              activeOpacity={0.9}
+              onPress={() => {
+                setCurrentPlayer({ item: zikr, type: 'zikr' });
+              }}
+            >
+              {/* Thumbnail avec overlay */}
+              <View style={styles.zikrThumbnailContainer}>
+                <Image 
+                  source={zikr.image || require('./assets/thierno.png')} 
+                  style={styles.zikrThumbnail}
+                  resizeMode="cover"
+                />
+                <View style={styles.zikrThumbnailOverlay}>
+                  <Text style={styles.zikrThumbnailOverlayText}>
+                    {zikr.subtitle?.toUpperCase() || zikr.title.toUpperCase()}
+                  </Text>
+                </View>
+              </View>
+
+              {/* Contenu de la carte */}
+              <View style={styles.zikrCardContent}>
+                <Text style={[styles.zikrCardTitleAr, { color: theme.text }]} numberOfLines={1}>
+                  {zikr.titleAr}
+                </Text>
+                <Text style={[styles.zikrCardTitle, { color: theme.text }]} numberOfLines={2}>
+                  {zikr.title}
+                </Text>
+                {zikr.subtitle && (
+                  <Text style={[styles.zikrCardSubtitle, { color: theme.textSecondary }]} numberOfLines={1}>
+                    {zikr.subtitle}
+                  </Text>
+                )}
+                <Text style={[styles.zikrCardDescription, { color: theme.textSecondary }]} numberOfLines={2}>
+                  {zikr.description}
+                </Text>
+                
+                {/* Métadonnées */}
+                <View style={styles.zikrCardFooter}>
+                  <View style={styles.zikrCardFooterLeft}>
+                    <Text style={styles.zikrCardFooterIcon}>🎧</Text>
+                    <Text style={[styles.zikrCardFooterText, { color: theme.textSecondary }]}>
+                      {zikr.duration || zikr.tracks || '--:--'}
+                    </Text>
+                  </View>
+                  <View style={styles.zikrCardFooterRight}>
+                    <TouchableOpacity style={styles.zikrCardFooterButton}>
+                      <Text style={styles.zikrCardFooterButtonIcon}>🔖</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                      style={styles.zikrCardFooterButton}
+                      onPress={() => setShowInfo(!showInfo)}
+                    >
+                      <Text style={styles.zikrCardFooterButtonIcon}>ℹ️</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+
+      {/* Lecteur audio selon l'image - Design complet */}
+      {currentPlayer?.type === 'zikr' && currentPlayer.item && (
+        <View style={styles.zikrPlayerContainer}>
+          {/* Header avec icônes */}
+          <View style={styles.zikrPlayerHeader}>
+            <TouchableOpacity 
+              onPress={handleClosePlayer}
+              style={styles.zikrPlayerHeaderIcon}
+            >
+              <Text style={styles.zikrPlayerHeaderIconText}>←</Text>
+            </TouchableOpacity>
+            <View style={styles.zikrPlayerHeaderIcons}>
+              <TouchableOpacity 
+                style={[styles.zikrPlayerHeaderIcon, showCarMode && { backgroundColor: '#0F5132', borderRadius: 20 }]}
+                onPress={() => setShowCarMode(!showCarMode)}
+              >
+                <Text style={styles.zikrPlayerHeaderIconText}>🚗</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.zikrPlayerHeaderIcon}
+                onPress={handleShare}
+              >
+                <Text style={styles.zikrPlayerHeaderIconText}>📤</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.zikrPlayerHeaderIcon}
+                onPress={() => setShowInfo(!showInfo)}
+              >
+                <Text style={styles.zikrPlayerHeaderIconText}>ℹ️</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Carte principale avec image */}
+          <View style={styles.zikrPlayerCard}>
+            <ImageBackground
+              source={currentPlayer.item.image || require('./assets/thierno.png')}
+              style={styles.zikrPlayerImage}
+              resizeMode="cover"
+              imageStyle={styles.zikrPlayerImageStyle}
+            >
+              {/* Overlay avec texte doré */}
+              <View style={styles.zikrPlayerOverlay}>
+                <Text style={styles.zikrPlayerOverlayText}>ZIKR IMAM AL-FAYDA</Text>
+                <Text style={styles.zikrPlayerOverlayText}>SHAYKH TIJANI CISSE</Text>
+              </View>
+            </ImageBackground>
+            
+            {/* Section turquoise avec motif */}
+            <LinearGradient
+              colors={['#20B2AA', '#17A2B8', '#20B2AA']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.zikrPlayerTealSection}
+            >
+              <View style={styles.zikrPlayerLogos}>
+                <View style={styles.zikrPlayerFaydaLogo}>
+                  <Text style={styles.zikrPlayerFaydaLogoAr}>فيضة</Text>
+                  <Text style={styles.zikrPlayerFaydaLogoText}>FAYDA DIGITAL</Text>
+                </View>
+              </View>
+            </LinearGradient>
+          </View>
+
+          {/* Titre de la piste */}
+          <View style={styles.zikrPlayerTrackInfo}>
+            <Text style={[styles.zikrPlayerTrackTitle, { color: theme.text }]} numberOfLines={1}>
+              {currentPlayer.item.titleAr} {currentPlayer.item.title}
+            </Text>
+            <TouchableOpacity style={styles.zikrPlayerOptions}>
+              <Text style={styles.zikrPlayerOptionsIcon}>☰</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Barre de progression */}
+          <View style={styles.zikrPlayerProgressContainer}>
+            <Slider
+              style={styles.zikrPlayerSlider}
+              value={position}
+              maximumValue={duration || 100}
+              minimumValue={0}
+              onValueChange={(value) => {
+                setPosition(value);
+                try {
+                  if (player) {
+                    player.currentTime = value / 1000;
+                  }
+                } catch (error) {
+                  console.log('Erreur seek:', error);
+                }
+              }}
+              minimumTrackTintColor="#0F5132"
+              maximumTrackTintColor="#e0e0e0"
+              thumbTintColor="#0F5132"
+            />
+            <View style={styles.zikrPlayerTimeContainer}>
+              <Text style={[styles.zikrPlayerTimeText, { color: theme.text }]}>
+                {formatTime(position)}
+              </Text>
+              <Text style={[styles.zikrPlayerTimeText, { color: theme.text }]}>
+                {duration > 0 ? formatRemainingTime(position, duration) : '--:--'}
+              </Text>
+            </View>
+          </View>
+
+          {/* Contrôles de lecture - Design selon l'image */}
+          <View style={styles.zikrPlayerControls}>
+            {/* 30s Rewind Circle */}
+            <TouchableOpacity 
+              style={styles.zikrPlayer30sBtn}
+              onPress={handleRewind}
+              activeOpacity={0.7}
+            >
+              <View style={styles.zikrPlayer30sCircle}>
+                <Text style={styles.zikrPlayer30sText}>30s</Text>
+              </View>
+            </TouchableOpacity>
+            
+            {/* Play/Pause Button */}
+            <TouchableOpacity 
+              style={styles.zikrPlayerPlayBtn}
+              onPress={togglePlay}
+              activeOpacity={0.9}
+            >
+              <LinearGradient
+                colors={['#0F5132', '#0B3C5D']}
+                style={styles.zikrPlayerPlayBtnGradient}
+              >
+                <Text style={styles.zikrPlayerPlayIcon}>{isPlaying ? '⏸' : '▶'}</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+            
+            {/* 30s Forward Circle */}
+            <TouchableOpacity 
+              style={styles.zikrPlayer30sBtn}
+              onPress={handleForward}
+              activeOpacity={0.7}
+            >
+              <View style={styles.zikrPlayer30sCircle}>
+                <Text style={styles.zikrPlayer30sText}>30s</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+
+          {/* Contrôles supplémentaires */}
+          <View style={styles.zikrPlayerBottomControls}>
+            <TouchableOpacity 
+              style={styles.zikrPlayerSpeedControl}
+              onPress={handleSpeedChange}
+            >
+              <Text style={styles.zikrPlayerSpeedIcon}>⏱</Text>
+              <Text style={[styles.zikrPlayerSpeedText, { color: theme.text }]}>
+                {playbackSpeed.toFixed(1)}x
+              </Text>
+            </TouchableOpacity>
+            <View style={styles.zikrPlayerBottomIcons}>
+              <TouchableOpacity style={styles.zikrPlayerBottomIcon}>
+                <Text style={styles.zikrPlayerBottomIconText}>Z</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.zikrPlayerBottomIcon}>
+                <Text style={styles.zikrPlayerBottomIconText}>Z</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
       )}
     </View>
   );
@@ -2577,7 +3187,7 @@ function LoadingScreen() {
 export default function App() {
   const [language, setLang] = React.useState<Language>('fr');
   const [darkMode, setDarkMode] = React.useState(false);
-  const [currentPlayer, setCurrentPlayer] = React.useState<{ item: any; type: 'music' | 'podcast' | 'book' | null } | null>(null);
+  const [currentPlayer, setCurrentPlayer] = React.useState<{ item: any; type: 'music' | 'podcast' | 'book' | 'zikr' | null } | null>(null);
   const [audioState, setAudioState] = React.useState<{ isPlaying: boolean; position: number; duration: number } | null>(null);
   const [currentRoute, setCurrentRoute] = React.useState<string | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
@@ -2615,6 +3225,7 @@ export default function App() {
           <Stack.Screen name="AudioPlayer" component={AudioPlayerScreen} />
           <Stack.Screen name="PDFReader" component={PDFReaderScreen} />
           <Stack.Screen name="VideoPlayer" component={VideoPlayerScreen} />
+          <Stack.Screen name="Zikr" component={ZikrScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </AppContext.Provider>
@@ -6132,6 +6743,174 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  // Styles ZikrScreen
+  zikrHeader: {
+    paddingTop: 50,
+    paddingBottom: 15,
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  zikrBackButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  zikrBackIcon: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  zikrHeaderTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+  },
+  zikrHeaderSpacer: {
+    width: 40,
+  },
+  zikrScrollView: {
+    flex: 1,
+  },
+  zikrScrollContent: {
+    paddingBottom: 30,
+  },
+  zikrBannerContainer: {
+    width: '100%',
+    height: 200,
+    marginBottom: 20,
+    borderRadius: 0,
+    overflow: 'hidden',
+  },
+  zikrBannerGradient: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  zikrBannerPattern: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  zikrBannerTextAr: {
+    fontSize: 80,
+    color: '#C9A24D',
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
+  },
+  zikrBannerTextLatin: {
+    fontSize: 32,
+    color: '#C9A24D',
+    fontWeight: 'bold',
+    letterSpacing: 4,
+  },
+  zikrSectionHeader: {
+    paddingHorizontal: 20,
+    marginBottom: 15,
+  },
+  zikrSectionTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  zikrSectionSubtitle: {
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  zikrCard: {
+    marginHorizontal: 20,
+    marginBottom: 20,
+    borderRadius: 16,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    elevation: 6,
+  },
+  zikrThumbnailContainer: {
+    width: '100%',
+    height: 200,
+    position: 'relative',
+  },
+  zikrThumbnail: {
+    width: '100%',
+    height: '100%',
+  },
+  zikrThumbnailOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(15, 81, 50, 0.9)',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+  zikrThumbnailOverlayText: {
+    fontSize: 12,
+    color: '#ffffff',
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
+  },
+  zikrCardContent: {
+    padding: 16,
+  },
+  zikrCardTitleAr: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 6,
+    color: '#0F5132',
+  },
+  zikrCardTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  zikrCardSubtitle: {
+    fontSize: 14,
+    fontWeight: '500',
+    marginBottom: 8,
+  },
+  zikrCardDescription: {
+    fontSize: 13,
+    lineHeight: 18,
+    marginBottom: 12,
+  },
+  zikrCardFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  zikrCardFooterLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  zikrCardFooterRight: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  zikrCardFooterIcon: {
+    fontSize: 18,
+  },
+  zikrCardFooterText: {
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  zikrCardFooterButton: {
+    width: 32,
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  zikrCardFooterButtonIcon: {
+    fontSize: 18,
+  },
   // Styles musique améliorés
   musicSection: {
     marginBottom: 30,
@@ -6375,6 +7154,257 @@ const styles = StyleSheet.create({
   libraryVideoView: {
     flex: 1,
     width: '100%',
+  },
+  // Styles lecteur Zikr selon l'image
+  zikrPlayerContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#ffffff',
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 10,
+    paddingBottom: 20,
+  },
+  zikrPlayerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 15,
+    paddingBottom: 10,
+  },
+  zikrPlayerHeaderIcon: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  zikrPlayerHeaderIconText: {
+    fontSize: 22,
+    color: '#0F5132',
+  },
+  zikrPlayerHeaderIcons: {
+    flexDirection: 'row',
+    gap: 15,
+  },
+  zikrPlayerCard: {
+    marginHorizontal: 20,
+    marginBottom: 20,
+    borderRadius: 20,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  zikrPlayerImage: {
+    width: '100%',
+    height: 300,
+    justifyContent: 'flex-end',
+  },
+  zikrPlayerImageStyle: {
+    opacity: 0.9,
+  },
+  zikrPlayerOverlay: {
+    padding: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+  },
+  zikrPlayerOverlayText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#C9A24D',
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+    letterSpacing: 2,
+    marginBottom: 4,
+  },
+  zikrPlayerTealSection: {
+    padding: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 100,
+  },
+  zikrPlayerLogos: {
+    alignItems: 'center',
+  },
+  zikrPlayerFaydaLogo: {
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  zikrPlayerFaydaLogoAr: {
+    fontSize: 20,
+    color: '#ffffff',
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  zikrPlayerFaydaLogoText: {
+    fontSize: 14,
+    color: '#ffffff',
+    fontWeight: 'bold',
+    letterSpacing: 2,
+  },
+  zikrPlayerTrackInfo: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    marginBottom: 15,
+  },
+  zikrPlayerTrackTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    flex: 1,
+    marginRight: 10,
+  },
+  zikrPlayerOptions: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    backgroundColor: '#D4A574',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  zikrPlayerOptionsIcon: {
+    fontSize: 18,
+    color: '#ffffff',
+    fontWeight: 'bold',
+  },
+  zikrPlayerProgressContainer: {
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  zikrPlayerSlider: {
+    width: '100%',
+    height: 40,
+    marginBottom: 8,
+  },
+  zikrPlayerTimeContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  zikrPlayerTimeText: {
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  zikrPlayerControls: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    marginBottom: 20,
+    gap: 12,
+  },
+  zikrPlayerSquareBtn: {
+    width: 50,
+    height: 50,
+    borderRadius: 8,
+    backgroundColor: '#6B7A8F',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  zikrPlayerSquareBtnInner: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  zikrPlayerSquareIcon: {
+    fontSize: 14,
+    color: '#ffffff',
+    fontWeight: 'bold',
+    lineHeight: 16,
+    textAlign: 'center',
+  },
+  zikrPlayer30sBtn: {
+    width: 60,
+    height: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  zikrPlayer30sCircle: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    borderWidth: 2,
+    borderColor: '#0F5132',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+  },
+  zikrPlayer30sText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#0F5132',
+  },
+  zikrPlayerPlayBtn: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  zikrPlayerPlayBtnGradient: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  zikrPlayerPlayIcon: {
+    fontSize: 32,
+    color: '#ffffff',
+    fontWeight: 'bold',
+  },
+  zikrPlayerBottomControls: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  zikrPlayerSpeedControl: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  zikrPlayerSpeedIcon: {
+    fontSize: 18,
+    color: '#0F5132',
+  },
+  zikrPlayerSpeedText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  zikrPlayerBottomIcons: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  zikrPlayerBottomIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#0F5132',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  zikrPlayerBottomIconText: {
+    fontSize: 16,
+    color: '#ffffff',
+    fontWeight: 'bold',
   },
 });
 
