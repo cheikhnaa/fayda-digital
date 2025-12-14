@@ -3,7 +3,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Asset } from 'expo-asset';
-import * as FileSystem from 'expo-file-system';
 import { useAudioPlayer } from 'expo-audio';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Print from 'expo-print';
@@ -11,7 +10,7 @@ import * as Sharing from 'expo-sharing';
 import { StatusBar } from 'expo-status-bar';
 import { VideoView, useVideoPlayer } from 'expo-video';
 import * as React from 'react';
-import { ActivityIndicator, Alert, Dimensions, Image, ImageBackground, Linking, Modal, ScrollView, Share, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Animated, Dimensions, Image, ImageBackground, Modal, ScrollView, Share, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { Language, setLanguage, t } from './translations';
 
@@ -761,8 +760,20 @@ function MusicScreen({ navigation }: any) {
   const [showInfo, setShowInfo] = React.useState(false);
   const [showMenu, setShowMenu] = React.useState(false);
 
-  // Utiliser expo-audio pour la lecture
-  const player = useAudioPlayer(require('./assets/audio/audio.mp3'));
+  // Utiliser expo-audio pour la lecture - Utiliser le fichier audio de la piste sélectionnée
+  const getAudioSource = () => {
+    if (currentPlayer?.type === 'music' && currentPlayer.item) {
+      // Si c'est une sourate du Coran, utiliser son fichier
+      if (currentPlayer.item.file) {
+        return currentPlayer.item.file;
+      }
+      // Sinon, utiliser le fichier par défaut
+      return require('./assets/audio/audio.mp3');
+    }
+    return require('./assets/audio/audio.mp3');
+  };
+
+  const player = useAudioPlayer(getAudioSource());
 
   React.useEffect(() => {
     if (player && currentPlayer?.type === 'music') {
@@ -1599,6 +1610,20 @@ function LibraryScreen({ navigation }: any) {
   const { language, darkMode } = React.useContext(AppContext);
   const theme = darkMode ? darkTheme : lightTheme;
   const [selectedCourse, setSelectedCourse] = React.useState<any>(null);
+  const [selectedLesson, setSelectedLesson] = React.useState<any>(null);
+  const [isVideoPlaying, setIsVideoPlaying] = React.useState(false);
+  
+  // Créer le lecteur vidéo pour la leçon sélectionnée
+  const videoUrl = selectedLesson?.videoUrl || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+  const videoPlayer = useVideoPlayer(
+    { uri: videoUrl },
+    (player) => {
+      if (player) {
+        player.loop = false;
+        player.muted = false;
+      }
+    }
+  );
 
   const courseLessons: Record<number, any[]> = {
     1: [
@@ -1754,7 +1779,10 @@ function LibraryScreen({ navigation }: any) {
                         }
                       ]}
                       activeOpacity={0.7}
-                      onPress={() => navigation.navigate('VideoPlayer', { lesson })}
+                      onPress={() => {
+                        setSelectedLesson(lesson);
+                        setIsVideoPlaying(true);
+                      }}
                     >
                       <View style={styles.libraryLessonItemContent}>
                         <View style={[styles.libraryLessonNumber, { backgroundColor: courseColors[0] + '20' }]}>
@@ -1796,6 +1824,34 @@ function LibraryScreen({ navigation }: any) {
           );
         })}
       </ScrollView>
+
+      {/* Lecteur vidéo intégré - Format MOOC */}
+      {selectedLesson && isVideoPlaying && (
+        <View style={[styles.libraryVideoPlayer, { backgroundColor: theme.background }]}>
+          <View style={[styles.libraryVideoHeader, { backgroundColor: theme.surface }]}>
+            <Text style={[styles.libraryVideoTitle, { color: theme.text }]} numberOfLines={1}>
+              {selectedLesson.title}
+            </Text>
+            <TouchableOpacity 
+              onPress={() => {
+                setSelectedLesson(null);
+                setIsVideoPlaying(false);
+              }}
+              style={styles.libraryVideoClose}
+            >
+              <Text style={[styles.libraryVideoCloseText, { color: theme.text }]}>✕</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.libraryVideoContainer}>
+            <VideoView
+              player={videoPlayer}
+              style={styles.libraryVideoView}
+              allowsFullscreen
+              allowsPictureInPicture
+            />
+          </View>
+        </View>
+      )}
     </View>
   );
 }
@@ -2013,6 +2069,18 @@ function AudioPlayerScreen({ route, navigation }: any) {
   const [duration, setDuration] = React.useState(6030000); // 100:30 (1h40:30)
   const [playbackSpeed, setPlaybackSpeed] = React.useState(1.0);
   const [carMode, setCarMode] = React.useState(false);
+  const [currentPage, setCurrentPage] = React.useState(0);
+  const scrollViewRef = React.useRef<ScrollView>(null);
+  const fadeAnim = React.useRef(new Animated.Value(1)).current;
+  const slideAnim = React.useRef(new Animated.Value(0)).current;
+
+  // Contenu texte simulé pour la synchronisation (vous pouvez remplacer par le vrai contenu)
+  const contentPages = [
+    "Première page du contenu. Ce texte sera synchronisé avec la lecture audio. Lorsque l'audio avance, le contenu défile automatiquement.",
+    "Deuxième page du contenu. La transition entre les pages est fluide et animée. Le lecteur suit automatiquement le texte affiché.",
+    "Troisième page du contenu. Les transitions sont synchronisées avec la position audio pour une expérience de lecture optimale.",
+    "Quatrième page du contenu. Le système de synchronisation permet de suivre facilement le texte pendant l'écoute.",
+  ];
 
   // Utiliser expo-audio pour la lecture
   const player = useAudioPlayer(require('./assets/audio/audio.mp3'));
@@ -2022,8 +2090,49 @@ function AudioPlayerScreen({ route, navigation }: any) {
       const updateStatus = () => {
         try {
           setIsPlaying(player.playing || false);
-          setPosition((player.currentTime || 0) * 1000);
+          const currentPos = (player.currentTime || 0) * 1000;
+          setPosition(currentPos);
           setDuration((player.duration || 0) * 1000);
+          
+          // Synchroniser le scroll avec la position audio
+          if (isPlaying && duration > 0) {
+            const progress = currentPos / duration;
+            const totalHeight = contentPages.length * 500; // Hauteur estimée par page
+            const scrollPosition = progress * totalHeight;
+            
+            // Calculer la page actuelle
+            const newPage = Math.floor(progress * contentPages.length);
+            if (newPage !== currentPage && newPage < contentPages.length) {
+              // Transition vers la nouvelle page
+              Animated.sequence([
+                Animated.timing(fadeAnim, {
+                  toValue: 0,
+                  duration: 200,
+                  useNativeDriver: true,
+                }),
+                Animated.timing(slideAnim, {
+                  toValue: -newPage * 20,
+                  duration: 300,
+                  useNativeDriver: true,
+                }),
+                Animated.timing(fadeAnim, {
+                  toValue: 1,
+                  duration: 200,
+                  useNativeDriver: true,
+                }),
+              ]).start();
+              
+              setCurrentPage(newPage);
+              
+              // Faire défiler vers la page correspondante
+              if (scrollViewRef.current) {
+                scrollViewRef.current.scrollTo({
+                  y: newPage * 500,
+                  animated: true,
+                });
+              }
+            }
+          }
         } catch (error) {
           console.log('Erreur mise à jour audio:', error);
         }
@@ -2031,7 +2140,7 @@ function AudioPlayerScreen({ route, navigation }: any) {
       const interval = setInterval(updateStatus, 500);
       return () => clearInterval(interval);
     }
-  }, [player]);
+  }, [player, isPlaying, duration, currentPage]);
 
   const togglePlay = async () => {
     try {
@@ -2122,10 +2231,37 @@ function AudioPlayerScreen({ route, navigation }: any) {
       </View>
 
       <ScrollView 
+        ref={scrollViewRef}
         style={styles.audioPlayerContentNew} 
         contentContainerStyle={styles.audioPlayerContentContainerNew}
         showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
       >
+        {/* Contenu texte synchronisé avec la lecture */}
+        <Animated.View 
+          style={[
+            styles.audioPlayerContentText,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            }
+          ]}
+        >
+          {contentPages.map((pageContent, index) => (
+            <View 
+              key={index} 
+              style={[
+                styles.audioPlayerPage,
+                index === currentPage && styles.audioPlayerPageActive
+              ]}
+            >
+              <Text style={[styles.audioPlayerPageText, { color: theme.text }]}>
+                {pageContent}
+              </Text>
+            </View>
+          ))}
+        </Animated.View>
+
         {/* Grande carte centrale avec motif islamique */}
         <View style={styles.audioPlayerCardNew}>
           <View style={styles.audioPlayerCardInner}>
@@ -2555,6 +2691,51 @@ function MainTabs() {
   );
 }
 
+// Écran de chargement avec "Hassaniya Digital"
+function LoadingScreen() {
+  const [fadeAnim] = React.useState(new Animated.Value(0));
+  const [scaleAnim] = React.useState(new Animated.Value(0.8));
+
+  React.useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        friction: 4,
+        tension: 40,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
+  return (
+    <View style={styles.loadingScreen}>
+      <LinearGradient
+        colors={['#0F5132', '#0B3C5D', '#0F5132']}
+        style={styles.loadingGradient}
+      >
+        <Animated.View
+          style={[
+            styles.loadingContent,
+            {
+              opacity: fadeAnim,
+              transform: [{ scale: scaleAnim }],
+            },
+          ]}
+        >
+          <Text style={styles.loadingLogo}>فيضة</Text>
+          <Text style={styles.loadingTitle}>HASSANIYA DIGITAL</Text>
+          <ActivityIndicator size="large" color="#C9A24D" style={styles.loadingSpinner} />
+        </Animated.View>
+      </LinearGradient>
+    </View>
+  );
+}
+
 // Composant principal
 export default function App() {
   const [language, setLang] = React.useState<Language>('fr');
@@ -2562,10 +2743,20 @@ export default function App() {
   const [currentPlayer, setCurrentPlayer] = React.useState<{ item: any; type: 'music' | 'podcast' | 'book' | null } | null>(null);
   const [audioState, setAudioState] = React.useState<{ isPlaying: boolean; position: number; duration: number } | null>(null);
   const [currentRoute, setCurrentRoute] = React.useState<string | null>(null);
+  const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
     setLanguage(language);
+    // Simuler un chargement de 2 secondes
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+    return () => clearTimeout(timer);
   }, [language]);
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <AppContext.Provider value={{
@@ -4935,6 +5126,33 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 30,
   },
+  audioPlayerContentText: {
+    marginBottom: 30,
+    minHeight: 200,
+  },
+  audioPlayerPage: {
+    padding: 20,
+    marginBottom: 20,
+    borderRadius: 12,
+    backgroundColor: '#f8f8f8',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  audioPlayerPageActive: {
+    backgroundColor: '#f0f8f0',
+    borderColor: '#0F5132',
+    borderWidth: 2,
+    shadowColor: '#0F5132',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  audioPlayerPageText: {
+    fontSize: 16,
+    lineHeight: 24,
+    textAlign: 'justify',
+  },
   // Grande carte centrale
   audioPlayerCardNew: {
     marginTop: 10,
@@ -6036,6 +6254,90 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#fff',
     marginLeft: 2,
+  },
+  // Styles écran de chargement
+  loadingScreen: {
+    flex: 1,
+  },
+  loadingGradient: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingLogo: {
+    fontSize: 80,
+    color: '#C9A24D',
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
+  },
+  loadingTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#fff',
+    letterSpacing: 3,
+    marginBottom: 40,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
+  },
+  loadingSpinner: {
+    marginTop: 20,
+  },
+  // Styles lecteur vidéo intégré dans LibraryScreen
+  libraryVideoPlayer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 300,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 10,
+    zIndex: 1000,
+  },
+  libraryVideoHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  libraryVideoTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    flex: 1,
+    marginRight: 10,
+  },
+  libraryVideoClose: {
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  libraryVideoCloseText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  libraryVideoContainer: {
+    flex: 1,
+    backgroundColor: '#000',
+  },
+  libraryVideoView: {
+    flex: 1,
+    width: '100%',
   },
 });
 
