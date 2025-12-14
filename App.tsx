@@ -2,14 +2,16 @@ import Slider from '@react-native-community/slider';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Asset } from 'expo-asset';
+import * as FileSystem from 'expo-file-system';
 import { useAudioPlayer } from 'expo-audio';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as Print from 'expo-print';
+import * as Sharing from 'expo-sharing';
 import { StatusBar } from 'expo-status-bar';
 import { VideoView, useVideoPlayer } from 'expo-video';
 import * as React from 'react';
-import { Alert, Dimensions, Image, ImageBackground, Linking, Modal, ScrollView, Share, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Asset } from 'expo-asset';
-import * as FileSystem from 'expo-file-system';
+import { ActivityIndicator, Alert, Dimensions, Image, ImageBackground, Linking, Modal, ScrollView, Share, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { Language, setLanguage, t } from './translations';
 
@@ -76,6 +78,7 @@ const podcasts = [
     subscribed: false,
     duration: '06:34',
     image: require('./assets/thierno.png'),
+    description: 'مناسب أهل الوداد في مدح خير العباد - الديوان السادس من الدواوين الست',
   },
   { 
     id: 2, 
@@ -99,30 +102,6 @@ const podcasts = [
     subscribers: 6700, 
     subscribed: false,
     duration: '05:16',
-    image: require('./assets/thierno.png'),
-  },
-  { 
-    id: 4, 
-    title: 'Le Coran Expliqué', 
-    titleAr: 'تفسير القرآن',
-    subtitle: 'Explications détaillées',
-    host: 'Dr. Amina Karim', 
-    episodes: 114, 
-    subscribers: 15800, 
-    subscribed: false,
-    duration: '15:30',
-    image: require('./assets/thierno.png'),
-  },
-  { 
-    id: 5, 
-    title: 'Spiritualité Soufie', 
-    titleAr: 'التصوف',
-    subtitle: 'Enseignements spirituels',
-    host: 'Sheikh Muhammad Tijani', 
-    episodes: 62, 
-    subscribers: 9200, 
-    subscribed: false,
-    duration: '12:45',
     image: require('./assets/thierno.png'),
   },
 ];
@@ -242,7 +221,7 @@ const pdfFiles = [
   {
     id: 100,
     title: 'Azal Thierno Hassen Dem',
-    titleAr: 'أزال ثيرنو حسن ديم',
+    titleAr: 'أزل تيرنو حسن ديم',
     author: 'Thierno Hassane Dème',
     pages: 120,
     cover: '📖',
@@ -272,7 +251,7 @@ const pdfFiles = [
     author: 'Shaykh al-Islam',
     pages: 150,
     cover: '📖',
-    pdfFile: require('./assets/pdf/نور الكمال في مشهد الرجال .pdf'),
+    pdfFile: require('./assets/pdf/Nour_al_Kamal_fi_Mashhad_ar_Rijal.pdf'),
     description: 'La lumière de la perfection dans la présence des hommes - Ouvrage spirituel de grande importance.',
     category: 'Ma\'arifa',
     rating: 4.9,
@@ -1443,12 +1422,9 @@ function PodcastsScreen({ navigation }: any) {
                     <View style={styles.podcastCardInfoItem}>
                       <Text style={styles.podcastCardInfoIcon}>🎧</Text>
                       <Text style={[styles.podcastCardInfoText, { color: theme.textSecondary }]}>
-                        {podcast.episodes}
+                        {podcast.duration}
                       </Text>
                     </View>
-                    <Text style={[styles.podcastCardDuration, { color: theme.textSecondary }]}>
-                      {podcast.duration}
-                    </Text>
                     <TouchableOpacity 
                       style={styles.podcastCardInfoButton}
                       onPress={(e) => {
@@ -1824,8 +1800,7 @@ function LibraryScreen({ navigation }: any) {
   );
 }
 
-// Écran simple pour ouvrir le livre avec le lecteur par défaut
-// Écran pour ouvrir le livre PDF
+// Écran lecteur PDF - Affiche le PDF directement dans l'application
 function PDFReaderScreen({ route, navigation }: any) {
   const { book } = route.params;
   const { darkMode } = React.useContext(AppContext);
@@ -1833,170 +1808,154 @@ function PDFReaderScreen({ route, navigation }: any) {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [pdfUri, setPdfUri] = React.useState<string | null>(null);
-  const [pdfBase64, setPdfBase64] = React.useState<string | null>(null);
-  const [loadingProgress, setLoadingProgress] = React.useState(0);
+  const webViewRef = React.useRef<WebView>(null);
+  const [zoomLevel, setZoomLevel] = React.useState(1.0);
 
   React.useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
-    
     const loadPdf = async () => {
       try {
         if (book?.pdfFile) {
-          timeoutId = setTimeout(() => {
-            if (loading) {
-              setError('Le chargement du PDF prend trop de temps. Veuillez réessayer.');
-              setLoading(false);
-            }
-          }, 30000);
-          
+          setLoading(true);
           const asset = Asset.fromModule(book.pdfFile);
           await asset.downloadAsync();
+          
           if (asset.localUri) {
             setPdfUri(asset.localUri);
-            
-            try {
-              setLoadingProgress(30);
-              const base64 = await FileSystem.readAsStringAsync(asset.localUri, {
-                encoding: 'base64' as any,
-              });
-              setLoadingProgress(100);
-              setPdfBase64(base64);
-              clearTimeout(timeoutId);
-              setLoading(false);
-            } catch (readErr) {
-              console.error('Erreur lecture PDF:', readErr);
-              clearTimeout(timeoutId);
-              setError('Erreur lors du chargement du PDF');
-              setLoading(false);
-            }
+            setLoading(false);
           } else {
-            clearTimeout(timeoutId);
             setError('Impossible de charger le PDF');
             setLoading(false);
           }
         } else {
-          clearTimeout(timeoutId);
           setError('Aucun fichier PDF disponible');
           setLoading(false);
         }
       } catch (err) {
         console.error('Erreur chargement PDF:', err);
-        clearTimeout(timeoutId);
         setError('Erreur lors du chargement du PDF');
         setLoading(false);
       }
     };
 
     loadPdf();
-    
-    return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-    };
   }, [book]);
 
-  // HTML pour afficher le PDF dans WebView avec PDF.js
-  const getPdfHtml = () => {
-    if (pdfBase64) {
-      return `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-            <style>
-              * { margin: 0; padding: 0; box-sizing: border-box; }
-              html, body { width: 100%; height: 100%; margin: 0; padding: 0; background: #525252; overflow: auto; -webkit-overflow-scrolling: touch; }
-              #pdf-container { width: 100%; padding: 10px; display: flex; flex-direction: column; align-items: center; }
-              .page-wrapper { width: 100%; max-width: 100%; margin-bottom: 10px; display: flex; justify-content: center; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); min-height: 200px; position: relative; }
-              canvas { max-width: 100%; height: auto; display: block; }
-              .page-loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #666; font-family: Arial, sans-serif; font-size: 14px; }
-              .loading { color: white; text-align: center; padding: 20px; font-family: Arial, sans-serif; }
-            </style>
-          </head>
-          <body>
-            <div id="pdf-container"><div class="loading">Chargement du PDF...</div></div>
-            <script>
-              (async function() {
-                try {
-                  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-                  const pdfData = atob('${pdfBase64}');
-                  const loadingTask = pdfjsLib.getDocument({ data: pdfData, cMapUrl: '', cMapPacked: false, disableAutoFetch: false, disableStream: false });
-                  const pdf = await loadingTask.promise;
-                  const container = document.getElementById('pdf-container');
-                  container.innerHTML = '';
-                  const screenWidth = window.innerWidth;
-                  const scale = Math.min(1.2, screenWidth / 612);
-                  const pageWrappers = [];
-                  for (let i = 1; i <= pdf.numPages; i++) {
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'page-wrapper';
-                    wrapper.id = 'page-' + i;
-                    wrapper.innerHTML = '<div class="page-loading">Page ' + i + '...</div>';
-                    container.appendChild(wrapper);
-                    pageWrappers.push({ wrapper, pageNum: i });
-                  }
-                  const loadPage = async (pageNum, wrapper) => {
-                    try {
-                      const page = await pdf.getPage(pageNum);
-                      const viewport = page.getViewport({ scale: scale });
-                      const canvas = document.createElement('canvas');
-                      const context = canvas.getContext('2d');
-                      canvas.height = viewport.height;
-                      canvas.width = viewport.width;
-                      await page.render({ canvasContext: context, viewport: viewport }).promise;
-                      wrapper.innerHTML = '';
-                      wrapper.appendChild(canvas);
-                    } catch (error) {
-                      wrapper.innerHTML = '<div class="page-loading" style="color: red;">Erreur page ' + pageNum + '</div>';
-                    }
-                  };
-                  if (pageWrappers.length > 0) {
-                    await loadPage(1, pageWrappers[0].wrapper);
-                  }
-                  for (let i = 1; i < pageWrappers.length; i++) {
-                    setTimeout(() => { loadPage(pageWrappers[i].pageNum, pageWrappers[i].wrapper); }, i * 100);
-                  }
-                } catch (error) {
-                  document.getElementById('pdf-container').innerHTML = '<div class="loading" style="color: red;">Erreur: ' + error.message + '</div>';
-                }
-              })();
-            </script>
-          </body>
-        </html>
-      `;
+  // Fonction pour zoomer
+  const handleZoomIn = () => {
+    const newZoom = Math.min(zoomLevel + 0.25, 3.0);
+    setZoomLevel(newZoom);
+    webViewRef.current?.injectJavaScript(`
+      document.body.style.zoom = ${newZoom};
+      true;
+    `);
+  };
+
+  const handleZoomOut = () => {
+    const newZoom = Math.max(zoomLevel - 0.25, 0.5);
+    setZoomLevel(newZoom);
+    webViewRef.current?.injectJavaScript(`
+      document.body.style.zoom = ${newZoom};
+      true;
+    `);
+  };
+
+  // Fonction pour partager
+  const handleShare = async () => {
+    try {
+      if (pdfUri) {
+        const isAvailable = await Sharing.isAvailableAsync();
+        if (isAvailable) {
+          await Sharing.shareAsync(pdfUri);
+        } else {
+          await Share.share({
+            message: `Partagez "${book?.title || 'ce PDF'}"`,
+            url: pdfUri,
+          });
+        }
+      }
+    } catch (err) {
+      Alert.alert('Erreur', 'Impossible de partager le PDF');
+      console.error('Erreur partage:', err);
     }
-    return '<html><body><p>Chargement du PDF...</p></body></html>';
+  };
+
+  // Fonction pour imprimer
+  const handlePrint = async () => {
+    try {
+      if (pdfUri) {
+        await Print.printAsync({
+          uri: pdfUri,
+        });
+      }
+    } catch (err) {
+      Alert.alert('Erreur', 'Impossible d\'imprimer le PDF');
+      console.error('Erreur impression:', err);
+    }
   };
 
   return (
     <View style={[styles.pdfReaderScreen, { backgroundColor: theme.background }]}>
       <StatusBar style={darkMode ? 'light' : 'dark'} />
       <View style={[styles.pdfReaderHeader, { backgroundColor: theme.surface }]}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={[styles.pdfReaderClose, { color: theme.text }]}>✕</Text>
-        </TouchableOpacity>
+        <View style={{width: 40}} />
         <Text style={[styles.pdfReaderTitle, { color: theme.text }]} numberOfLines={1}>
           {book?.title || 'Livre'}
         </Text>
         <View style={{width: 40}} />
       </View>
+
+      {/* Barre de contrôles PDF */}
+      <View style={[styles.pdfControlsBar, { backgroundColor: theme.surface }]}>
+        <TouchableOpacity 
+          style={[styles.pdfControlButton, { backgroundColor: theme.background }]}
+          onPress={handleZoomOut}
+        >
+          <Text style={[styles.pdfControlIcon, { color: theme.text }]}>🔍-</Text>
+        </TouchableOpacity>
+        
+        <Text style={[styles.pdfZoomText, { color: theme.text }]}>
+          {Math.round(zoomLevel * 100)}%
+        </Text>
+        
+        <TouchableOpacity 
+          style={[styles.pdfControlButton, { backgroundColor: theme.background }]}
+          onPress={handleZoomIn}
+        >
+          <Text style={[styles.pdfControlIcon, { color: theme.text }]}>🔍+</Text>
+        </TouchableOpacity>
+        
+        <View style={styles.pdfControlsSeparator} />
+        
+        <TouchableOpacity 
+          style={[styles.pdfControlButton, { backgroundColor: theme.background }]}
+          onPress={handleShare}
+        >
+          <Text style={[styles.pdfControlIcon, { color: theme.text }]}>📤</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity 
+          style={[styles.pdfControlButton, { backgroundColor: theme.background }]}
+          onPress={handlePrint}
+        >
+          <Text style={[styles.pdfControlIcon, { color: theme.text }]}>🖨️</Text>
+        </TouchableOpacity>
+        
+        <View style={styles.pdfControlsSeparator} />
+        
+        <TouchableOpacity 
+          style={[styles.pdfControlButton, { backgroundColor: '#0F5132' }]}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={[styles.pdfControlIcon, { color: '#fff' }]}>✕</Text>
+        </TouchableOpacity>
+      </View>
       
       {loading ? (
         <View style={styles.pdfContainer}>
-          <Text style={styles.pdfIcon}>📖</Text>
-          <Text style={[styles.pdfTitle, { color: theme.text }]}>
-            {book?.title || 'Livre'}
-          </Text>
+          <ActivityIndicator size="large" color="#0F5132" />
           <Text style={[styles.pdfLoadingText, { color: theme.textSecondary, marginTop: 20 }]}>
-            {t('common.loading')}... {loadingProgress > 0 ? `${loadingProgress}%` : ''}
+            Chargement du PDF...
           </Text>
-          {loadingProgress > 0 && (
-            <View style={styles.pdfProgressBar}>
-              <View style={[styles.pdfProgressFill, { width: `${loadingProgress}%` }]} />
-            </View>
-          )}
         </View>
       ) : error ? (
         <View style={styles.pdfContainer}>
@@ -2004,62 +1963,42 @@ function PDFReaderScreen({ route, navigation }: any) {
           <Text style={[styles.pdfTitle, { color: theme.text }]}>
             {error}
           </Text>
-          {pdfUri && (
-            <TouchableOpacity
-              style={[styles.pdfOpenButton, { backgroundColor: '#0F5132', marginTop: 20 }]}
-              onPress={async () => {
-                try {
-                  const canOpen = await Linking.canOpenURL(pdfUri);
-                  if (canOpen) {
-                    await Linking.openURL(pdfUri);
-                  } else {
-                    Alert.alert('Erreur', 'Impossible d\'ouvrir le PDF avec le lecteur par défaut');
-                  }
-                } catch (err) {
-                  Alert.alert('Erreur', 'Impossible d\'ouvrir le PDF');
-                }
-              }}
-            >
-              <Text style={styles.pdfOpenButtonText}>Ouvrir avec le lecteur par défaut</Text>
-            </TouchableOpacity>
-          )}
         </View>
-      ) : pdfBase64 ? (
-        <View style={styles.pdfWebViewContainer}>
+      ) : pdfUri ? (
+        <View style={{ flex: 1 }}>
           <WebView
-            source={{ html: getPdfHtml() }}
-            style={styles.pdfWebView}
-            onLoadStart={() => setLoading(true)}
-            onLoadEnd={() => setTimeout(() => setLoading(false), 1000)}
+            ref={webViewRef}
+            source={{ uri: pdfUri }}
+            style={{ flex: 1 }}
+            startInLoadingState={true}
+            renderLoading={() => (
+              <View style={styles.pdfContainer}>
+                <ActivityIndicator size="large" color="#0F5132" />
+                <Text style={[styles.pdfLoadingText, { color: theme.textSecondary, marginTop: 20 }]}>
+                  Chargement du PDF...
+                </Text>
+              </View>
+            )}
             onError={(syntheticEvent) => {
-              console.error('WebView error: ', syntheticEvent.nativeEvent);
-              setError('Impossible d\'afficher le PDF dans l\'application');
+              const { nativeEvent } = syntheticEvent;
+              console.error('WebView Error:', nativeEvent);
+              setError('Impossible d\'afficher le PDF');
+            }}
+            onLoadEnd={() => {
               setLoading(false);
+              // Initialiser le zoom
+              webViewRef.current?.injectJavaScript(`
+                document.body.style.zoom = ${zoomLevel};
+                true;
+              `);
             }}
             javaScriptEnabled={true}
-            domStorageEnabled={true}
-            startInLoadingState={false}
             scalesPageToFit={true}
-            allowsInlineMediaPlayback={true}
-            mediaPlaybackRequiresUserAction={false}
-            originWhitelist={['*']}
             allowFileAccess={true}
-            allowUniversalAccessFromFileURLs={true}
-            cacheEnabled={false}
-            mixedContentMode="always"
+            originWhitelist={['*']}
           />
         </View>
-      ) : (
-        <View style={styles.pdfContainer}>
-          <Text style={styles.pdfIcon}>📖</Text>
-          <Text style={[styles.pdfTitle, { color: theme.text }]}>
-            {book?.title || 'Livre'}
-          </Text>
-          <Text style={[styles.pdfInfo, { color: theme.textSecondary, marginTop: 20 }]}>
-            Chargement du PDF...
-          </Text>
-        </View>
-      )}
+      ) : null}
     </View>
   );
 }
@@ -3632,15 +3571,6 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
   },
-  pdfLoading: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  pdfLoadingText: {
-    fontSize: 16,
-    color: '#666',
-  },
   pdfContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -3657,58 +3587,46 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 10,
   },
-  pdfInfo: {
-    fontSize: 14,
-    textAlign: 'center',
-    marginTop: 10,
-  },
-  pdfOpenButton: {
-    marginTop: 30,
-    paddingHorizontal: 30,
-    paddingVertical: 15,
-    borderRadius: 25,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  pdfOpenButtonText: {
-    color: '#fff',
+  pdfLoadingText: {
     fontSize: 16,
-    fontWeight: 'bold',
+    textAlign: 'center',
   },
-  pdfWebViewContainer: {
-    flex: 1,
-    position: 'relative',
+  pdfControlsBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+    gap: 10,
   },
-  pdfWebView: {
-    flex: 1,
-    backgroundColor: '#525252',
-  },
-  pdfLoadingOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+  pdfControlButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 1000,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  pdfProgressBar: {
-    width: '80%',
-    height: 4,
+  pdfControlIcon: {
+    fontSize: 20,
+  },
+  pdfZoomText: {
+    fontSize: 14,
+    fontWeight: '600',
+    minWidth: 50,
+    textAlign: 'center',
+  },
+  pdfControlsSeparator: {
+    width: 1,
+    height: 30,
     backgroundColor: '#e0e0e0',
-    borderRadius: 2,
-    marginTop: 15,
-    overflow: 'hidden',
-  },
-  pdfProgressFill: {
-    height: '100%',
-    backgroundColor: '#0F5132',
-    borderRadius: 2,
+    marginHorizontal: 5,
   },
   audioPlayer: {
     position: 'absolute',
@@ -5861,10 +5779,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   podcastCardInfoText: {
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  podcastCardDuration: {
     fontSize: 12,
     fontWeight: '600',
   },
