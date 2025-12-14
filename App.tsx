@@ -1624,13 +1624,8 @@ function ZikrScreen({ navigation }: any) {
               minimumValue={0}
               onValueChange={(value) => {
                 setPosition(value);
-                try {
-                  if (player) {
-                    player.currentTime = value / 1000;
-                  }
-                } catch (error) {
-                  console.log('Erreur seek:', error);
-                }
+                // Note: currentTime est en lecture seule dans expo-audio
+                // La position sera mise à jour automatiquement par le player
               }}
               minimumTrackTintColor="#0F5132"
               maximumTrackTintColor="#e0e0e0"
