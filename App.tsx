@@ -369,6 +369,7 @@ const pdfFiles = [
     pages: 200,
     cover: '📖',
     pdfFile: require('./assets/pdf/diawahir_al_mahani.pdf'),
+    image: require('./assets/thierno.png'),
     description: 'Les perles précieuses - Un ouvrage fondamental de la Tariqa Tijaniyya contenant les enseignements spirituels et les secrets de la voie.',
     category: 'Tariqa',
     rating: 5.0,
@@ -1425,6 +1426,7 @@ function ZikrScreen({ navigation }: any) {
     setPlaybackSpeed(newSpeed);
     // Note: La vitesse de lecture peut être implémentée avec expo-av si nécessaire
     // Pour l'instant, on garde juste l'affichage
+    Alert.alert('Vitesse de lecture', `Vitesse réglée à ${newSpeed.toFixed(1)}x`);
   };
 
   return (
@@ -1567,7 +1569,16 @@ function ZikrScreen({ navigation }: any) {
               </TouchableOpacity>
               <TouchableOpacity 
                 style={styles.zikrPlayerHeaderIcon}
-                onPress={() => setShowInfo(!showInfo)}
+                onPress={() => {
+                  setShowInfo(!showInfo);
+                  if (currentPlayer?.item) {
+                    Alert.alert(
+                      currentPlayer.item.title,
+                      currentPlayer.item.description || 'Informations sur cette piste',
+                      [{ text: 'OK' }]
+                    );
+                  }
+                }}
               >
                 <Text style={styles.zikrPlayerHeaderIconText}>ℹ️</Text>
               </TouchableOpacity>
@@ -1692,9 +1703,6 @@ function ZikrScreen({ navigation }: any) {
               </Text>
             </TouchableOpacity>
             <View style={styles.zikrPlayerBottomIcons}>
-              <TouchableOpacity style={styles.zikrPlayerBottomIcon}>
-                <Text style={styles.zikrPlayerBottomIconText}>Z</Text>
-              </TouchableOpacity>
               <TouchableOpacity style={styles.zikrPlayerBottomIcon}>
                 <Text style={styles.zikrPlayerBottomIconText}>Z</Text>
               </TouchableOpacity>
@@ -2342,18 +2350,48 @@ function PDFReaderScreen({ route, navigation }: any) {
   const handleZoomIn = () => {
     const newZoom = Math.min(zoomLevel + 0.25, 3.0);
     setZoomLevel(newZoom);
+    // Utiliser une approche différente pour le zoom avec WebView
     webViewRef.current?.injectJavaScript(`
-      document.body.style.zoom = ${newZoom};
-      true;
+      (function() {
+        var viewport = document.querySelector('meta[name=viewport]');
+        if (!viewport) {
+          viewport = document.createElement('meta');
+          viewport.name = 'viewport';
+          document.head.appendChild(viewport);
+        }
+        viewport.content = 'width=device-width, initial-scale=' + ${newZoom} + ', maximum-scale=3.0, user-scalable=yes';
+        var body = document.body;
+        if (body) {
+          body.style.transform = 'scale(' + ${newZoom} + ')';
+          body.style.transformOrigin = 'top left';
+          body.style.width = (100 / ${newZoom}) + '%';
+        }
+        true;
+      })();
     `);
   };
 
   const handleZoomOut = () => {
     const newZoom = Math.max(zoomLevel - 0.25, 0.5);
     setZoomLevel(newZoom);
+    // Utiliser une approche différente pour le zoom avec WebView
     webViewRef.current?.injectJavaScript(`
-      document.body.style.zoom = ${newZoom};
-      true;
+      (function() {
+        var viewport = document.querySelector('meta[name=viewport]');
+        if (!viewport) {
+          viewport = document.createElement('meta');
+          viewport.name = 'viewport';
+          document.head.appendChild(viewport);
+        }
+        viewport.content = 'width=device-width, initial-scale=' + ${newZoom} + ', maximum-scale=3.0, user-scalable=yes';
+        var body = document.body;
+        if (body) {
+          body.style.transform = 'scale(' + ${newZoom} + ')';
+          body.style.transformOrigin = 'top left';
+          body.style.width = (100 / ${newZoom}) + '%';
+        }
+        true;
+      })();
     `);
   };
 
