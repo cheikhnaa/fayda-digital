@@ -4,6 +4,7 @@ import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Asset } from 'expo-asset';
 import { useAudioPlayer } from 'expo-audio';
+import { useAVPlayback } from 'expo-av';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
@@ -1308,13 +1309,12 @@ function ZikrScreen({ navigation }: any) {
 
   // Appliquer la vitesse de lecture quand elle change
   React.useEffect(() => {
-    if (player && currentPlayer?.type === 'zikr' && playbackSpeed !== 1.0) {
+    if (player && currentPlayer?.type === 'zikr') {
       try {
-        // expo-audio ne supporte pas directement le changement de vitesse via une propriété
-        // On peut essayer d'utiliser une approche alternative en ajustant l'intervalle de mise à jour
-        // pour simuler le changement de vitesse visuellement
-        // Note: Pour un vrai changement de vitesse audio, il faudrait migrer vers expo-av
-        // qui supporte la propriété rate sur useAVPlayback
+        // Essayer d'appliquer la vitesse au player
+        if ('rate' in player) {
+          (player as any).rate = playbackSpeed;
+        }
       } catch (error) {
         console.log('Erreur application vitesse:', error);
       }
@@ -1442,10 +1442,14 @@ function ZikrScreen({ navigation }: any) {
     const newSpeed = speeds[nextIndex];
     setPlaybackSpeed(newSpeed);
     
-    // Note: expo-audio ne supporte pas directement le changement de vitesse
-    // Pour implémenter cette fonctionnalité, il faudrait migrer vers expo-av
-    // qui supporte la propriété rate sur useAVPlayback
-    // Pour l'instant, on met juste à jour l'affichage
+    // Appliquer la vitesse au player si possible
+    try {
+      if (player && 'rate' in player) {
+        (player as any).rate = newSpeed;
+      }
+    } catch (error) {
+      console.log('Erreur changement vitesse:', error);
+    }
   };
 
   const handleMenuPress = () => {
