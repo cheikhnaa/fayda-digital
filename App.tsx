@@ -8,6 +8,9 @@ import { StatusBar } from 'expo-status-bar';
 import { VideoView, useVideoPlayer } from 'expo-video';
 import * as React from 'react';
 import { Alert, Dimensions, Image, ImageBackground, Linking, Modal, ScrollView, Share, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Asset } from 'expo-asset';
+import * as FileSystem from 'expo-file-system';
+import { WebView } from 'react-native-webview';
 import { Language, setLanguage, t } from './translations';
 
 const Stack = createNativeStackNavigator();
@@ -60,12 +63,68 @@ const musicTracks = [
   { id: 8, title: 'Asma Allah Al-Husna', artist: 'Mishary Rashid', duration: '8:30' },
 ];
 
+// Podcasts avec design inspiré de l'image
 const podcasts = [
-  { id: 1, title: 'Sagesse Quotidienne', host: 'Sheikh Abdullah', episodes: 156, subscribers: 8500, subscribed: false },
-  { id: 2, title: 'Histoire de l\'Islam', host: 'Dr. Hassan Ali', episodes: 48, subscribers: 12300, subscribed: false },
-  { id: 3, title: 'Questions de Foi', host: 'Sheikh Youssef', episodes: 89, subscribers: 6700, subscribed: false },
-  { id: 4, title: 'Le Coran Expliqué', host: 'Dr. Amina Karim', episodes: 114, subscribers: 15800, subscribed: false },
-  { id: 5, title: 'Spiritualité Soufie', host: 'Sheikh Muhammad Tijani', episodes: 62, subscribers: 9200, subscribed: false },
+  { 
+    id: 1, 
+    title: 'Dawaawin as-Sit', 
+    titleAr: 'الدواوين الست',
+    subtitle: 'al-dawāwīn al-sitt',
+    host: 'Sheikh Hassan Cisse', 
+    episodes: 60, 
+    subscribers: 8500, 
+    subscribed: false,
+    duration: '06:34',
+    image: require('./assets/thierno.png'),
+  },
+  { 
+    id: 2, 
+    title: 'Alhaji Jibril Madaha', 
+    titleAr: 'مدح',
+    subtitle: 'Yaa Marhaba bi...',
+    host: 'Shaykh Jibril', 
+    episodes: 45, 
+    subscribers: 12300, 
+    subscribed: false,
+    duration: '01:08',
+    image: require('./assets/thierno.png'),
+  },
+  { 
+    id: 3, 
+    title: 'Shaykh al-Islam al', 
+    titleAr: 'تهنئة الربيع',
+    subtitle: 'Niasse Tania S',
+    host: 'Shaykh al-Islam', 
+    episodes: 38, 
+    subscribers: 6700, 
+    subscribed: false,
+    duration: '05:16',
+    image: require('./assets/thierno.png'),
+  },
+  { 
+    id: 4, 
+    title: 'Le Coran Expliqué', 
+    titleAr: 'تفسير القرآن',
+    subtitle: 'Explications détaillées',
+    host: 'Dr. Amina Karim', 
+    episodes: 114, 
+    subscribers: 15800, 
+    subscribed: false,
+    duration: '15:30',
+    image: require('./assets/thierno.png'),
+  },
+  { 
+    id: 5, 
+    title: 'Spiritualité Soufie', 
+    titleAr: 'التصوف',
+    subtitle: 'Enseignements spirituels',
+    host: 'Sheikh Muhammad Tijani', 
+    episodes: 62, 
+    subscribers: 9200, 
+    subscribed: false,
+    duration: '12:45',
+    image: require('./assets/thierno.png'),
+  },
 ];
 
 const courses = [
@@ -178,7 +237,55 @@ const ebooks = [
   },
 ];
 
+// Fichiers PDF depuis le dossier assets/pdf
+const pdfFiles = [
+  {
+    id: 100,
+    title: 'Azal Thierno Hassen Dem',
+    titleAr: 'أزال ثيرنو حسن ديم',
+    author: 'Thierno Hassane Dème',
+    pages: 120,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/Azal_Thierno_Hassen_Dem.pdf'),
+    description: 'Ouvrage spirituel de grande valeur sur la vie et les enseignements de Thierno Hassane Dème.',
+    category: 'Biographie',
+    rating: 5.0,
+    downloads: 5000,
+  },
+  {
+    id: 101,
+    title: 'Diawahir al Mahani',
+    titleAr: 'جواهر المعاني',
+    author: 'Cheikh Ahmed Tijani',
+    pages: 200,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/diawahir_al_mahani.pdf'),
+    description: 'Les perles précieuses - Un ouvrage fondamental de la Tariqa Tijaniyya contenant les enseignements spirituels et les secrets de la voie.',
+    category: 'Tariqa',
+    rating: 5.0,
+    downloads: 8000,
+  },
+  {
+    id: 102,
+    title: 'Nour al Kamal fi Mashhad ar-Rijal',
+    titleAr: 'نور الكمال في مشهد الرجال',
+    author: 'Shaykh al-Islam',
+    pages: 150,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/نور الكمال في مشهد الرجال .pdf'),
+    description: 'La lumière de la perfection dans la présence des hommes - Ouvrage spirituel de grande importance.',
+    category: 'Ma\'arifa',
+    rating: 4.9,
+    downloads: 6000,
+  },
+];
+
 const bookCategories = [
+  {
+    id: 'pdf',
+    title: 'Livres PDF',
+    books: pdfFiles,
+  },
   {
     id: 'fiqh',
     title: 'Fiqh (Français)',
@@ -477,6 +584,14 @@ function BooksScreen({ navigation }: any) {
   const [expandedCategory, setExpandedCategory] = React.useState<string | null>(null);
 
   const handleBookPress = (book: any) => {
+    // Si c'est un PDF, l'ouvrir directement
+    if (book.pdfFile) {
+      setCurrentPlayer({ item: book, type: 'book' });
+      navigation.navigate('PDFReader', { book });
+      return;
+    }
+    
+    // Sinon, afficher le modal
     const fullBook = ebooks.find(b => b.id === book.id) || {
       ...book,
       description: 'Livre islamique de grande valeur spirituelle.',
@@ -1260,129 +1375,155 @@ function PodcastsScreen({ navigation }: any) {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <StatusBar style={darkMode ? 'light' : 'dark'} />
       
-      {/* Header avec gradient élégant */}
-      <LinearGradient
-        colors={darkMode ? ['#0B3C5D', '#0F5132'] : ['#F8F9F6', '#ffffff']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.podcastsHeaderModern}
-      >
-        <View style={styles.podcastsHeaderContent}>
-          <View style={styles.podcastsHeaderLeft}>
-            <View style={styles.podcastsHeaderIconContainer}>
-              <Text style={styles.podcastsHeaderIcon}>🎙️</Text>
-            </View>
-            <View>
-              <Text style={[styles.podcastsHeaderTitle, { color: theme.text }]}>{t('podcasts.title')}</Text>
-              <Text style={[styles.podcastsHeaderSubtitle, { color: theme.textSecondary }]}>
-                {podcasts.length} {t('podcasts.title').toLowerCase()} {t('library.available').split(' ')[1]}
-              </Text>
-            </View>
-          </View>
-          <LanguageSelector />
-        </View>
-      </LinearGradient>
+      {/* Header simple */}
+      <View style={[styles.podcastsHeaderSimple, { backgroundColor: theme.surface }]}>
+        <Text style={[styles.podcastsHeaderTitleSimple, { color: '#0F5132' }]}>Podcasts</Text>
+        <LanguageSelector />
+      </View>
 
       <ScrollView 
         style={styles.podcastsScrollNew} 
         contentContainerStyle={[styles.podcastsScrollContentNew, currentPlayer?.type === 'podcast' && { paddingBottom: 220 }]}
         showsVerticalScrollIndicator={false}
       >
-        {podcasts.map((podcast, index) => {
-          const podcastColors = getPodcastColor(podcast.id);
-          const isSubscribed = subscribedPodcasts.includes(podcast.id);
+        {/* Section Zikr & Music Snippets - Cartes horizontales */}
+        <View style={styles.podcastsSection}>
+          <View style={styles.podcastsSectionHeader}>
+            <Text style={[styles.podcastsSectionTitle, { color: '#0F5132' }]}>Zikr & Music Snippets</Text>
+            <TouchableOpacity style={styles.podcastsViewAllButton}>
+              <Text style={styles.podcastsViewAllText}>View all</Text>
+            </TouchableOpacity>
+          </View>
           
-          return (
-            <View key={podcast.id} style={styles.podcastCardWrapper}>
-              <View 
-                style={[
-                  styles.podcastCardNew,
-                  { 
-                    backgroundColor: theme.surface,
-                    borderLeftWidth: 5,
-                    borderLeftColor: podcastColors[0],
-                  }
-                ]}
-              >
-                <View style={styles.podcastCardContentNew}>
-                  {/* Icône avec gradient coloré */}
-                  <LinearGradient
-                    colors={podcastColors}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.podcastIconNew}
-                  >
-                    <Text style={styles.podcastIconTextNew}>🎙️</Text>
-                  </LinearGradient>
-
-                  {/* Informations du podcast */}
-                  <View style={styles.podcastInfoNew}>
-                    <View style={styles.podcastTitleRow}>
-                      <Text style={[styles.podcastTitleNew, { color: theme.text }]} numberOfLines={2}>
-                        {podcast.title}
-                      </Text>
-                      {isSubscribed && (
-                        <View style={[styles.podcastSubscribedBadge, { backgroundColor: podcastColors[0] }]}>
-                          <Text style={styles.podcastSubscribedIcon}>✓</Text>
-                        </View>
-                      )}
-                    </View>
-                    
-                    <Text style={[styles.podcastHostNew, { color: theme.textSecondary }]} numberOfLines={1}>
-                      👤 {t('modal.by')} {podcast.host}
-                    </Text>
-
-                    {/* Statistiques avec badges */}
-                    <View style={styles.podcastStatsNew}>
-                      <View style={[styles.podcastStatBadge, { backgroundColor: podcastColors[0] + '15' }]}>
-                        <Text style={styles.podcastStatIconNew}>📻</Text>
-                        <Text style={[styles.podcastStatTextNew, { color: podcastColors[0] }]}>
-                          {podcast.episodes}
-                        </Text>
-                        <Text style={[styles.podcastStatLabel, { color: theme.textSecondary }]}>{t('stats.episodes')}</Text>
-                      </View>
-                      <View style={[styles.podcastStatBadge, { backgroundColor: podcastColors[0] + '15' }]}>
-                        <Text style={styles.podcastStatIconNew}>👥</Text>
-                        <Text style={[styles.podcastStatTextNew, { color: podcastColors[0] }]}>
-                          {podcast.subscribers}
-                        </Text>
-                        <Text style={[styles.podcastStatLabel, { color: theme.textSecondary }]}>{t('stats.subscribers')}</Text>
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.podcastsHorizontalScroll}
+          >
+            {podcasts.slice(0, 3).map((podcast) => {
+              const isPlaying = currentPlayer?.type === 'podcast' && currentPlayer.item?.id === podcast.id;
+              
+              return (
+                <TouchableOpacity
+                  key={podcast.id}
+                  style={styles.podcastCardHorizontal}
+                  activeOpacity={0.9}
+                  onPress={() => {
+                    setCurrentPlayer({ item: podcast, type: 'podcast' });
+                  }}
+                >
+                  {/* Image d'album avec texte */}
+                  <View style={styles.podcastAlbumContainer}>
+                    <Image 
+                      source={podcast.image || require('./assets/thierno.png')} 
+                      style={styles.podcastAlbumImage}
+                      resizeMode="cover"
+                    />
+                    <View style={styles.podcastAlbumOverlay}>
+                      <Text style={styles.podcastAlbumTextAr}>{podcast.titleAr}</Text>
+                      <Text style={styles.podcastAlbumTextLatin}>{podcast.subtitle || podcast.title}</Text>
+                      <View style={styles.podcastAlbumLogo}>
+                        <Text style={styles.podcastAlbumLogoText}>فيضة FAYDA</Text>
                       </View>
                     </View>
                   </View>
-                </View>
-
-                {/* Actions */}
-                <View style={styles.podcastActionsNew}>
-                  <TouchableOpacity
-                    style={[
-                      styles.podcastSubscribeButton,
-                      isSubscribed && { backgroundColor: podcastColors[0] }
-                    ]}
-                    activeOpacity={0.8}
-                    onPress={() => handleSubscribe(podcast.id)}
-                  >
-                    <Text style={[
-                      styles.podcastSubscribeText,
-                      isSubscribed && styles.podcastSubscribeTextActive
-                    ]}>
-                      {isSubscribed ? `✓ ${t('action.subscribed')}` : t('action.subscribe')}
+                  
+                  {/* Titre et infos */}
+                  <Text style={[styles.podcastCardTitle, { color: theme.text }]} numberOfLines={1}>
+                    {podcast.title}
+                  </Text>
+                  {podcast.subtitle && (
+                    <Text style={[styles.podcastCardSubtitle, { color: theme.textSecondary }]} numberOfLines={1}>
+                      {podcast.subtitle}
                     </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[styles.podcastPlayButtonNew, { backgroundColor: podcastColors[0] }]}
-                    activeOpacity={0.9}
-                    onPress={() => {
-                      setCurrentPlayer({ item: podcast, type: 'podcast' });
-                    }}
-                  >
-                    <Text style={styles.podcastPlayIconNew}>▶</Text>
-                  </TouchableOpacity>
-                </View>
+                  )}
+                  
+                  {/* Infos avec icônes */}
+                  <View style={styles.podcastCardInfo}>
+                    <View style={styles.podcastCardInfoItem}>
+                      <Text style={styles.podcastCardInfoIcon}>🎧</Text>
+                      <Text style={[styles.podcastCardInfoText, { color: theme.textSecondary }]}>
+                        {podcast.episodes}
+                      </Text>
+                    </View>
+                    <Text style={[styles.podcastCardDuration, { color: theme.textSecondary }]}>
+                      {podcast.duration}
+                    </Text>
+                    <TouchableOpacity 
+                      style={styles.podcastCardInfoButton}
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        setShowInfo(!showInfo);
+                      }}
+                    >
+                      <Text style={styles.podcastCardInfoIcon}>ℹ️</Text>
+                    </TouchableOpacity>
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+
+        {/* Section Zikr - Grande carte */}
+        <View style={styles.podcastsSection}>
+          <View style={styles.podcastsSectionHeader}>
+            <Text style={[styles.podcastsSectionTitle, { color: '#0F5132' }]}>Zikr</Text>
+            <TouchableOpacity style={styles.podcastsViewAllButton}>
+              <Text style={styles.podcastsViewAllText}>View all</Text>
+            </TouchableOpacity>
+          </View>
+          
+          <TouchableOpacity 
+            style={styles.podcastZikrCard}
+            activeOpacity={0.9}
+            onPress={() => {
+              setCurrentPlayer({ item: podcasts[0], type: 'podcast' });
+            }}
+          >
+            <LinearGradient
+              colors={['#0B3C5D', '#0F5132', '#0B3C5D']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.podcastZikrGradient}
+            >
+              <View style={styles.podcastZikrPattern}>
+                <Text style={styles.podcastZikrTextAr}>ذكر</Text>
+                <Text style={styles.podcastZikrTextLatin}>ZIKR</Text>
               </View>
-            </View>
-          );
-        })}
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+
+        {/* Section Music - Grande carte */}
+        <View style={styles.podcastsSection}>
+          <View style={styles.podcastsSectionHeader}>
+            <Text style={[styles.podcastsSectionTitle, { color: '#0F5132' }]}>Music</Text>
+            <TouchableOpacity style={styles.podcastsViewAllButton}>
+              <Text style={styles.podcastsViewAllText}>View all</Text>
+            </TouchableOpacity>
+          </View>
+          
+          <TouchableOpacity 
+            style={styles.podcastMusicCard}
+            activeOpacity={0.9}
+            onPress={() => {
+              navigation.navigate('Music');
+            }}
+          >
+            <LinearGradient
+              colors={['#0F5132', '#0B3C5D', '#0F5132']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.podcastMusicGradient}
+            >
+              <View style={styles.podcastMusicPattern}>
+                <Text style={styles.podcastMusicTextAr}>موسيقى</Text>
+                <Text style={styles.podcastMusicTextLatin}>MUSIC</Text>
+              </View>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
 
       {/* Lecteur audio intégré en bas - Moderne */}
@@ -1684,33 +1825,241 @@ function LibraryScreen({ navigation }: any) {
 }
 
 // Écran simple pour ouvrir le livre avec le lecteur par défaut
+// Écran pour ouvrir le livre PDF
 function PDFReaderScreen({ route, navigation }: any) {
   const { book } = route.params;
   const { darkMode } = React.useContext(AppContext);
   const theme = darkMode ? darkTheme : lightTheme;
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+  const [pdfUri, setPdfUri] = React.useState<string | null>(null);
+  const [pdfBase64, setPdfBase64] = React.useState<string | null>(null);
+  const [loadingProgress, setLoadingProgress] = React.useState(0);
 
   React.useEffect(() => {
-    // Retourner automatiquement après un court délai
-    // Le fichier sera ouvert par le système par défaut
-    const timer = setTimeout(() => {
-      navigation.goBack();
-    }, 1000);
+    let timeoutId: NodeJS.Timeout;
+    
+    const loadPdf = async () => {
+      try {
+        if (book?.pdfFile) {
+          timeoutId = setTimeout(() => {
+            if (loading) {
+              setError('Le chargement du PDF prend trop de temps. Veuillez réessayer.');
+              setLoading(false);
+            }
+          }, 30000);
+          
+          const asset = Asset.fromModule(book.pdfFile);
+          await asset.downloadAsync();
+          if (asset.localUri) {
+            setPdfUri(asset.localUri);
+            
+            try {
+              setLoadingProgress(30);
+              const base64 = await FileSystem.readAsStringAsync(asset.localUri, {
+                encoding: 'base64' as any,
+              });
+              setLoadingProgress(100);
+              setPdfBase64(base64);
+              clearTimeout(timeoutId);
+              setLoading(false);
+            } catch (readErr) {
+              console.error('Erreur lecture PDF:', readErr);
+              clearTimeout(timeoutId);
+              setError('Erreur lors du chargement du PDF');
+              setLoading(false);
+            }
+          } else {
+            clearTimeout(timeoutId);
+            setError('Impossible de charger le PDF');
+            setLoading(false);
+          }
+        } else {
+          clearTimeout(timeoutId);
+          setError('Aucun fichier PDF disponible');
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error('Erreur chargement PDF:', err);
+        clearTimeout(timeoutId);
+        setError('Erreur lors du chargement du PDF');
+        setLoading(false);
+      }
+    };
 
-    return () => clearTimeout(timer);
-  }, [navigation]);
+    loadPdf();
+    
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [book]);
+
+  // HTML pour afficher le PDF dans WebView avec PDF.js
+  const getPdfHtml = () => {
+    if (pdfBase64) {
+      return `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+            <style>
+              * { margin: 0; padding: 0; box-sizing: border-box; }
+              html, body { width: 100%; height: 100%; margin: 0; padding: 0; background: #525252; overflow: auto; -webkit-overflow-scrolling: touch; }
+              #pdf-container { width: 100%; padding: 10px; display: flex; flex-direction: column; align-items: center; }
+              .page-wrapper { width: 100%; max-width: 100%; margin-bottom: 10px; display: flex; justify-content: center; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); min-height: 200px; position: relative; }
+              canvas { max-width: 100%; height: auto; display: block; }
+              .page-loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #666; font-family: Arial, sans-serif; font-size: 14px; }
+              .loading { color: white; text-align: center; padding: 20px; font-family: Arial, sans-serif; }
+            </style>
+          </head>
+          <body>
+            <div id="pdf-container"><div class="loading">Chargement du PDF...</div></div>
+            <script>
+              (async function() {
+                try {
+                  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+                  const pdfData = atob('${pdfBase64}');
+                  const loadingTask = pdfjsLib.getDocument({ data: pdfData, cMapUrl: '', cMapPacked: false, disableAutoFetch: false, disableStream: false });
+                  const pdf = await loadingTask.promise;
+                  const container = document.getElementById('pdf-container');
+                  container.innerHTML = '';
+                  const screenWidth = window.innerWidth;
+                  const scale = Math.min(1.2, screenWidth / 612);
+                  const pageWrappers = [];
+                  for (let i = 1; i <= pdf.numPages; i++) {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'page-wrapper';
+                    wrapper.id = 'page-' + i;
+                    wrapper.innerHTML = '<div class="page-loading">Page ' + i + '...</div>';
+                    container.appendChild(wrapper);
+                    pageWrappers.push({ wrapper, pageNum: i });
+                  }
+                  const loadPage = async (pageNum, wrapper) => {
+                    try {
+                      const page = await pdf.getPage(pageNum);
+                      const viewport = page.getViewport({ scale: scale });
+                      const canvas = document.createElement('canvas');
+                      const context = canvas.getContext('2d');
+                      canvas.height = viewport.height;
+                      canvas.width = viewport.width;
+                      await page.render({ canvasContext: context, viewport: viewport }).promise;
+                      wrapper.innerHTML = '';
+                      wrapper.appendChild(canvas);
+                    } catch (error) {
+                      wrapper.innerHTML = '<div class="page-loading" style="color: red;">Erreur page ' + pageNum + '</div>';
+                    }
+                  };
+                  if (pageWrappers.length > 0) {
+                    await loadPage(1, pageWrappers[0].wrapper);
+                  }
+                  for (let i = 1; i < pageWrappers.length; i++) {
+                    setTimeout(() => { loadPage(pageWrappers[i].pageNum, pageWrappers[i].wrapper); }, i * 100);
+                  }
+                } catch (error) {
+                  document.getElementById('pdf-container').innerHTML = '<div class="loading" style="color: red;">Erreur: ' + error.message + '</div>';
+                }
+              })();
+            </script>
+          </body>
+        </html>
+      `;
+    }
+    return '<html><body><p>Chargement du PDF...</p></body></html>';
+  };
 
   return (
     <View style={[styles.pdfReaderScreen, { backgroundColor: theme.background }]}>
-      <View style={styles.pdfReaderHeader}>
+      <StatusBar style={darkMode ? 'light' : 'dark'} />
+      <View style={[styles.pdfReaderHeader, { backgroundColor: theme.surface }]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.pdfReaderClose}>✕</Text>
+          <Text style={[styles.pdfReaderClose, { color: theme.text }]}>✕</Text>
         </TouchableOpacity>
-        <Text style={styles.pdfReaderTitle} numberOfLines={1}>{book.title || 'Livre'}</Text>
+        <Text style={[styles.pdfReaderTitle, { color: theme.text }]} numberOfLines={1}>
+          {book?.title || 'Livre'}
+        </Text>
         <View style={{width: 40}} />
       </View>
-      <View style={styles.pdfLoading}>
-        <Text style={styles.pdfLoadingText}>{t('common.loading')}...</Text>
-      </View>
+      
+      {loading ? (
+        <View style={styles.pdfContainer}>
+          <Text style={styles.pdfIcon}>📖</Text>
+          <Text style={[styles.pdfTitle, { color: theme.text }]}>
+            {book?.title || 'Livre'}
+          </Text>
+          <Text style={[styles.pdfLoadingText, { color: theme.textSecondary, marginTop: 20 }]}>
+            {t('common.loading')}... {loadingProgress > 0 ? `${loadingProgress}%` : ''}
+          </Text>
+          {loadingProgress > 0 && (
+            <View style={styles.pdfProgressBar}>
+              <View style={[styles.pdfProgressFill, { width: `${loadingProgress}%` }]} />
+            </View>
+          )}
+        </View>
+      ) : error ? (
+        <View style={styles.pdfContainer}>
+          <Text style={styles.pdfIcon}>⚠️</Text>
+          <Text style={[styles.pdfTitle, { color: theme.text }]}>
+            {error}
+          </Text>
+          {pdfUri && (
+            <TouchableOpacity
+              style={[styles.pdfOpenButton, { backgroundColor: '#0F5132', marginTop: 20 }]}
+              onPress={async () => {
+                try {
+                  const canOpen = await Linking.canOpenURL(pdfUri);
+                  if (canOpen) {
+                    await Linking.openURL(pdfUri);
+                  } else {
+                    Alert.alert('Erreur', 'Impossible d\'ouvrir le PDF avec le lecteur par défaut');
+                  }
+                } catch (err) {
+                  Alert.alert('Erreur', 'Impossible d\'ouvrir le PDF');
+                }
+              }}
+            >
+              <Text style={styles.pdfOpenButtonText}>Ouvrir avec le lecteur par défaut</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      ) : pdfBase64 ? (
+        <View style={styles.pdfWebViewContainer}>
+          <WebView
+            source={{ html: getPdfHtml() }}
+            style={styles.pdfWebView}
+            onLoadStart={() => setLoading(true)}
+            onLoadEnd={() => setTimeout(() => setLoading(false), 1000)}
+            onError={(syntheticEvent) => {
+              console.error('WebView error: ', syntheticEvent.nativeEvent);
+              setError('Impossible d\'afficher le PDF dans l\'application');
+              setLoading(false);
+            }}
+            javaScriptEnabled={true}
+            domStorageEnabled={true}
+            startInLoadingState={false}
+            scalesPageToFit={true}
+            allowsInlineMediaPlayback={true}
+            mediaPlaybackRequiresUserAction={false}
+            originWhitelist={['*']}
+            allowFileAccess={true}
+            allowUniversalAccessFromFileURLs={true}
+            cacheEnabled={false}
+            mixedContentMode="always"
+          />
+        </View>
+      ) : (
+        <View style={styles.pdfContainer}>
+          <Text style={styles.pdfIcon}>📖</Text>
+          <Text style={[styles.pdfTitle, { color: theme.text }]}>
+            {book?.title || 'Livre'}
+          </Text>
+          <Text style={[styles.pdfInfo, { color: theme.textSecondary, marginTop: 20 }]}>
+            Chargement du PDF...
+          </Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -3291,6 +3640,75 @@ const styles = StyleSheet.create({
   pdfLoadingText: {
     fontSize: 16,
     color: '#666',
+  },
+  pdfContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  pdfIcon: {
+    fontSize: 80,
+    marginBottom: 20,
+  },
+  pdfTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  pdfInfo: {
+    fontSize: 14,
+    textAlign: 'center',
+    marginTop: 10,
+  },
+  pdfOpenButton: {
+    marginTop: 30,
+    paddingHorizontal: 30,
+    paddingVertical: 15,
+    borderRadius: 25,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  pdfOpenButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  pdfWebViewContainer: {
+    flex: 1,
+    position: 'relative',
+  },
+  pdfWebView: {
+    flex: 1,
+    backgroundColor: '#525252',
+  },
+  pdfLoadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+  },
+  pdfProgressBar: {
+    width: '80%',
+    height: 4,
+    backgroundColor: '#e0e0e0',
+    borderRadius: 2,
+    marginTop: 15,
+    overflow: 'hidden',
+  },
+  pdfProgressFill: {
+    height: '100%',
+    backgroundColor: '#0F5132',
+    borderRadius: 2,
   },
   audioPlayer: {
     position: 'absolute',
@@ -5336,6 +5754,214 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: '#fff',
     marginLeft: 2,
+  },
+  // Styles nouveaux podcasts
+  podcastsSection: {
+    marginBottom: 30,
+    paddingHorizontal: 20,
+  },
+  podcastsSectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  podcastsSectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  podcastsViewAllButton: {
+    backgroundColor: '#C9A24D',
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 15,
+  },
+  podcastsViewAllText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  podcastsHorizontalScroll: {
+    paddingRight: 20,
+    gap: 15,
+  },
+  podcastCardHorizontal: {
+    width: 180,
+    marginRight: 15,
+  },
+  podcastAlbumContainer: {
+    width: 180,
+    height: 180,
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginBottom: 12,
+    borderWidth: 2,
+    borderColor: '#0F5132',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  podcastAlbumImage: {
+    width: '100%',
+    height: '100%',
+  },
+  podcastAlbumOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    padding: 10,
+    paddingBottom: 8,
+  },
+  podcastAlbumTextAr: {
+    fontSize: 14,
+    color: '#fff',
+    fontWeight: 'bold',
+    marginBottom: 2,
+    textAlign: 'right',
+  },
+  podcastAlbumTextLatin: {
+    fontSize: 10,
+    color: '#fff',
+    marginBottom: 4,
+    textAlign: 'right',
+  },
+  podcastAlbumLogo: {
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  podcastAlbumLogoText: {
+    fontSize: 8,
+    color: '#C9A24D',
+    fontWeight: '600',
+  },
+  podcastCardTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  podcastCardSubtitle: {
+    fontSize: 12,
+    marginBottom: 8,
+  },
+  podcastCardInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  podcastCardInfoItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  podcastCardInfoIcon: {
+    fontSize: 14,
+  },
+  podcastCardInfoText: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  podcastCardDuration: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  podcastCardInfoButton: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#f0f0f0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  podcastZikrCard: {
+    width: '100%',
+    height: 200,
+    borderRadius: 20,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  podcastZikrGradient: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  podcastZikrPattern: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  podcastZikrTextAr: {
+    fontSize: 80,
+    color: '#C9A24D',
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
+  },
+  podcastZikrTextLatin: {
+    fontSize: 32,
+    color: '#C9A24D',
+    fontWeight: 'bold',
+    letterSpacing: 4,
+  },
+  podcastMusicCard: {
+    width: '100%',
+    height: 200,
+    borderRadius: 20,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  podcastMusicGradient: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  podcastMusicPattern: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  podcastMusicTextAr: {
+    fontSize: 80,
+    color: '#C9A24D',
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
+  },
+  podcastMusicTextLatin: {
+    fontSize: 32,
+    color: '#C9A24D',
+    fontWeight: 'bold',
+    letterSpacing: 4,
+  },
+  // Styles header simple podcasts
+  podcastsHeaderSimple: {
+    paddingTop: 50,
+    paddingBottom: 15,
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  podcastsHeaderTitleSimple: {
+    fontSize: 28,
+    fontWeight: 'bold',
   },
   // Styles musique améliorés
   musicSection: {
