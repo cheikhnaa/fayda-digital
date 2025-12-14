@@ -1248,6 +1248,8 @@ function ZikrScreen({ navigation }: any) {
   const [showInfo, setShowInfo] = React.useState(false);
   const [showCarMode, setShowCarMode] = React.useState(false);
   const [playbackSpeed, setPlaybackSpeed] = React.useState(1.0);
+  const [showMenu, setShowMenu] = React.useState(false);
+  const [showSleepTimer, setShowSleepTimer] = React.useState(false);
 
   // Utiliser expo-audio pour la lecture
   const getAudioSource = () => {
@@ -1425,8 +1427,42 @@ function ZikrScreen({ navigation }: any) {
     const newSpeed = speeds[nextIndex];
     setPlaybackSpeed(newSpeed);
     // Note: La vitesse de lecture peut être implémentée avec expo-av si nécessaire
-    // Pour l'instant, on garde juste l'affichage
-    Alert.alert('Vitesse de lecture', `Vitesse réglée à ${newSpeed.toFixed(1)}x`);
+    // Pour l'instant, on garde juste l'affichage et on informe l'utilisateur
+    Alert.alert(
+      'Vitesse de lecture',
+      `Vitesse réglée à ${newSpeed.toFixed(1)}x`,
+      [{ text: 'OK' }]
+    );
+  };
+
+  const handleMenuPress = () => {
+    setShowMenu(!showMenu);
+    Alert.alert(
+      'Options',
+      'Choisissez une option',
+      [
+        { text: 'Ajouter à la playlist', onPress: () => {} },
+        { text: 'Télécharger', onPress: () => {} },
+        { text: 'Supprimer', onPress: () => {}, style: 'destructive' },
+        { text: 'Annuler', style: 'cancel' },
+      ]
+    );
+  };
+
+  const handleSleepTimer = () => {
+    setShowSleepTimer(!showSleepTimer);
+    Alert.alert(
+      'Minuteur de sommeil',
+      'Choisissez la durée',
+      [
+        { text: '5 minutes', onPress: () => {} },
+        { text: '10 minutes', onPress: () => {} },
+        { text: '15 minutes', onPress: () => {} },
+        { text: '30 minutes', onPress: () => {} },
+        { text: 'Désactiver', onPress: () => setShowSleepTimer(false) },
+        { text: 'Annuler', style: 'cancel' },
+      ]
+    );
   };
 
   return (
@@ -1621,7 +1657,10 @@ function ZikrScreen({ navigation }: any) {
             <Text style={[styles.zikrPlayerTrackTitle, { color: theme.text }]} numberOfLines={1}>
               {currentPlayer.item.titleAr} {currentPlayer.item.title}
             </Text>
-            <TouchableOpacity style={styles.zikrPlayerOptions}>
+            <TouchableOpacity 
+              style={styles.zikrPlayerOptions}
+              onPress={handleMenuPress}
+            >
               <Text style={styles.zikrPlayerOptionsIcon}>☰</Text>
             </TouchableOpacity>
           </View>
@@ -1703,7 +1742,10 @@ function ZikrScreen({ navigation }: any) {
               </Text>
             </TouchableOpacity>
             <View style={styles.zikrPlayerBottomIcons}>
-              <TouchableOpacity style={styles.zikrPlayerBottomIcon}>
+              <TouchableOpacity 
+                style={[styles.zikrPlayerBottomIcon, showSleepTimer && { backgroundColor: '#C9A24D' }]}
+                onPress={handleSleepTimer}
+              >
                 <Text style={styles.zikrPlayerBottomIconText}>Z</Text>
               </TouchableOpacity>
             </View>
