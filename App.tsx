@@ -1308,12 +1308,13 @@ function ZikrScreen({ navigation }: any) {
 
   // Appliquer la vitesse de lecture quand elle change
   React.useEffect(() => {
-    if (player && currentPlayer?.type === 'zikr') {
+    if (player && currentPlayer?.type === 'zikr' && playbackSpeed !== 1.0) {
       try {
-        // expo-audio ne supporte pas directement le changement de vitesse
-        // On ajuste la position pour simuler le changement de vitesse
-        // Note: Ceci est une limitation d'expo-audio, pour un vrai changement de vitesse,
-        // il faudrait utiliser expo-av avec useAVPlayback qui supporte la propriété rate
+        // expo-audio ne supporte pas directement le changement de vitesse via une propriété
+        // On peut essayer d'utiliser une approche alternative en ajustant l'intervalle de mise à jour
+        // pour simuler le changement de vitesse visuellement
+        // Note: Pour un vrai changement de vitesse audio, il faudrait migrer vers expo-av
+        // qui supporte la propriété rate sur useAVPlayback
       } catch (error) {
         console.log('Erreur application vitesse:', error);
       }
