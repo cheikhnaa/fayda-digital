@@ -2,12 +2,16 @@ import Slider from '@react-native-community/slider';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Asset } from 'expo-asset';
 import { useAudioPlayer } from 'expo-audio';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as Print from 'expo-print';
+import * as Sharing from 'expo-sharing';
 import { StatusBar } from 'expo-status-bar';
 import { VideoView, useVideoPlayer } from 'expo-video';
 import * as React from 'react';
-import { Alert, Dimensions, Image, ImageBackground, Linking, Modal, ScrollView, Share, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Animated, Dimensions, Image, ImageBackground, Modal, ScrollView, Share, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { WebView } from 'react-native-webview';
 import { Language, setLanguage, t } from './translations';
 
 const Stack = createNativeStackNavigator();
@@ -49,6 +53,142 @@ const zikrTracks = [
   { id: 104, title: 'Jawharat al-Kamal', titleAr: 'جوهرة الكمال', artist: 'Sheikh Hassan', duration: '08:15', type: 'zikr' },
 ];
 
+// Fichiers Zikr depuis le dossier assets/zikr
+const zikrFiles = [
+  { 
+    id: 1, 
+    title: 'Zikr Imam al-Fayda Shaykh Tijani Cisse', 
+    titleAr: 'ذكر إمام الفيض الشيخ التجاني سي',
+    subtitle: 'Zikr Imam al-Fayda Shaykh Tijani Cisse',
+    description: 'This beautiful Zikr is the heartfelt chant of the Imam of the Fayda, Shaykh Tijani Cisse, bringing peace and spiritual elevation.',
+    duration: '10:00',
+    tracks: null,
+    file: require('./assets/zikr/babacar-thiam-zikr-3.mp3'),
+    image: require('./assets/thierno.png'),
+  },
+  { 
+    id: 2, 
+    title: 'Secrets of Ziyara Rihla (2024)', 
+    titleAr: 'أسرار الزيارة',
+    subtitle: 'Secrets of Ziyara Soundtrack',
+    description: 'This Rihla drew us into an unending journey of divine presence, where we felt the closeness of the beloved Prophet and the saints.',
+    duration: null,
+    tracks: '4 tracks',
+    file: require('./assets/zikr/babacar-thiam-zikr-4.mp3'),
+    image: require('./assets/thierno.png'),
+  },
+  { 
+    id: 3, 
+    title: 'Shaykh Muhammad Sha\'ban', 
+    titleAr: 'الشيخ محمد شعبان',
+    subtitle: 'Qasidat al-Burdah (Poem - قصيدة البردة of the Mantle)',
+    description: 'The Burdah Qasida, formally known as Qasidat al-Burdah, is one of the most celebrated poems in praise of the Prophet Muhammad.',
+    duration: '58:14',
+    tracks: null,
+    file: require('./assets/zikr/gamou-babacar-thiam-1.mp3'),
+    image: require('./assets/thierno.png'),
+  },
+  { 
+    id: 4, 
+    title: 'Gamou Babacar Thiam 1', 
+    titleAr: 'جامع بابكر تيام 1',
+    subtitle: 'Zikr Collection',
+    description: 'A collection of beautiful Zikr recitations from Gamou celebrations.',
+    duration: '12:30',
+    tracks: null,
+    file: require('./assets/zikr/gamou-babacar-thiam-1.mp3'),
+    image: require('./assets/thierno.png'),
+  },
+  { 
+    id: 5, 
+    title: 'Gamou Babacar Thiam 3', 
+    titleAr: 'جامع بابكر تيام 3',
+    subtitle: 'Zikr Collection',
+    description: 'A collection of beautiful Zikr recitations from Gamou celebrations.',
+    duration: '15:20',
+    tracks: null,
+    file: require('./assets/zikr/gamou-babacar-thiam-3.mp3'),
+    image: require('./assets/thierno.png'),
+  },
+  { 
+    id: 6, 
+    title: 'Gamou Babacar Thiam 4', 
+    titleAr: 'جامع بابكر تيام 4',
+    subtitle: 'Zikr Collection',
+    description: 'A collection of beautiful Zikr recitations from Gamou celebrations.',
+    duration: '18:45',
+    tracks: null,
+    file: require('./assets/zikr/gamou-babacar-thiam-4.mp3'),
+    image: require('./assets/thierno.png'),
+  },
+  { 
+    id: 7, 
+    title: 'Gamou Babacar Thiam 5', 
+    titleAr: 'جامع بابكر تيام 5',
+    subtitle: 'Zikr Collection',
+    description: 'A collection of beautiful Zikr recitations from Gamou celebrations.',
+    duration: '14:10',
+    tracks: null,
+    file: require('./assets/zikr/gamou-babacar-thiam-5.mp3'),
+    image: require('./assets/thierno.png'),
+  },
+  { 
+    id: 8, 
+    title: 'Gamou Babacar Thiam 6', 
+    titleAr: 'جامع بابكر تيام 6',
+    subtitle: 'Zikr Collection',
+    description: 'A collection of beautiful Zikr recitations from Gamou celebrations.',
+    duration: '16:25',
+    tracks: null,
+    file: require('./assets/zikr/gamou-babacar-thiam-6.mp3'),
+    image: require('./assets/thierno.png'),
+  },
+  { 
+    id: 9, 
+    title: 'Maouloud 2008 Zikr 1', 
+    titleAr: 'مولود 2008 ذكر 1',
+    subtitle: 'Maouloud Celebration',
+    description: 'Beautiful Zikr from the Maouloud celebration of 2008.',
+    duration: '20:00',
+    tracks: null,
+    file: require('./assets/zikr/maouloud-2008-zikr-1.mp3'),
+    image: require('./assets/thierno.png'),
+  },
+  { 
+    id: 10, 
+    title: 'Maouloud 2008 Zikr 2', 
+    titleAr: 'مولود 2008 ذكر 2',
+    subtitle: 'Maouloud Celebration',
+    description: 'Beautiful Zikr from the Maouloud celebration of 2008.',
+    duration: '22:15',
+    tracks: null,
+    file: require('./assets/zikr/maouloud-2008-zikr-2.mp3'),
+    image: require('./assets/thierno.png'),
+  },
+  { 
+    id: 11, 
+    title: 'Babacar Thiam Zikr 3', 
+    titleAr: 'بابكر تيام ذكر 3',
+    subtitle: 'Zikr Collection',
+    description: 'A beautiful Zikr recitation by Babacar Thiam.',
+    duration: '11:40',
+    tracks: null,
+    file: require('./assets/zikr/babacar-thiam-zikr-3.mp3'),
+    image: require('./assets/thierno.png'),
+  },
+  { 
+    id: 12, 
+    title: 'Babacar Thiam Zikr 4', 
+    titleAr: 'بابكر تيام ذكر 4',
+    subtitle: 'Zikr Collection',
+    description: 'A beautiful Zikr recitation by Babacar Thiam.',
+    duration: '13:50',
+    tracks: null,
+    file: require('./assets/zikr/babacar-thiam-zikr-4.mp3'),
+    image: require('./assets/thierno.png'),
+  },
+];
+
 const musicTracks = [
   { id: 1, title: 'Salawat al-Fatihi', artist: 'Ensemble Tijani', duration: '45:23' },
   { id: 2, title: 'Qasida Burda', artist: 'Sheikh Mahmoud Al-Tohamy', duration: '28:15' },
@@ -60,12 +200,40 @@ const musicTracks = [
   { id: 8, title: 'Asma Allah Al-Husna', artist: 'Mishary Rashid', duration: '8:30' },
 ];
 
+// Podcasts avec design inspiré de l'image
 const podcasts = [
-  { id: 1, title: 'Sagesse Quotidienne', host: 'Sheikh Abdullah', episodes: 156, subscribers: 8500, subscribed: false },
-  { id: 2, title: 'Histoire de l\'Islam', host: 'Dr. Hassan Ali', episodes: 48, subscribers: 12300, subscribed: false },
-  { id: 3, title: 'Questions de Foi', host: 'Sheikh Youssef', episodes: 89, subscribers: 6700, subscribed: false },
-  { id: 4, title: 'Le Coran Expliqué', host: 'Dr. Amina Karim', episodes: 114, subscribers: 15800, subscribed: false },
-  { id: 5, title: 'Spiritualité Soufie', host: 'Sheikh Muhammad Tijani', episodes: 62, subscribers: 9200, subscribed: false },
+  { 
+    id: 1, 
+    title: 'Concealed Conversations - Sufism & the Tijani way', 
+    titleAr: 'محادثات مخفية',
+    subtitle: 'Sufism and the Tijani way',
+    host: 'Shaykh Hassan Cisse', 
+    episodes: 60, 
+    subscribers: 8500, 
+    subscribed: false,
+    duration: '02:00:39',
+    date: '27 August 2023',
+    image: require('./assets/thierno.png'),
+    description: 'A collection of spiritual conversations about Sufism and the Tijani way.',
+    locked: false,
+    episodeType: 'Weekly',
+  },
+  { 
+    id: 2, 
+    title: 'Shaykh Hassan Cisse Talks', 
+    titleAr: 'محاضرات الشيخ حسن سيسي',
+    subtitle: 'A collection of speeches and talks',
+    host: 'Shaykh Hassan Cisse', 
+    episodes: 10, 
+    subscribers: 12300, 
+    subscribed: false,
+    duration: '01:30:00',
+    date: '26 August 2023',
+    image: require('./assets/thierno.png'),
+    description: 'A collection of speeches and talks of Imam Shaykh Hassan Cisse.',
+    locked: true,
+    episodeType: 'Episodes 1 - 10',
+  },
 ];
 
 const courses = [
@@ -178,7 +346,56 @@ const ebooks = [
   },
 ];
 
+// Fichiers PDF depuis le dossier assets/pdf
+const pdfFiles = [
+  {
+    id: 100,
+    title: 'Azal Thierno Hassen Dem',
+    titleAr: 'أزل تيرنو حسن ديم',
+    author: 'Thierno Hassane Dème',
+    pages: 120,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/Azal_Thierno_Hassen_Dem.pdf'),
+    description: 'Ouvrage spirituel de grande valeur sur la vie et les enseignements de Thierno Hassane Dème.',
+    category: 'Biographie',
+    rating: 5.0,
+    downloads: 5000,
+  },
+  {
+    id: 101,
+    title: 'Diawahir al Mahani',
+    titleAr: 'جواهر المعاني',
+    author: 'Cheikh Ahmed Tijani',
+    pages: 200,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/diawahir_al_mahani.pdf'),
+    image: require('./assets/thierno.png'),
+    description: 'Les perles précieuses - Un ouvrage fondamental de la Tariqa Tijaniyya contenant les enseignements spirituels et les secrets de la voie.',
+    category: 'Tariqa',
+    rating: 5.0,
+    downloads: 8000,
+  },
+  {
+    id: 102,
+    title: 'Nour al Kamal fi Mashhad ar-Rijal',
+    titleAr: 'نور الكمال في مشهد الرجال',
+    author: 'Shaykh al-Islam',
+    pages: 150,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/Nour_al_Kamal_fi_Mashhad_ar_Rijal.pdf'),
+    description: 'La lumière de la perfection dans la présence des hommes - Ouvrage spirituel de grande importance.',
+    category: 'Ma\'arifa',
+    rating: 4.9,
+    downloads: 6000,
+  },
+];
+
 const bookCategories = [
+  {
+    id: 'pdf',
+    title: 'Livres PDF',
+    books: pdfFiles,
+  },
   {
     id: 'fiqh',
     title: 'Fiqh (Français)',
@@ -218,8 +435,8 @@ const AppContext = React.createContext<{
   setLang: (lang: Language) => void;
   darkMode: boolean;
   setDarkMode: (dark: boolean) => void;
-  currentPlayer: { item: any; type: 'music' | 'podcast' | 'book' | null } | null;
-  setCurrentPlayer: (player: { item: any; type: 'music' | 'podcast' | 'book' | null } | null) => void;
+  currentPlayer: { item: any; type: 'music' | 'podcast' | 'book' | 'zikr' | null } | null;
+  setCurrentPlayer: (player: { item: any; type: 'music' | 'podcast' | 'book' | 'zikr' | null } | null) => void;
   audioState: { isPlaying: boolean; position: number; duration: number } | null;
   setAudioState: (state: { isPlaying: boolean; position: number; duration: number } | null) => void;
   currentRoute: string | null;
@@ -477,6 +694,14 @@ function BooksScreen({ navigation }: any) {
   const [expandedCategory, setExpandedCategory] = React.useState<string | null>(null);
 
   const handleBookPress = (book: any) => {
+    // Si c'est un PDF, l'ouvrir directement
+    if (book.pdfFile) {
+      setCurrentPlayer({ item: book, type: 'book' });
+      navigation.navigate('PDFReader', { book });
+      return;
+    }
+    
+    // Sinon, afficher le modal
     const fullBook = ebooks.find(b => b.id === book.id) || {
       ...book,
       description: 'Livre islamique de grande valeur spirituelle.',
@@ -667,8 +892,20 @@ function MusicScreen({ navigation }: any) {
   const [showInfo, setShowInfo] = React.useState(false);
   const [showMenu, setShowMenu] = React.useState(false);
 
-  // Utiliser expo-audio pour la lecture
-  const player = useAudioPlayer(require('./assets/audio/audio.mp3'));
+  // Utiliser expo-audio pour la lecture - Utiliser le fichier audio de la piste sélectionnée
+  const getAudioSource = () => {
+    if (currentPlayer?.type === 'music' && currentPlayer.item) {
+      // Si c'est une sourate du Coran, utiliser son fichier
+      if (currentPlayer.item.file) {
+        return currentPlayer.item.file;
+      }
+      // Sinon, utiliser le fichier par défaut
+      return require('./assets/audio/audio.mp3');
+    }
+    return require('./assets/audio/audio.mp3');
+  };
+
+  const player = useAudioPlayer(getAudioSource());
 
   React.useEffect(() => {
     if (player && currentPlayer?.type === 'music') {
@@ -766,291 +1003,146 @@ function MusicScreen({ navigation }: any) {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <StatusBar style={darkMode ? 'light' : 'dark'} />
       
-      {/* Header avec gradient élégant */}
-      <LinearGradient
-        colors={darkMode ? ['#0B3C5D', '#0F5132'] : ['#F8F9F6', '#ffffff']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.musicHeaderModern}
-      >
-        <View style={styles.musicHeaderContent}>
-          <View style={styles.musicHeaderLeft}>
-            <View style={styles.musicHeaderIconContainer}>
-              <Text style={styles.musicHeaderIcon}>🎵</Text>
-            </View>
-            <View>
-              <Text style={[styles.musicHeaderTitle, { color: theme.text }]}>{t('music.title')}</Text>
-              <Text style={[styles.musicHeaderSubtitle, { color: theme.textSecondary }]}>
-                {zikrTracks.length + coranTracks.length + musicTracks.length} pistes {t('library.available').split(' ')[1]}
-              </Text>
-            </View>
-          </View>
-          <LanguageSelector />
-        </View>
-      </LinearGradient>
+      {/* Header simple */}
+      <View style={[styles.podcastsHeaderSimple, { backgroundColor: theme.surface }]}>
+        <Text style={[styles.podcastsHeaderTitleSimple, { color: '#0F5132' }]}>Musique</Text>
+        <LanguageSelector />
+      </View>
 
       <ScrollView 
-        style={styles.musicScrollNew} 
-        contentContainerStyle={[styles.musicScrollContentNew, currentPlayer?.type === 'music' && { paddingBottom: 220 }]}
+        style={styles.podcastsScrollNew} 
+        contentContainerStyle={[styles.podcastsScrollContentNew, currentPlayer?.type === 'music' && { paddingBottom: 220 }]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Section 1: Zikr & Music Snippets */}
-        <View style={styles.musicSection}>
-          <View style={styles.sectionHeaderModern}>
-            <View style={styles.sectionTitleContainerModern}>
-              <View style={styles.sectionIconContainer}>
-                <Text style={styles.sectionIconModern}>🕌</Text>
-              </View>
-              <View>
-                <Text style={[styles.sectionTitleModern, { color: theme.text }]}>Zikr & Music Snippets</Text>
-                <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>{zikrTracks.length} pistes</Text>
-              </View>
-            </View>
+        {/* Section Zikr & Music Snippets - Cartes horizontales */}
+        <View style={styles.podcastsSection}>
+          <View style={styles.podcastsSectionHeader}>
+            <Text style={[styles.podcastsSectionTitle, { color: '#0F5132' }]}>Zikr & Music Snippets</Text>
+            <TouchableOpacity style={styles.podcastsViewAllButton}>
+              <Text style={styles.podcastsViewAllText}>View all</Text>
+            </TouchableOpacity>
           </View>
-          <View style={styles.musicGridNew}>
-            {zikrTracks.map((track) => {
-              const musicColors = getMusicColor(track.id);
+          
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.podcastsHorizontalScroll}
+          >
+            {zikrTracks.slice(0, 3).map((track) => {
               const isPlaying = currentPlayer?.type === 'music' && currentPlayer.item?.id === track.id;
               
               return (
                 <TouchableOpacity
                   key={track.id}
-                  style={[
-                    styles.musicCardNew,
-                    { 
-                      backgroundColor: theme.surface,
-                      borderLeftWidth: 4,
-                      borderLeftColor: musicColors[0],
-                    },
-                    isPlaying && styles.musicCardPlaying
-                  ]}
-                  activeOpacity={0.85}
+                  style={styles.podcastCardHorizontal}
+                  activeOpacity={0.9}
                   onPress={() => {
-                    setSelectedTrack(track);
                     setCurrentPlayer({ item: track, type: 'music' });
                   }}
                 >
-                  <LinearGradient
-                    colors={musicColors}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.musicIconNew}
-                  >
-                    <Text style={styles.musicIconTextNew}>🕌</Text>
-                  </LinearGradient>
-                  
-                  <View style={styles.musicInfoNew}>
-                    <View style={styles.musicTitleRow}>
-                      <Text style={[styles.musicTitleNew, { color: theme.text }]} numberOfLines={2}>
-                        {track.title}
-                      </Text>
-                      {isPlaying && (
-                        <View style={[styles.musicPlayingBadge, { backgroundColor: musicColors[0] }]}>
-                          <Text style={styles.musicPlayingIcon}>♪</Text>
-                        </View>
-                      )}
-                    </View>
-                    <Text style={[styles.musicArtistNew, { color: theme.textSecondary }]} numberOfLines={1}>
-                      👤 {track.artist}
-                    </Text>
-                    <View style={styles.musicMetaNew}>
-                      <View style={[styles.musicDurationBadge, { backgroundColor: musicColors[0] + '15' }]}>
-                        <Text style={styles.musicDurationIcon}>⏱️</Text>
-                        <Text style={[styles.musicDurationText, { color: musicColors[0] }]}>
-                          {track.duration}
-                        </Text>
+                  {/* Image d'album avec texte */}
+                  <View style={styles.podcastAlbumContainer}>
+                    <Image 
+                      source={require('./assets/thierno.png')} 
+                      style={styles.podcastAlbumImage}
+                      resizeMode="cover"
+                    />
+                    <View style={styles.podcastAlbumOverlay}>
+                      <Text style={styles.podcastAlbumTextAr}>{track.titleAr}</Text>
+                      <Text style={styles.podcastAlbumTextLatin}>{track.title}</Text>
+                      <View style={styles.podcastAlbumLogo}>
+                        <Text style={styles.podcastAlbumLogoText}>فيضة FAYDA</Text>
                       </View>
                     </View>
                   </View>
-
-                  <TouchableOpacity
-                    style={[styles.musicPlayButtonNew, { backgroundColor: musicColors[0] }]}
-                    activeOpacity={0.9}
-                    onPress={() => {
-                      setSelectedTrack(track);
-                      setCurrentPlayer({ item: track, type: 'music' });
-                    }}
-                  >
-                    <Text style={styles.musicPlayIconNew}>{isPlaying ? '⏸' : '▶'}</Text>
-                  </TouchableOpacity>
+                  
+                  {/* Titre et infos */}
+                  <Text style={[styles.podcastCardTitle, { color: theme.text }]} numberOfLines={1}>
+                    {track.title}
+                  </Text>
+                  
+                  {/* Infos avec icônes */}
+                  <View style={styles.podcastCardInfo}>
+                    <View style={styles.podcastCardInfoItem}>
+                      <Text style={styles.podcastCardInfoIcon}>🎧</Text>
+                      <Text style={[styles.podcastCardInfoText, { color: theme.textSecondary }]}>
+                        {track.duration}
+                      </Text>
+                    </View>
+                    <TouchableOpacity 
+                      style={styles.podcastCardInfoButton}
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        setShowInfo(!showInfo);
+                      }}
+                    >
+                      <Text style={styles.podcastCardInfoIcon}>ℹ️</Text>
+                    </TouchableOpacity>
+                  </View>
                 </TouchableOpacity>
               );
             })}
-          </View>
+          </ScrollView>
         </View>
 
-        {/* Section 2: Coran */}
-        <View style={styles.musicSection}>
-          <View style={styles.sectionHeaderModern}>
-            <View style={styles.sectionTitleContainerModern}>
-              <View style={styles.sectionIconContainer}>
-                <Text style={styles.sectionIconModern}>📿</Text>
-              </View>
-              <View>
-                <Text style={[styles.sectionTitleModern, { color: theme.text }]}>Coran</Text>
-                <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>{coranTracks.length} sourates</Text>
-              </View>
-            </View>
+        {/* Section Zikr - Grande carte */}
+        <View style={styles.podcastsSection}>
+          <View style={styles.podcastsSectionHeader}>
+            <Text style={[styles.podcastsSectionTitle, { color: '#0F5132' }]}>Zikr</Text>
+            <TouchableOpacity style={styles.podcastsViewAllButton}>
+              <Text style={styles.podcastsViewAllText}>View all</Text>
+            </TouchableOpacity>
           </View>
-          <View style={styles.musicGridNew}>
-            {coranTracks.map((track) => {
-              const musicColors = getMusicColor(track.id);
-              const isPlaying = currentPlayer?.type === 'music' && currentPlayer.item?.id === track.id;
-              
-              return (
-                <TouchableOpacity
-                  key={track.id}
-                  style={[
-                    styles.musicCardNew,
-                    { 
-                      backgroundColor: theme.surface,
-                      borderLeftWidth: 4,
-                      borderLeftColor: musicColors[0],
-                    },
-                    isPlaying && styles.musicCardPlaying
-                  ]}
-                  activeOpacity={0.85}
-                  onPress={() => {
-                    setSelectedTrack(track);
-                    setCurrentPlayer({ item: track, type: 'music' });
-                  }}
-                >
-                  <LinearGradient
-                    colors={musicColors}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.musicIconNew}
-                  >
-                    <Text style={styles.musicIconTextNew}>📿</Text>
-                  </LinearGradient>
-                  
-                  <View style={styles.musicInfoNew}>
-                    <View style={styles.musicTitleRow}>
-                      <Text style={[styles.musicTitleNew, { color: theme.text }]} numberOfLines={2}>
-                        {track.title}
-                      </Text>
-                      {isPlaying && (
-                        <View style={[styles.musicPlayingBadge, { backgroundColor: musicColors[0] }]}>
-                          <Text style={styles.musicPlayingIcon}>♪</Text>
-                        </View>
-                      )}
-                    </View>
-                    <Text style={[styles.musicArtistNew, { color: theme.textSecondary }]} numberOfLines={1}>
-                      👤 {track.reciter}
-                    </Text>
-                    <View style={styles.musicMetaNew}>
-                      <View style={[styles.musicDurationBadge, { backgroundColor: musicColors[0] + '15' }]}>
-                        <Text style={styles.musicDurationIcon}>⏱️</Text>
-                        <Text style={[styles.musicDurationText, { color: musicColors[0] }]}>
-                          {track.duration}
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
-
-                  <TouchableOpacity
-                    style={[styles.musicPlayButtonNew, { backgroundColor: musicColors[0] }]}
-                    activeOpacity={0.9}
-                    onPress={() => {
-                      setSelectedTrack(track);
-                      setCurrentPlayer({ item: track, type: 'music' });
-                    }}
-                  >
-                    <Text style={styles.musicPlayIconNew}>
-                      {isPlaying ? '⏸' : '▶'}
-                    </Text>
-                  </TouchableOpacity>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
+          
+          <TouchableOpacity 
+            style={styles.podcastZikrCard}
+            activeOpacity={0.9}
+            onPress={() => {
+              navigation.navigate('Zikr');
+            }}
+          >
+            <LinearGradient
+              colors={['#0B3C5D', '#0F5132', '#0B3C5D']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.podcastZikrGradient}
+            >
+              <View style={styles.podcastZikrPattern}>
+                <Text style={styles.podcastZikrTextAr}>ذكر</Text>
+                <Text style={styles.podcastZikrTextLatin}>ZIKR</Text>
+              </View>
+            </LinearGradient>
+          </TouchableOpacity>
         </View>
 
-        {/* Section 3: Music */}
-        <View style={styles.musicSection}>
-          <View style={styles.sectionHeaderModern}>
-            <View style={styles.sectionTitleContainerModern}>
-              <View style={styles.sectionIconContainer}>
-                <Text style={styles.sectionIconModern}>🎵</Text>
-              </View>
-              <View>
-                <Text style={[styles.sectionTitleModern, { color: theme.text }]}>Music</Text>
-                <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>{musicTracks.length} pistes</Text>
-              </View>
-            </View>
+        {/* Section Music - Grande carte */}
+        <View style={styles.podcastsSection}>
+          <View style={styles.podcastsSectionHeader}>
+            <Text style={[styles.podcastsSectionTitle, { color: '#0F5132' }]}>Music</Text>
+            <TouchableOpacity style={styles.podcastsViewAllButton}>
+              <Text style={styles.podcastsViewAllText}>View all</Text>
+            </TouchableOpacity>
           </View>
-          <View style={styles.musicGridNew}>
-            {musicTracks.map((track) => {
-              const musicColors = getMusicColor(track.id);
-              const isPlaying = currentPlayer?.type === 'music' && currentPlayer.item?.id === track.id;
-              
-              return (
-                <TouchableOpacity
-                  key={track.id}
-                  style={[
-                    styles.musicCardNew,
-                    { 
-                      backgroundColor: theme.surface,
-                      borderLeftWidth: 4,
-                      borderLeftColor: musicColors[0],
-                    },
-                    isPlaying && styles.musicCardPlaying
-                  ]}
-                  activeOpacity={0.85}
-                  onPress={() => {
-                    setSelectedTrack(track);
-                    setCurrentPlayer({ item: track, type: 'music' });
-                  }}
-                >
-                  <LinearGradient
-                    colors={musicColors}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.musicIconNew}
-                  >
-                    <Text style={styles.musicIconTextNew}>🎵</Text>
-                  </LinearGradient>
-                  
-                  <View style={styles.musicInfoNew}>
-                    <View style={styles.musicTitleRow}>
-                      <Text style={[styles.musicTitleNew, { color: theme.text }]} numberOfLines={2}>
-                        {track.title}
-                      </Text>
-                      {isPlaying && (
-                        <View style={[styles.musicPlayingBadge, { backgroundColor: musicColors[0] }]}>
-                          <Text style={styles.musicPlayingIcon}>♪</Text>
-                        </View>
-                      )}
-                    </View>
-                    <Text style={[styles.musicArtistNew, { color: theme.textSecondary }]} numberOfLines={1}>
-                      👤 {t('player.artist')}: {track.artist}
-                    </Text>
-                    <View style={styles.musicMetaNew}>
-                      <View style={[styles.musicDurationBadge, { backgroundColor: musicColors[0] + '15' }]}>
-                        <Text style={styles.musicDurationIcon}>⏱️</Text>
-                        <Text style={[styles.musicDurationText, { color: musicColors[0] }]}>
-                          {track.duration}
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
-
-                  <TouchableOpacity
-                    style={[styles.musicPlayButtonNew, { backgroundColor: musicColors[0] }]}
-                    activeOpacity={0.9}
-                    onPress={() => {
-                      setSelectedTrack(track);
-                      setCurrentPlayer({ item: track, type: 'music' });
-                    }}
-                  >
-                    <Text style={styles.musicPlayIconNew}>
-                      {isPlaying ? '⏸' : '▶'}
-                    </Text>
-                  </TouchableOpacity>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
+          
+          <TouchableOpacity 
+            style={styles.podcastMusicCard}
+            activeOpacity={0.9}
+            onPress={() => {
+              setCurrentPlayer({ item: musicTracks[0], type: 'music' });
+            }}
+          >
+            <LinearGradient
+              colors={['#0F5132', '#0B3C5D', '#0F5132']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.podcastMusicGradient}
+            >
+              <View style={styles.podcastMusicPattern}>
+                <Text style={styles.podcastMusicTextAr}>موسيقى</Text>
+                <Text style={styles.podcastMusicTextLatin}>MUSIC</Text>
+              </View>
+            </LinearGradient>
+          </TouchableOpacity>
         </View>
       </ScrollView>
 
@@ -1141,6 +1233,540 @@ function MusicScreen({ navigation }: any) {
             </View>
           </View>
         </LinearGradient>
+      )}
+    </View>
+  );
+}
+
+// Écran Zikr - Design selon l'image
+function ZikrScreen({ navigation }: any) {
+  const { language, darkMode, setCurrentPlayer, currentPlayer } = React.useContext(AppContext);
+  const theme = darkMode ? darkTheme : lightTheme;
+  const [isPlaying, setIsPlaying] = React.useState(false);
+  const [position, setPosition] = React.useState(0);
+  const [duration, setDuration] = React.useState(0);
+  const [showInfo, setShowInfo] = React.useState(false);
+  const [showCarMode, setShowCarMode] = React.useState(false);
+  const [playbackSpeed, setPlaybackSpeed] = React.useState(1.0);
+  const [showMenu, setShowMenu] = React.useState(false);
+  const [showSleepTimer, setShowSleepTimer] = React.useState(false);
+
+  // Utiliser expo-audio pour la lecture
+  const getAudioSource = () => {
+    if (currentPlayer?.type === 'zikr' && currentPlayer.item) {
+      if (currentPlayer.item.file) {
+        return currentPlayer.item.file;
+      }
+      return require('./assets/audio/audio.mp3');
+    }
+    return require('./assets/audio/audio.mp3');
+  };
+
+  const player = useAudioPlayer(getAudioSource());
+
+  React.useEffect(() => {
+    if (player && currentPlayer?.type === 'zikr') {
+      setPosition(0);
+      setDuration(0);
+      
+      // Démarrer automatiquement la lecture
+      const startPlayback = async () => {
+        try {
+          if (player && !player.playing) {
+            await player.play();
+            setIsPlaying(true);
+          }
+        } catch (error) {
+          console.log('Erreur démarrage automatique:', error);
+        }
+      };
+      
+      startPlayback();
+      
+      const updateStatus = () => {
+        try {
+          if (player) {
+            setIsPlaying(player.playing || false);
+            setPosition((player.currentTime || 0) * 1000);
+            const dur = (player.duration || 0) * 1000;
+            if (dur > 0) {
+              setDuration(dur);
+            }
+          }
+        } catch (error) {
+          console.log('Erreur mise à jour audio:', error);
+        }
+      };
+      const interval = setInterval(updateStatus, 500);
+      return () => clearInterval(interval);
+    } else {
+      setIsPlaying(false);
+      setPosition(0);
+      setDuration(0);
+    }
+  }, [player, currentPlayer]);
+
+  // Appliquer la vitesse de lecture quand elle change
+  React.useEffect(() => {
+    if (player && currentPlayer?.type === 'zikr') {
+      try {
+        // Essayer d'appliquer la vitesse au player
+        if ('rate' in player) {
+          (player as any).rate = playbackSpeed;
+        }
+      } catch (error) {
+        console.log('Erreur application vitesse:', error);
+      }
+    }
+  }, [playbackSpeed, player, currentPlayer]);
+
+  const togglePlay = async () => {
+    try {
+      if (player) {
+        if (player.playing) {
+          await player.pause();
+          setIsPlaying(false);
+        } else {
+          await player.play();
+          setIsPlaying(true);
+          if (duration === 0) {
+            setTimeout(() => {
+              if (player.duration) {
+                setDuration(player.duration * 1000);
+              }
+            }, 500);
+          }
+        }
+      }
+    } catch (error) {
+      console.log('Erreur toggle play:', error);
+      setIsPlaying(!isPlaying);
+      if (!isPlaying && duration === 0) {
+        setDuration(180000);
+      }
+    }
+  };
+
+  const formatTime = (ms: number) => {
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const formatRemainingTime = (current: number, total: number) => {
+    const remaining = total - current;
+    const totalSeconds = Math.floor(remaining / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `-${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const handleRewind = async () => {
+    try {
+      if (player) {
+        const currentTime = player.currentTime || 0;
+        const newTime = Math.max(0, currentTime - 30);
+        // Utiliser setPosition pour mettre à jour l'état, le player se mettra à jour automatiquement
+        setPosition(newTime * 1000);
+        // Forcer la mise à jour en relançant la lecture si nécessaire
+        if (player.playing) {
+          await player.pause();
+          await player.play();
+        }
+      }
+    } catch (error) {
+      console.log('Erreur rewind:', error);
+    }
+  };
+
+  const handleForward = async () => {
+    try {
+      if (player) {
+        const currentTime = player.currentTime || 0;
+        const maxTime = player.duration || 0;
+        const newTime = Math.min(maxTime, currentTime + 30);
+        // Utiliser setPosition pour mettre à jour l'état
+        setPosition(newTime * 1000);
+        // Forcer la mise à jour en relançant la lecture si nécessaire
+        if (player.playing) {
+          await player.pause();
+          await player.play();
+        }
+      }
+    } catch (error) {
+      console.log('Erreur forward:', error);
+    }
+  };
+
+  const handlePrevious = () => {
+    const currentIndex = zikrFiles.findIndex(z => z.id === currentPlayer?.item?.id);
+    if (currentIndex > 0) {
+      setCurrentPlayer({ item: zikrFiles[currentIndex - 1], type: 'zikr' });
+    }
+  };
+
+  const handleNext = () => {
+    const currentIndex = zikrFiles.findIndex(z => z.id === currentPlayer?.item?.id);
+    if (currentIndex < zikrFiles.length - 1) {
+      setCurrentPlayer({ item: zikrFiles[currentIndex + 1], type: 'zikr' });
+    }
+  };
+
+
+  const handleShare = async () => {
+    if (currentPlayer?.item) {
+      try {
+        await Share.share({
+          message: `Écoutez "${currentPlayer.item.title}" sur Hassaniya Digital`,
+          title: currentPlayer.item.title,
+        });
+      } catch (error) {
+        console.error('Erreur partage:', error);
+      }
+    }
+  };
+
+  const handleClosePlayer = () => {
+    setCurrentPlayer(null);
+    if (player) {
+      player.pause();
+    }
+  };
+
+  const handleSpeedChange = async () => {
+    const speeds = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
+    const currentIndex = speeds.indexOf(playbackSpeed);
+    const nextIndex = (currentIndex + 1) % speeds.length;
+    const newSpeed = speeds[nextIndex];
+    setPlaybackSpeed(newSpeed);
+    
+    // Appliquer la vitesse au player si possible
+    try {
+      if (player && 'rate' in player) {
+        (player as any).rate = newSpeed;
+      }
+    } catch (error) {
+      console.log('Erreur changement vitesse:', error);
+    }
+  };
+
+  const handleMenuPress = () => {
+    setShowMenu(!showMenu);
+    Alert.alert(
+      'Options',
+      'Choisissez une option',
+      [
+        { text: 'Ajouter à la playlist', onPress: () => {} },
+        { text: 'Télécharger', onPress: () => {} },
+        { text: 'Supprimer', onPress: () => {}, style: 'destructive' },
+        { text: 'Annuler', style: 'cancel' },
+      ]
+    );
+  };
+
+  const handleSleepTimer = () => {
+    setShowSleepTimer(!showSleepTimer);
+    Alert.alert(
+      'Minuteur de sommeil',
+      'Choisissez la durée',
+      [
+        { text: '5 minutes', onPress: () => {} },
+        { text: '10 minutes', onPress: () => {} },
+        { text: '15 minutes', onPress: () => {} },
+        { text: '30 minutes', onPress: () => {} },
+        { text: 'Désactiver', onPress: () => setShowSleepTimer(false) },
+        { text: 'Annuler', style: 'cancel' },
+      ]
+    );
+  };
+
+  return (
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <StatusBar style={darkMode ? 'light' : 'dark'} />
+      
+      {/* Header avec bouton retour */}
+      <View style={[styles.zikrHeader, { backgroundColor: theme.surface }]}>
+        <TouchableOpacity 
+          onPress={() => navigation.goBack()}
+          style={styles.zikrBackButton}
+        >
+          <Text style={[styles.zikrBackIcon, { color: theme.text }]}>←</Text>
+        </TouchableOpacity>
+        <Text style={[styles.zikrHeaderTitle, { color: '#0F5132' }]}>Zikr</Text>
+        <View style={styles.zikrHeaderSpacer} />
+      </View>
+
+      <ScrollView 
+        style={styles.zikrScrollView} 
+        contentContainerStyle={[styles.zikrScrollContent, currentPlayer?.type === 'zikr' && { paddingBottom: 220 }]}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Banner Zikr en haut */}
+        <View style={styles.zikrBannerContainer}>
+          <LinearGradient
+            colors={['#0B3C5D', '#0F5132', '#0B3C5D']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.zikrBannerGradient}
+          >
+            <View style={styles.zikrBannerPattern}>
+              <Text style={styles.zikrBannerTextAr}>ذكر</Text>
+              <Text style={styles.zikrBannerTextLatin}>ZIKR</Text>
+            </View>
+          </LinearGradient>
+        </View>
+
+        {/* Section Header */}
+        <View style={styles.zikrSectionHeader}>
+          <Text style={[styles.zikrSectionTitle, { color: theme.text }]}>Zikr</Text>
+          <Text style={[styles.zikrSectionSubtitle, { color: theme.textSecondary }]}>
+            {zikrFiles.length} tracks
+          </Text>
+        </View>
+
+        {/* Liste des fichiers Zikr */}
+        {zikrFiles.map((zikr) => {
+          const isPlaying = currentPlayer?.type === 'zikr' && currentPlayer.item?.id === zikr.id;
+          
+          return (
+            <TouchableOpacity
+              key={zikr.id}
+              style={[styles.zikrCard, { backgroundColor: theme.surface }]}
+              activeOpacity={0.9}
+              onPress={() => {
+                setCurrentPlayer({ item: zikr, type: 'zikr' });
+              }}
+            >
+              {/* Thumbnail avec overlay */}
+              <View style={styles.zikrThumbnailContainer}>
+                <Image 
+                  source={zikr.image || require('./assets/thierno.png')} 
+                  style={styles.zikrThumbnail}
+                  resizeMode="cover"
+                />
+                <View style={styles.zikrThumbnailOverlay}>
+                  <Text style={styles.zikrThumbnailOverlayText}>
+                    {zikr.subtitle?.toUpperCase() || zikr.title.toUpperCase()}
+                  </Text>
+                </View>
+              </View>
+
+              {/* Contenu de la carte */}
+              <View style={styles.zikrCardContent}>
+                <Text style={[styles.zikrCardTitleAr, { color: theme.text }]} numberOfLines={1}>
+                  {zikr.titleAr}
+                </Text>
+                <Text style={[styles.zikrCardTitle, { color: theme.text }]} numberOfLines={2}>
+                  {zikr.title}
+                </Text>
+                {zikr.subtitle && (
+                  <Text style={[styles.zikrCardSubtitle, { color: theme.textSecondary }]} numberOfLines={1}>
+                    {zikr.subtitle}
+                  </Text>
+                )}
+                <Text style={[styles.zikrCardDescription, { color: theme.textSecondary }]} numberOfLines={2}>
+                  {zikr.description}
+                </Text>
+                
+                {/* Métadonnées */}
+                <View style={styles.zikrCardFooter}>
+                  <View style={styles.zikrCardFooterLeft}>
+                    <Text style={styles.zikrCardFooterIcon}>🎧</Text>
+                    <Text style={[styles.zikrCardFooterText, { color: theme.textSecondary }]}>
+                      {zikr.duration || zikr.tracks || '--:--'}
+                    </Text>
+                  </View>
+                  <View style={styles.zikrCardFooterRight}>
+                    <TouchableOpacity style={styles.zikrCardFooterButton}>
+                      <Text style={styles.zikrCardFooterButtonIcon}>🔖</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                      style={styles.zikrCardFooterButton}
+                      onPress={() => setShowInfo(!showInfo)}
+                    >
+                      <Text style={styles.zikrCardFooterButtonIcon}>ℹ️</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+
+      {/* Lecteur audio selon l'image - Design complet */}
+      {currentPlayer?.type === 'zikr' && currentPlayer.item && (
+        <View style={styles.zikrPlayerContainer}>
+          {/* Header avec icônes */}
+          <View style={styles.zikrPlayerHeader}>
+            <TouchableOpacity 
+              onPress={handleClosePlayer}
+              style={styles.zikrPlayerHeaderIcon}
+            >
+              <Text style={styles.zikrPlayerHeaderIconText}>←</Text>
+            </TouchableOpacity>
+            <View style={styles.zikrPlayerHeaderIcons}>
+              <TouchableOpacity 
+                style={[styles.zikrPlayerHeaderIcon, showCarMode && { backgroundColor: '#0F5132', borderRadius: 20 }]}
+                onPress={() => setShowCarMode(!showCarMode)}
+              >
+                <Text style={styles.zikrPlayerHeaderIconText}>🚗</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.zikrPlayerHeaderIcon}
+                onPress={handleShare}
+              >
+                <Text style={styles.zikrPlayerHeaderIconText}>📤</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.zikrPlayerHeaderIcon}
+                onPress={() => {
+                  setShowInfo(!showInfo);
+                  if (currentPlayer?.item) {
+                    Alert.alert(
+                      currentPlayer.item.title,
+                      currentPlayer.item.description || 'Informations sur cette piste',
+                      [{ text: 'OK' }]
+                    );
+                  }
+                }}
+              >
+                <Text style={styles.zikrPlayerHeaderIconText}>ℹ️</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Carte principale avec image */}
+          <View style={styles.zikrPlayerCard}>
+            <ImageBackground
+              source={currentPlayer.item.image || require('./assets/thierno.png')}
+              style={styles.zikrPlayerImage}
+              resizeMode="cover"
+              imageStyle={styles.zikrPlayerImageStyle}
+            >
+              {/* Overlay avec texte doré */}
+              <View style={styles.zikrPlayerOverlay}>
+                <Text style={styles.zikrPlayerOverlayText}>ZIKR IMAM AL-FAYDA</Text>
+                <Text style={styles.zikrPlayerOverlayText}>SHAYKH TIJANI CISSE</Text>
+              </View>
+            </ImageBackground>
+            
+            {/* Section turquoise avec motif */}
+            <LinearGradient
+              colors={['#20B2AA', '#17A2B8', '#20B2AA']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.zikrPlayerTealSection}
+            >
+              <View style={styles.zikrPlayerLogos}>
+                <View style={styles.zikrPlayerFaydaLogo}>
+                  <Text style={styles.zikrPlayerFaydaLogoAr}>فيضة</Text>
+                  <Text style={styles.zikrPlayerFaydaLogoText}>FAYDA DIGITAL</Text>
+                </View>
+              </View>
+            </LinearGradient>
+          </View>
+
+          {/* Titre de la piste */}
+          <View style={styles.zikrPlayerTrackInfo}>
+            <Text style={[styles.zikrPlayerTrackTitle, { color: theme.text }]} numberOfLines={1}>
+              {currentPlayer.item.titleAr} {currentPlayer.item.title}
+            </Text>
+            <TouchableOpacity 
+              style={styles.zikrPlayerOptions}
+              onPress={handleMenuPress}
+            >
+              <Text style={styles.zikrPlayerOptionsIcon}>☰</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Barre de progression */}
+          <View style={styles.zikrPlayerProgressContainer}>
+            <Slider
+              style={styles.zikrPlayerSlider}
+              value={position}
+              maximumValue={duration || 100}
+              minimumValue={0}
+              onValueChange={(value) => {
+                setPosition(value);
+                // Note: currentTime est en lecture seule dans expo-audio
+                // La position sera mise à jour automatiquement par le player
+              }}
+              minimumTrackTintColor="#0F5132"
+              maximumTrackTintColor="#e0e0e0"
+              thumbTintColor="#0F5132"
+            />
+            <View style={styles.zikrPlayerTimeContainer}>
+              <Text style={[styles.zikrPlayerTimeText, { color: theme.text }]}>
+                {formatTime(position)}
+              </Text>
+              <Text style={[styles.zikrPlayerTimeText, { color: theme.text }]}>
+                {duration > 0 ? formatRemainingTime(position, duration) : '--:--'}
+              </Text>
+            </View>
+          </View>
+
+          {/* Contrôles de lecture - Design selon l'image */}
+          <View style={styles.zikrPlayerControls}>
+            {/* 30s Rewind Circle */}
+            <TouchableOpacity 
+              style={styles.zikrPlayer30sBtn}
+              onPress={handleRewind}
+              activeOpacity={0.7}
+            >
+              <View style={styles.zikrPlayer30sCircle}>
+                <Text style={styles.zikrPlayer30sText}>30s</Text>
+              </View>
+            </TouchableOpacity>
+            
+            {/* Play/Pause Button */}
+            <TouchableOpacity 
+              style={styles.zikrPlayerPlayBtn}
+              onPress={togglePlay}
+              activeOpacity={0.9}
+            >
+              <LinearGradient
+                colors={['#0F5132', '#0B3C5D']}
+                style={styles.zikrPlayerPlayBtnGradient}
+              >
+                <Text style={styles.zikrPlayerPlayIcon}>{isPlaying ? '⏸' : '▶'}</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+            
+            {/* 30s Forward Circle */}
+            <TouchableOpacity 
+              style={styles.zikrPlayer30sBtn}
+              onPress={handleForward}
+              activeOpacity={0.7}
+            >
+              <View style={styles.zikrPlayer30sCircle}>
+                <Text style={styles.zikrPlayer30sText}>30s</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+
+          {/* Contrôles supplémentaires */}
+          <View style={styles.zikrPlayerBottomControls}>
+            <TouchableOpacity 
+              style={styles.zikrPlayerSpeedControl}
+              onPress={handleSpeedChange}
+            >
+              <Text style={styles.zikrPlayerSpeedIcon}>⏱</Text>
+              <Text style={[styles.zikrPlayerSpeedText, { color: theme.text }]}>
+                {playbackSpeed.toFixed(1)}x
+              </Text>
+            </TouchableOpacity>
+            <View style={styles.zikrPlayerBottomIcons}>
+              <TouchableOpacity 
+                style={[styles.zikrPlayerBottomIcon, showSleepTimer && { backgroundColor: '#C9A24D' }]}
+                onPress={handleSleepTimer}
+              >
+                <Text style={styles.zikrPlayerBottomIconText}>Z</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
       )}
     </View>
   );
@@ -1256,133 +1882,143 @@ function PodcastsScreen({ navigation }: any) {
     return colors[(id - 1) % colors.length];
   };
 
+  const [selectedTab, setSelectedTab] = React.useState<'podcast' | 'knowledgecast'>('podcast');
+
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <StatusBar style={darkMode ? 'light' : 'dark'} />
       
-      {/* Header avec gradient élégant */}
-      <LinearGradient
-        colors={darkMode ? ['#0B3C5D', '#0F5132'] : ['#F8F9F6', '#ffffff']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.podcastsHeaderModern}
-      >
-        <View style={styles.podcastsHeaderContent}>
-          <View style={styles.podcastsHeaderLeft}>
-            <View style={styles.podcastsHeaderIconContainer}>
-              <Text style={styles.podcastsHeaderIcon}>🎙️</Text>
-            </View>
-            <View>
-              <Text style={[styles.podcastsHeaderTitle, { color: theme.text }]}>{t('podcasts.title')}</Text>
-              <Text style={[styles.podcastsHeaderSubtitle, { color: theme.textSecondary }]}>
-                {podcasts.length} {t('podcasts.title').toLowerCase()} {t('library.available').split(' ')[1]}
-              </Text>
-            </View>
-          </View>
-          <LanguageSelector />
+      {/* Header avec pills et icônes */}
+      <View style={[styles.podcastsHeaderNew, { backgroundColor: theme.surface }]}>
+        <TouchableOpacity style={styles.podcastsHeaderIconBtn}>
+          <Text style={[styles.podcastsHeaderIconNew, { color: theme.text }]}>⚙️</Text>
+        </TouchableOpacity>
+        
+        <View style={styles.podcastsHeaderPills}>
+          <TouchableOpacity
+            style={[
+              styles.podcastsHeaderPill,
+              selectedTab === 'podcast' && styles.podcastsHeaderPillActive
+            ]}
+            onPress={() => setSelectedTab('podcast')}
+          >
+            <Text style={[
+              styles.podcastsHeaderPillText,
+              selectedTab === 'podcast' && styles.podcastsHeaderPillTextActive
+            ]}>
+              Podcast
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.podcastsHeaderPill,
+              selectedTab === 'knowledgecast' && styles.podcastsHeaderPillActive
+            ]}
+            onPress={() => setSelectedTab('knowledgecast')}
+          >
+            <Text style={[
+              styles.podcastsHeaderPillText,
+              selectedTab === 'knowledgecast' && styles.podcastsHeaderPillTextActive
+            ]}>
+              KnowledgeCast
+            </Text>
+          </TouchableOpacity>
         </View>
-      </LinearGradient>
+        
+        <TouchableOpacity style={styles.podcastsHeaderIconBtn}>
+          <Text style={[styles.podcastsHeaderIconNew, { color: theme.text }]}>🔍</Text>
+        </TouchableOpacity>
+      </View>
 
       <ScrollView 
         style={styles.podcastsScrollNew} 
         contentContainerStyle={[styles.podcastsScrollContentNew, currentPlayer?.type === 'podcast' && { paddingBottom: 220 }]}
         showsVerticalScrollIndicator={false}
       >
-        {podcasts.map((podcast, index) => {
-          const podcastColors = getPodcastColor(podcast.id);
-          const isSubscribed = subscribedPodcasts.includes(podcast.id);
-          
-          return (
-            <View key={podcast.id} style={styles.podcastCardWrapper}>
-              <View 
-                style={[
-                  styles.podcastCardNew,
-                  { 
-                    backgroundColor: theme.surface,
-                    borderLeftWidth: 5,
-                    borderLeftColor: podcastColors[0],
-                  }
-                ]}
-              >
-                <View style={styles.podcastCardContentNew}>
-                  {/* Icône avec gradient coloré */}
-                  <LinearGradient
-                    colors={podcastColors}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.podcastIconNew}
-                  >
-                    <Text style={styles.podcastIconTextNew}>🎙️</Text>
-                  </LinearGradient>
+        {podcasts.map((podcast) => (
+          <View key={podcast.id} style={styles.podcastCardNew}>
+            {/* Icône FAYDA avec date */}
+            <View style={styles.podcastCardHeader}>
+              <View style={styles.podcastFaydaIcon}>
+                <Text style={styles.podcastFaydaIconText}>فيضة</Text>
+              </View>
+              <Text style={[styles.podcastDate, { color: theme.textSecondary }]}>
+                {podcast.date}
+              </Text>
+            </View>
 
-                  {/* Informations du podcast */}
-                  <View style={styles.podcastInfoNew}>
-                    <View style={styles.podcastTitleRow}>
-                      <Text style={[styles.podcastTitleNew, { color: theme.text }]} numberOfLines={2}>
-                        {podcast.title}
-                      </Text>
-                      {isSubscribed && (
-                        <View style={[styles.podcastSubscribedBadge, { backgroundColor: podcastColors[0] }]}>
-                          <Text style={styles.podcastSubscribedIcon}>✓</Text>
-                        </View>
-                      )}
-                    </View>
-                    
-                    <Text style={[styles.podcastHostNew, { color: theme.textSecondary }]} numberOfLines={1}>
-                      👤 {t('modal.by')} {podcast.host}
-                    </Text>
-
-                    {/* Statistiques avec badges */}
-                    <View style={styles.podcastStatsNew}>
-                      <View style={[styles.podcastStatBadge, { backgroundColor: podcastColors[0] + '15' }]}>
-                        <Text style={styles.podcastStatIconNew}>📻</Text>
-                        <Text style={[styles.podcastStatTextNew, { color: podcastColors[0] }]}>
-                          {podcast.episodes}
-                        </Text>
-                        <Text style={[styles.podcastStatLabel, { color: theme.textSecondary }]}>{t('stats.episodes')}</Text>
-                      </View>
-                      <View style={[styles.podcastStatBadge, { backgroundColor: podcastColors[0] + '15' }]}>
-                        <Text style={styles.podcastStatIconNew}>👥</Text>
-                        <Text style={[styles.podcastStatTextNew, { color: podcastColors[0] }]}>
-                          {podcast.subscribers}
-                        </Text>
-                        <Text style={[styles.podcastStatLabel, { color: theme.textSecondary }]}>{t('stats.subscribers')}</Text>
-                      </View>
-                    </View>
-                  </View>
+            {/* Thumbnail avec overlay */}
+            <TouchableOpacity
+              style={styles.podcastThumbnailContainer}
+              activeOpacity={0.9}
+              onPress={() => {
+                setCurrentPlayer({ item: podcast, type: 'podcast' });
+              }}
+            >
+              <Image 
+                source={podcast.image || require('./assets/thierno.png')} 
+                style={styles.podcastThumbnail}
+                resizeMode="cover"
+              />
+              
+              {/* Icône de cadenas si verrouillé */}
+              {podcast.locked && (
+                <View style={styles.podcastLockIcon}>
+                  <Text style={styles.podcastLockIconText}>🔒</Text>
                 </View>
-
-                {/* Actions */}
-                <View style={styles.podcastActionsNew}>
-                  <TouchableOpacity
-                    style={[
-                      styles.podcastSubscribeButton,
-                      isSubscribed && { backgroundColor: podcastColors[0] }
-                    ]}
-                    activeOpacity={0.8}
-                    onPress={() => handleSubscribe(podcast.id)}
-                  >
-                    <Text style={[
-                      styles.podcastSubscribeText,
-                      isSubscribed && styles.podcastSubscribeTextActive
-                    ]}>
-                      {isSubscribed ? `✓ ${t('action.subscribed')}` : t('action.subscribe')}
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[styles.podcastPlayButtonNew, { backgroundColor: podcastColors[0] }]}
-                    activeOpacity={0.9}
-                    onPress={() => {
-                      setCurrentPlayer({ item: podcast, type: 'podcast' });
-                    }}
-                  >
-                    <Text style={styles.podcastPlayIconNew}>▶</Text>
-                  </TouchableOpacity>
+              )}
+              
+              {/* Overlay avec texte */}
+              <View style={styles.podcastThumbnailOverlay}>
+                <View style={styles.podcastThumbnailTextContainer}>
+                  <Text style={styles.podcastThumbnailTitle}>{podcast.title}</Text>
+                  <Text style={styles.podcastThumbnailSubtitle}>{podcast.subtitle}</Text>
+                  <Text style={styles.podcastThumbnailEpisodes}>Episodes - {podcast.episodeType}</Text>
+                </View>
+                
+                {/* Logo FAYDA DIGITAL avec waveform */}
+                <View style={styles.podcastThumbnailLogo}>
+                  <Text style={styles.podcastThumbnailLogoAr}>فيضة</Text>
+                  <Text style={styles.podcastThumbnailLogoText}>DIGITAL</Text>
+                  <Text style={styles.podcastThumbnailWaveform}>〰️</Text>
                 </View>
               </View>
+            </TouchableOpacity>
+
+            {/* Titre en dessous */}
+            <Text style={[styles.podcastCardTitleNew, { color: theme.text }]} numberOfLines={2}>
+              {podcast.title}
+            </Text>
+            
+            {/* Description si disponible */}
+            {podcast.description && (
+              <Text style={[styles.podcastCardDescription, { color: theme.textSecondary }]} numberOfLines={2}>
+                {podcast.description}
+              </Text>
+            )}
+
+            {/* Infos avec icônes */}
+            <View style={styles.podcastCardFooterNew}>
+              <View style={styles.podcastCardFooterLeft}>
+                <Text style={styles.podcastCardFooterIcon}>🎧</Text>
+                <Text style={[styles.podcastCardFooterText, { color: theme.textSecondary }]}>
+                  {podcast.duration}
+                </Text>
+              </View>
+              <View style={styles.podcastCardFooterRight}>
+                <TouchableOpacity style={styles.podcastCardFooterButton}>
+                  <Text style={styles.podcastCardFooterIcon}>🔖</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={styles.podcastCardFooterButton}
+                  onPress={() => setShowInfo(!showInfo)}
+                >
+                  <Text style={styles.podcastCardFooterIcon}>ℹ️</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          );
-        })}
+          </View>
+        ))}
       </ScrollView>
 
       {/* Lecteur audio intégré en bas - Moderne */}
@@ -1482,6 +2118,20 @@ function LibraryScreen({ navigation }: any) {
   const { language, darkMode } = React.useContext(AppContext);
   const theme = darkMode ? darkTheme : lightTheme;
   const [selectedCourse, setSelectedCourse] = React.useState<any>(null);
+  const [selectedLesson, setSelectedLesson] = React.useState<any>(null);
+  const [isVideoPlaying, setIsVideoPlaying] = React.useState(false);
+  
+  // Créer le lecteur vidéo pour la leçon sélectionnée
+  const videoUrl = selectedLesson?.videoUrl || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+  const videoPlayer = useVideoPlayer(
+    { uri: videoUrl },
+    (player) => {
+      if (player) {
+        player.loop = false;
+        player.muted = false;
+      }
+    }
+  );
 
   const courseLessons: Record<number, any[]> = {
     1: [
@@ -1637,7 +2287,10 @@ function LibraryScreen({ navigation }: any) {
                         }
                       ]}
                       activeOpacity={0.7}
-                      onPress={() => navigation.navigate('VideoPlayer', { lesson })}
+                      onPress={() => {
+                        setSelectedLesson(lesson);
+                        setIsVideoPlaying(true);
+                      }}
                     >
                       <View style={styles.libraryLessonItemContent}>
                         <View style={[styles.libraryLessonNumber, { backgroundColor: courseColors[0] + '20' }]}>
@@ -1679,38 +2332,267 @@ function LibraryScreen({ navigation }: any) {
           );
         })}
       </ScrollView>
+
+      {/* Lecteur vidéo intégré - Format MOOC */}
+      {selectedLesson && isVideoPlaying && (
+        <View style={[styles.libraryVideoPlayer, { backgroundColor: theme.background }]}>
+          <View style={[styles.libraryVideoHeader, { backgroundColor: theme.surface }]}>
+            <Text style={[styles.libraryVideoTitle, { color: theme.text }]} numberOfLines={1}>
+              {selectedLesson.title}
+            </Text>
+            <TouchableOpacity 
+              onPress={() => {
+                setSelectedLesson(null);
+                setIsVideoPlaying(false);
+              }}
+              style={styles.libraryVideoClose}
+            >
+              <Text style={[styles.libraryVideoCloseText, { color: theme.text }]}>✕</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.libraryVideoContainer}>
+            <VideoView
+              player={videoPlayer}
+              style={styles.libraryVideoView}
+              allowsFullscreen
+              allowsPictureInPicture
+            />
+          </View>
+        </View>
+      )}
     </View>
   );
 }
 
-// Écran simple pour ouvrir le livre avec le lecteur par défaut
+// Écran lecteur PDF - Affiche le PDF directement dans l'application
 function PDFReaderScreen({ route, navigation }: any) {
   const { book } = route.params;
   const { darkMode } = React.useContext(AppContext);
   const theme = darkMode ? darkTheme : lightTheme;
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+  const [pdfUri, setPdfUri] = React.useState<string | null>(null);
+  const webViewRef = React.useRef<WebView>(null);
+  const [zoomLevel, setZoomLevel] = React.useState(1.0);
 
   React.useEffect(() => {
-    // Retourner automatiquement après un court délai
-    // Le fichier sera ouvert par le système par défaut
-    const timer = setTimeout(() => {
-      navigation.goBack();
-    }, 1000);
+    const loadPdf = async () => {
+      try {
+        if (book?.pdfFile) {
+          setLoading(true);
+          const asset = Asset.fromModule(book.pdfFile);
+          await asset.downloadAsync();
+          
+          if (asset.localUri) {
+            setPdfUri(asset.localUri);
+            setLoading(false);
+          } else {
+            setError('Impossible de charger le PDF');
+            setLoading(false);
+          }
+        } else {
+          setError('Aucun fichier PDF disponible');
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error('Erreur chargement PDF:', err);
+        setError('Erreur lors du chargement du PDF');
+        setLoading(false);
+      }
+    };
 
-    return () => clearTimeout(timer);
-  }, [navigation]);
+    loadPdf();
+  }, [book]);
+
+  // Fonction pour zoomer
+  const handleZoomIn = () => {
+    const newZoom = Math.min(zoomLevel + 0.25, 3.0);
+    setZoomLevel(newZoom);
+    // Utiliser une approche différente pour le zoom avec WebView
+    webViewRef.current?.injectJavaScript(`
+      (function() {
+        var viewport = document.querySelector('meta[name=viewport]');
+        if (!viewport) {
+          viewport = document.createElement('meta');
+          viewport.name = 'viewport';
+          document.head.appendChild(viewport);
+        }
+        viewport.content = 'width=device-width, initial-scale=' + ${newZoom} + ', maximum-scale=3.0, user-scalable=yes';
+        var body = document.body;
+        if (body) {
+          body.style.transform = 'scale(' + ${newZoom} + ')';
+          body.style.transformOrigin = 'top left';
+          body.style.width = (100 / ${newZoom}) + '%';
+        }
+        true;
+      })();
+    `);
+  };
+
+  const handleZoomOut = () => {
+    const newZoom = Math.max(zoomLevel - 0.25, 0.5);
+    setZoomLevel(newZoom);
+    // Utiliser une approche différente pour le zoom avec WebView
+    webViewRef.current?.injectJavaScript(`
+      (function() {
+        var viewport = document.querySelector('meta[name=viewport]');
+        if (!viewport) {
+          viewport = document.createElement('meta');
+          viewport.name = 'viewport';
+          document.head.appendChild(viewport);
+        }
+        viewport.content = 'width=device-width, initial-scale=' + ${newZoom} + ', maximum-scale=3.0, user-scalable=yes';
+        var body = document.body;
+        if (body) {
+          body.style.transform = 'scale(' + ${newZoom} + ')';
+          body.style.transformOrigin = 'top left';
+          body.style.width = (100 / ${newZoom}) + '%';
+        }
+        true;
+      })();
+    `);
+  };
+
+  // Fonction pour partager
+  const handleShare = async () => {
+    try {
+      if (pdfUri) {
+        const isAvailable = await Sharing.isAvailableAsync();
+        if (isAvailable) {
+          await Sharing.shareAsync(pdfUri);
+        } else {
+          await Share.share({
+            message: `Partagez "${book?.title || 'ce PDF'}"`,
+            url: pdfUri,
+          });
+        }
+      }
+    } catch (err) {
+      Alert.alert('Erreur', 'Impossible de partager le PDF');
+      console.error('Erreur partage:', err);
+    }
+  };
+
+  // Fonction pour imprimer
+  const handlePrint = async () => {
+    try {
+      if (pdfUri) {
+        await Print.printAsync({
+          uri: pdfUri,
+        });
+      }
+    } catch (err) {
+      Alert.alert('Erreur', 'Impossible d\'imprimer le PDF');
+      console.error('Erreur impression:', err);
+    }
+  };
 
   return (
     <View style={[styles.pdfReaderScreen, { backgroundColor: theme.background }]}>
-      <View style={styles.pdfReaderHeader}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.pdfReaderClose}>✕</Text>
-        </TouchableOpacity>
-        <Text style={styles.pdfReaderTitle} numberOfLines={1}>{book.title || 'Livre'}</Text>
+      <StatusBar style={darkMode ? 'light' : 'dark'} />
+      <View style={[styles.pdfReaderHeader, { backgroundColor: theme.surface }]}>
+        <View style={{width: 40}} />
+        <Text style={[styles.pdfReaderTitle, { color: theme.text }]} numberOfLines={1}>
+          {book?.title || 'Livre'}
+        </Text>
         <View style={{width: 40}} />
       </View>
-      <View style={styles.pdfLoading}>
-        <Text style={styles.pdfLoadingText}>{t('common.loading')}...</Text>
+
+      {/* Barre de contrôles PDF */}
+      <View style={[styles.pdfControlsBar, { backgroundColor: theme.surface }]}>
+        <TouchableOpacity 
+          style={[styles.pdfControlButton, { backgroundColor: theme.background }]}
+          onPress={handleZoomOut}
+        >
+          <Text style={[styles.pdfControlIcon, { color: theme.text }]}>🔍-</Text>
+        </TouchableOpacity>
+        
+        <Text style={[styles.pdfZoomText, { color: theme.text }]}>
+          {Math.round(zoomLevel * 100)}%
+        </Text>
+        
+        <TouchableOpacity 
+          style={[styles.pdfControlButton, { backgroundColor: theme.background }]}
+          onPress={handleZoomIn}
+        >
+          <Text style={[styles.pdfControlIcon, { color: theme.text }]}>🔍+</Text>
+        </TouchableOpacity>
+        
+        <View style={styles.pdfControlsSeparator} />
+        
+        <TouchableOpacity 
+          style={[styles.pdfControlButton, { backgroundColor: theme.background }]}
+          onPress={handleShare}
+        >
+          <Text style={[styles.pdfControlIcon, { color: theme.text }]}>📤</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity 
+          style={[styles.pdfControlButton, { backgroundColor: theme.background }]}
+          onPress={handlePrint}
+        >
+          <Text style={[styles.pdfControlIcon, { color: theme.text }]}>🖨️</Text>
+        </TouchableOpacity>
+        
+        <View style={styles.pdfControlsSeparator} />
+        
+        <TouchableOpacity 
+          style={[styles.pdfControlButton, { backgroundColor: '#0F5132' }]}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={[styles.pdfControlIcon, { color: '#fff' }]}>✕</Text>
+        </TouchableOpacity>
       </View>
+      
+      {loading ? (
+        <View style={styles.pdfContainer}>
+          <ActivityIndicator size="large" color="#0F5132" />
+          <Text style={[styles.pdfLoadingText, { color: theme.textSecondary, marginTop: 20 }]}>
+            Chargement du PDF...
+          </Text>
+        </View>
+      ) : error ? (
+        <View style={styles.pdfContainer}>
+          <Text style={styles.pdfIcon}>⚠️</Text>
+          <Text style={[styles.pdfTitle, { color: theme.text }]}>
+            {error}
+          </Text>
+        </View>
+      ) : pdfUri ? (
+        <View style={{ flex: 1 }}>
+          <WebView
+            ref={webViewRef}
+            source={{ uri: pdfUri }}
+            style={{ flex: 1 }}
+            startInLoadingState={true}
+            renderLoading={() => (
+              <View style={styles.pdfContainer}>
+                <ActivityIndicator size="large" color="#0F5132" />
+                <Text style={[styles.pdfLoadingText, { color: theme.textSecondary, marginTop: 20 }]}>
+                  Chargement du PDF...
+                </Text>
+              </View>
+            )}
+            onError={(syntheticEvent) => {
+              const { nativeEvent } = syntheticEvent;
+              console.error('WebView Error:', nativeEvent);
+              setError('Impossible d\'afficher le PDF');
+            }}
+            onLoadEnd={() => {
+              setLoading(false);
+              // Initialiser le zoom
+              webViewRef.current?.injectJavaScript(`
+                document.body.style.zoom = ${zoomLevel};
+                true;
+              `);
+            }}
+            javaScriptEnabled={true}
+            scalesPageToFit={true}
+            allowFileAccess={true}
+            originWhitelist={['*']}
+          />
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -1725,6 +2607,18 @@ function AudioPlayerScreen({ route, navigation }: any) {
   const [duration, setDuration] = React.useState(6030000); // 100:30 (1h40:30)
   const [playbackSpeed, setPlaybackSpeed] = React.useState(1.0);
   const [carMode, setCarMode] = React.useState(false);
+  const [currentPage, setCurrentPage] = React.useState(0);
+  const scrollViewRef = React.useRef<ScrollView>(null);
+  const fadeAnim = React.useRef(new Animated.Value(1)).current;
+  const slideAnim = React.useRef(new Animated.Value(0)).current;
+
+  // Contenu texte simulé pour la synchronisation (vous pouvez remplacer par le vrai contenu)
+  const contentPages = [
+    "Première page du contenu. Ce texte sera synchronisé avec la lecture audio. Lorsque l'audio avance, le contenu défile automatiquement.",
+    "Deuxième page du contenu. La transition entre les pages est fluide et animée. Le lecteur suit automatiquement le texte affiché.",
+    "Troisième page du contenu. Les transitions sont synchronisées avec la position audio pour une expérience de lecture optimale.",
+    "Quatrième page du contenu. Le système de synchronisation permet de suivre facilement le texte pendant l'écoute.",
+  ];
 
   // Utiliser expo-audio pour la lecture
   const player = useAudioPlayer(require('./assets/audio/audio.mp3'));
@@ -1734,8 +2628,49 @@ function AudioPlayerScreen({ route, navigation }: any) {
       const updateStatus = () => {
         try {
           setIsPlaying(player.playing || false);
-          setPosition((player.currentTime || 0) * 1000);
+          const currentPos = (player.currentTime || 0) * 1000;
+          setPosition(currentPos);
           setDuration((player.duration || 0) * 1000);
+          
+          // Synchroniser le scroll avec la position audio
+          if (isPlaying && duration > 0) {
+            const progress = currentPos / duration;
+            const totalHeight = contentPages.length * 500; // Hauteur estimée par page
+            const scrollPosition = progress * totalHeight;
+            
+            // Calculer la page actuelle
+            const newPage = Math.floor(progress * contentPages.length);
+            if (newPage !== currentPage && newPage < contentPages.length) {
+              // Transition vers la nouvelle page
+              Animated.sequence([
+                Animated.timing(fadeAnim, {
+                  toValue: 0,
+                  duration: 200,
+                  useNativeDriver: true,
+                }),
+                Animated.timing(slideAnim, {
+                  toValue: -newPage * 20,
+                  duration: 300,
+                  useNativeDriver: true,
+                }),
+                Animated.timing(fadeAnim, {
+                  toValue: 1,
+                  duration: 200,
+                  useNativeDriver: true,
+                }),
+              ]).start();
+              
+              setCurrentPage(newPage);
+              
+              // Faire défiler vers la page correspondante
+              if (scrollViewRef.current) {
+                scrollViewRef.current.scrollTo({
+                  y: newPage * 500,
+                  animated: true,
+                });
+              }
+            }
+          }
         } catch (error) {
           console.log('Erreur mise à jour audio:', error);
         }
@@ -1743,7 +2678,7 @@ function AudioPlayerScreen({ route, navigation }: any) {
       const interval = setInterval(updateStatus, 500);
       return () => clearInterval(interval);
     }
-  }, [player]);
+  }, [player, isPlaying, duration, currentPage]);
 
   const togglePlay = async () => {
     try {
@@ -1834,10 +2769,37 @@ function AudioPlayerScreen({ route, navigation }: any) {
       </View>
 
       <ScrollView 
+        ref={scrollViewRef}
         style={styles.audioPlayerContentNew} 
         contentContainerStyle={styles.audioPlayerContentContainerNew}
         showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
       >
+        {/* Contenu texte synchronisé avec la lecture */}
+        <Animated.View 
+          style={[
+            styles.audioPlayerContentText,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            }
+          ]}
+        >
+          {contentPages.map((pageContent, index) => (
+            <View 
+              key={index} 
+              style={[
+                styles.audioPlayerPage,
+                index === currentPage && styles.audioPlayerPageActive
+              ]}
+            >
+              <Text style={[styles.audioPlayerPageText, { color: theme.text }]}>
+                {pageContent}
+              </Text>
+            </View>
+          ))}
+        </Animated.View>
+
         {/* Grande carte centrale avec motif islamique */}
         <View style={styles.audioPlayerCardNew}>
           <View style={styles.audioPlayerCardInner}>
@@ -2267,17 +3229,72 @@ function MainTabs() {
   );
 }
 
+// Écran de chargement avec "Hassaniya Digital"
+function LoadingScreen() {
+  const [fadeAnim] = React.useState(new Animated.Value(0));
+  const [scaleAnim] = React.useState(new Animated.Value(0.8));
+
+  React.useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        friction: 4,
+        tension: 40,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
+  return (
+    <View style={styles.loadingScreen}>
+      <LinearGradient
+        colors={['#0F5132', '#0B3C5D', '#0F5132']}
+        style={styles.loadingGradient}
+      >
+        <Animated.View
+          style={[
+            styles.loadingContent,
+            {
+              opacity: fadeAnim,
+              transform: [{ scale: scaleAnim }],
+            },
+          ]}
+        >
+          <Text style={styles.loadingLogo}>فيضة</Text>
+          <Text style={styles.loadingTitle}>HASSANIYA DIGITAL</Text>
+          <ActivityIndicator size="large" color="#C9A24D" style={styles.loadingSpinner} />
+        </Animated.View>
+      </LinearGradient>
+    </View>
+  );
+}
+
 // Composant principal
 export default function App() {
   const [language, setLang] = React.useState<Language>('fr');
   const [darkMode, setDarkMode] = React.useState(false);
-  const [currentPlayer, setCurrentPlayer] = React.useState<{ item: any; type: 'music' | 'podcast' | 'book' | null } | null>(null);
+  const [currentPlayer, setCurrentPlayer] = React.useState<{ item: any; type: 'music' | 'podcast' | 'book' | 'zikr' | null } | null>(null);
   const [audioState, setAudioState] = React.useState<{ isPlaying: boolean; position: number; duration: number } | null>(null);
   const [currentRoute, setCurrentRoute] = React.useState<string | null>(null);
+  const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
     setLanguage(language);
+    // Simuler un chargement de 2 secondes
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+    return () => clearTimeout(timer);
   }, [language]);
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <AppContext.Provider value={{
@@ -2299,6 +3316,7 @@ export default function App() {
           <Stack.Screen name="AudioPlayer" component={AudioPlayerScreen} />
           <Stack.Screen name="PDFReader" component={PDFReaderScreen} />
           <Stack.Screen name="VideoPlayer" component={VideoPlayerScreen} />
+          <Stack.Screen name="Zikr" component={ZikrScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </AppContext.Provider>
@@ -2943,10 +3961,6 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 6,
   },
-  podcastCardHeader: {
-    flexDirection: 'row',
-    marginBottom: 20,
-  },
   podcastIcon: {
     width: 50,
     height: 50,
@@ -3283,14 +4297,62 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
   },
-  pdfLoading: {
+  pdfContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 20,
+  },
+  pdfIcon: {
+    fontSize: 80,
+    marginBottom: 20,
+  },
+  pdfTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 10,
   },
   pdfLoadingText: {
     fontSize: 16,
-    color: '#666',
+    textAlign: 'center',
+  },
+  pdfControlsBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+    gap: 10,
+  },
+  pdfControlButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  pdfControlIcon: {
+    fontSize: 20,
+  },
+  pdfZoomText: {
+    fontSize: 14,
+    fontWeight: '600',
+    minWidth: 50,
+    textAlign: 'center',
+  },
+  pdfControlsSeparator: {
+    width: 1,
+    height: 30,
+    backgroundColor: '#e0e0e0',
+    marginHorizontal: 5,
   },
   audioPlayer: {
     position: 'absolute',
@@ -4599,6 +5661,33 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 30,
   },
+  audioPlayerContentText: {
+    marginBottom: 30,
+    minHeight: 200,
+  },
+  audioPlayerPage: {
+    padding: 20,
+    marginBottom: 20,
+    borderRadius: 12,
+    backgroundColor: '#f8f8f8',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  audioPlayerPageActive: {
+    backgroundColor: '#f0f8f0',
+    borderColor: '#0F5132',
+    borderWidth: 2,
+    shadowColor: '#0F5132',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  audioPlayerPageText: {
+    fontSize: 16,
+    lineHeight: 24,
+    textAlign: 'justify',
+  },
   // Grande carte centrale
   audioPlayerCardNew: {
     marginTop: 10,
@@ -5337,6 +6426,582 @@ const styles = StyleSheet.create({
     color: '#fff',
     marginLeft: 2,
   },
+  // Styles nouveaux podcasts
+  podcastsSection: {
+    marginBottom: 30,
+    paddingHorizontal: 20,
+  },
+  podcastsSectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  podcastsSectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  podcastsViewAllButton: {
+    backgroundColor: '#C9A24D',
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 15,
+  },
+  podcastsViewAllText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  podcastsHorizontalScroll: {
+    paddingRight: 20,
+    gap: 15,
+  },
+  podcastCardHorizontal: {
+    width: 180,
+    marginRight: 15,
+  },
+  podcastAlbumContainer: {
+    width: 180,
+    height: 180,
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginBottom: 12,
+    borderWidth: 2,
+    borderColor: '#0F5132',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  podcastAlbumImage: {
+    width: '100%',
+    height: '100%',
+  },
+  podcastAlbumOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    padding: 10,
+    paddingBottom: 8,
+  },
+  podcastAlbumTextAr: {
+    fontSize: 14,
+    color: '#fff',
+    fontWeight: 'bold',
+    marginBottom: 2,
+    textAlign: 'right',
+  },
+  podcastAlbumTextLatin: {
+    fontSize: 10,
+    color: '#fff',
+    marginBottom: 4,
+    textAlign: 'right',
+  },
+  podcastAlbumLogo: {
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  podcastAlbumLogoText: {
+    fontSize: 8,
+    color: '#C9A24D',
+    fontWeight: '600',
+  },
+  podcastCardTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  podcastCardSubtitle: {
+    fontSize: 12,
+    marginBottom: 8,
+  },
+  podcastCardInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  podcastCardInfoItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  podcastCardInfoIcon: {
+    fontSize: 14,
+  },
+  podcastCardInfoText: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  podcastCardInfoButton: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#f0f0f0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  podcastZikrCard: {
+    width: '100%',
+    height: 200,
+    borderRadius: 20,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  podcastZikrGradient: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  podcastZikrPattern: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  podcastZikrTextAr: {
+    fontSize: 80,
+    color: '#C9A24D',
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
+  },
+  podcastZikrTextLatin: {
+    fontSize: 32,
+    color: '#C9A24D',
+    fontWeight: 'bold',
+    letterSpacing: 4,
+  },
+  podcastMusicCard: {
+    width: '100%',
+    height: 200,
+    borderRadius: 20,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  podcastMusicGradient: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  podcastMusicPattern: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  podcastMusicTextAr: {
+    fontSize: 80,
+    color: '#ffffff',
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
+  },
+  podcastMusicTextLatin: {
+    fontSize: 32,
+    color: '#ffffff',
+    fontWeight: 'bold',
+    letterSpacing: 4,
+  },
+  // Styles header simple podcasts
+  podcastsHeaderSimple: {
+    paddingTop: 50,
+    paddingBottom: 15,
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  podcastsHeaderTitleSimple: {
+    fontSize: 28,
+    fontWeight: 'bold',
+  },
+  // Styles header nouveau design podcasts (avec pills)
+  podcastsHeaderNew: {
+    paddingTop: 50,
+    paddingBottom: 15,
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  podcastsHeaderIconBtn: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  podcastsHeaderIconNew: {
+    fontSize: 22,
+  },
+  podcastsHeaderPills: {
+    flexDirection: 'row',
+    gap: 10,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 25,
+    padding: 4,
+  },
+  podcastsHeaderPill: {
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  podcastsHeaderPillActive: {
+    backgroundColor: '#ffffff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  podcastsHeaderPillText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#666',
+  },
+  podcastsHeaderPillTextActive: {
+    color: '#0F5132',
+    fontWeight: 'bold',
+  },
+  // Styles cartes podcasts nouveau design
+  podcastCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+    paddingHorizontal: 4,
+  },
+  podcastFaydaIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#0F5132',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  podcastFaydaIconText: {
+    fontSize: 14,
+    color: '#C9A24D',
+    fontWeight: 'bold',
+  },
+  podcastDate: {
+    fontSize: 13,
+    fontWeight: '500',
+  },
+  podcastThumbnailContainer: {
+    width: '100%',
+    height: 280,
+    borderRadius: 16,
+    overflow: 'hidden',
+    marginBottom: 12,
+    position: 'relative',
+  },
+  podcastThumbnail: {
+    width: '100%',
+    height: '100%',
+  },
+  podcastLockIcon: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  podcastLockIconText: {
+    fontSize: 18,
+  },
+  podcastThumbnailOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    justifyContent: 'space-between',
+    padding: 20,
+  },
+  podcastThumbnailTextContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  podcastThumbnailTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    marginBottom: 8,
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+  },
+  podcastThumbnailSubtitle: {
+    fontSize: 16,
+    color: '#ffffff',
+    marginBottom: 6,
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+  },
+  podcastThumbnailEpisodes: {
+    fontSize: 13,
+    color: '#ffffff',
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+  },
+  podcastThumbnailLogo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-end',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    gap: 6,
+  },
+  podcastThumbnailLogoAr: {
+    fontSize: 14,
+    color: '#ffffff',
+    fontWeight: 'bold',
+  },
+  podcastThumbnailLogoText: {
+    fontSize: 12,
+    color: '#ffffff',
+    fontWeight: 'bold',
+    letterSpacing: 1,
+  },
+  podcastThumbnailWaveform: {
+    fontSize: 16,
+    color: '#ffffff',
+    marginLeft: 4,
+  },
+  podcastCardTitleNew: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 6,
+    paddingHorizontal: 4,
+  },
+  podcastCardDescription: {
+    fontSize: 14,
+    lineHeight: 20,
+    marginBottom: 12,
+    paddingHorizontal: 4,
+  },
+  podcastCardFooterNew: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 4,
+  },
+  podcastCardFooterLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  podcastCardFooterRight: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  podcastCardFooterIcon: {
+    fontSize: 18,
+  },
+  podcastCardFooterText: {
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  podcastCardFooterButton: {
+    width: 32,
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  // Styles ZikrScreen
+  zikrHeader: {
+    paddingTop: 50,
+    paddingBottom: 15,
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  zikrBackButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  zikrBackIcon: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  zikrHeaderTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+  },
+  zikrHeaderSpacer: {
+    width: 40,
+  },
+  zikrScrollView: {
+    flex: 1,
+  },
+  zikrScrollContent: {
+    paddingBottom: 30,
+  },
+  zikrBannerContainer: {
+    width: '100%',
+    height: 200,
+    marginBottom: 20,
+    borderRadius: 0,
+    overflow: 'hidden',
+  },
+  zikrBannerGradient: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  zikrBannerPattern: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  zikrBannerTextAr: {
+    fontSize: 80,
+    color: '#C9A24D',
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
+  },
+  zikrBannerTextLatin: {
+    fontSize: 32,
+    color: '#C9A24D',
+    fontWeight: 'bold',
+    letterSpacing: 4,
+  },
+  zikrSectionHeader: {
+    paddingHorizontal: 20,
+    marginBottom: 15,
+  },
+  zikrSectionTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  zikrSectionSubtitle: {
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  zikrCard: {
+    marginHorizontal: 20,
+    marginBottom: 20,
+    borderRadius: 16,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    elevation: 6,
+  },
+  zikrThumbnailContainer: {
+    width: '100%',
+    height: 200,
+    position: 'relative',
+  },
+  zikrThumbnail: {
+    width: '100%',
+    height: '100%',
+  },
+  zikrThumbnailOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(15, 81, 50, 0.9)',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+  zikrThumbnailOverlayText: {
+    fontSize: 12,
+    color: '#ffffff',
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
+  },
+  zikrCardContent: {
+    padding: 16,
+  },
+  zikrCardTitleAr: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 6,
+    color: '#0F5132',
+  },
+  zikrCardTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  zikrCardSubtitle: {
+    fontSize: 14,
+    fontWeight: '500',
+    marginBottom: 8,
+  },
+  zikrCardDescription: {
+    fontSize: 13,
+    lineHeight: 18,
+    marginBottom: 12,
+  },
+  zikrCardFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  zikrCardFooterLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  zikrCardFooterRight: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  zikrCardFooterIcon: {
+    fontSize: 18,
+  },
+  zikrCardFooterText: {
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  zikrCardFooterButton: {
+    width: 32,
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  zikrCardFooterButtonIcon: {
+    fontSize: 18,
+  },
   // Styles musique améliorés
   musicSection: {
     marginBottom: 30,
@@ -5496,6 +7161,341 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#fff',
     marginLeft: 2,
+  },
+  // Styles écran de chargement
+  loadingScreen: {
+    flex: 1,
+  },
+  loadingGradient: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingLogo: {
+    fontSize: 80,
+    color: '#C9A24D',
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
+  },
+  loadingTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#fff',
+    letterSpacing: 3,
+    marginBottom: 40,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
+  },
+  loadingSpinner: {
+    marginTop: 20,
+  },
+  // Styles lecteur vidéo intégré dans LibraryScreen
+  libraryVideoPlayer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 300,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 10,
+    zIndex: 1000,
+  },
+  libraryVideoHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  libraryVideoTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    flex: 1,
+    marginRight: 10,
+  },
+  libraryVideoClose: {
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  libraryVideoCloseText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  libraryVideoContainer: {
+    flex: 1,
+    backgroundColor: '#000',
+  },
+  libraryVideoView: {
+    flex: 1,
+    width: '100%',
+  },
+  // Styles lecteur Zikr selon l'image
+  zikrPlayerContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#ffffff',
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 10,
+    paddingBottom: 20,
+  },
+  zikrPlayerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 15,
+    paddingBottom: 10,
+  },
+  zikrPlayerHeaderIcon: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  zikrPlayerHeaderIconText: {
+    fontSize: 22,
+    color: '#0F5132',
+  },
+  zikrPlayerHeaderIcons: {
+    flexDirection: 'row',
+    gap: 15,
+  },
+  zikrPlayerCard: {
+    marginHorizontal: 20,
+    marginBottom: 20,
+    borderRadius: 20,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  zikrPlayerImage: {
+    width: '100%',
+    height: 300,
+    justifyContent: 'flex-end',
+  },
+  zikrPlayerImageStyle: {
+    opacity: 0.9,
+  },
+  zikrPlayerOverlay: {
+    padding: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+  },
+  zikrPlayerOverlayText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#C9A24D',
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+    letterSpacing: 2,
+    marginBottom: 4,
+  },
+  zikrPlayerTealSection: {
+    padding: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 100,
+  },
+  zikrPlayerLogos: {
+    alignItems: 'center',
+  },
+  zikrPlayerFaydaLogo: {
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  zikrPlayerFaydaLogoAr: {
+    fontSize: 20,
+    color: '#ffffff',
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  zikrPlayerFaydaLogoText: {
+    fontSize: 14,
+    color: '#ffffff',
+    fontWeight: 'bold',
+    letterSpacing: 2,
+  },
+  zikrPlayerTrackInfo: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    marginBottom: 15,
+  },
+  zikrPlayerTrackTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    flex: 1,
+    marginRight: 10,
+  },
+  zikrPlayerOptions: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    backgroundColor: '#D4A574',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  zikrPlayerOptionsIcon: {
+    fontSize: 18,
+    color: '#ffffff',
+    fontWeight: 'bold',
+  },
+  zikrPlayerProgressContainer: {
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  zikrPlayerSlider: {
+    width: '100%',
+    height: 40,
+    marginBottom: 8,
+  },
+  zikrPlayerTimeContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  zikrPlayerTimeText: {
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  zikrPlayerControls: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    marginBottom: 20,
+    gap: 12,
+  },
+  zikrPlayerSquareBtn: {
+    width: 50,
+    height: 50,
+    borderRadius: 8,
+    backgroundColor: '#6B7A8F',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  zikrPlayerSquareBtnInner: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  zikrPlayerSquareIcon: {
+    fontSize: 14,
+    color: '#ffffff',
+    fontWeight: 'bold',
+    lineHeight: 16,
+    textAlign: 'center',
+  },
+  zikrPlayer30sBtn: {
+    width: 60,
+    height: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  zikrPlayer30sCircle: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    borderWidth: 2,
+    borderColor: '#0F5132',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+  },
+  zikrPlayer30sText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#0F5132',
+  },
+  zikrPlayerPlayBtn: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  zikrPlayerPlayBtnGradient: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  zikrPlayerPlayIcon: {
+    fontSize: 32,
+    color: '#ffffff',
+    fontWeight: 'bold',
+  },
+  zikrPlayerBottomControls: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  zikrPlayerSpeedControl: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  zikrPlayerSpeedIcon: {
+    fontSize: 18,
+    color: '#0F5132',
+  },
+  zikrPlayerSpeedText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  zikrPlayerBottomIcons: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  zikrPlayerBottomIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#0F5132',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  zikrPlayerBottomIconText: {
+    fontSize: 16,
+    color: '#ffffff',
+    fontWeight: 'bold',
   },
 });
 
