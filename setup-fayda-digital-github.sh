@@ -50,7 +50,7 @@ git remote -v
 echo ""
 echo "📋 INSTRUCTIONS IMPORTANTES:"
 echo "============================"
-echo "1. Allez sur https://github.com/new"
+echo "1. Allez sur rlier clirhttps://github.com/new"
 echo "2. Repository name: fayda-digital"
 echo "3. Description: Application mobile Fayda Digital - Plateforme de contenu spirituel islamique"
 echo "4. Visibilité: Private (recommandé) ou Public"
