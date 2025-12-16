@@ -543,6 +543,34 @@ const pdfFiles = [
     rating: 5.0,
     downloads: 7500,
   },
+  {
+    id: 104,
+    title: 'Arabic Quran',
+    titleAr: 'القرآن الكريم',
+    author: 'Allah',
+    pages: 604,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/Arabic-Quran.pdf'),
+    image: require('./assets/pdf/coran.jpg'),
+    description: 'Le Saint Coran en arabe - La parole révélée d\'Allah au Prophète Muhammad (paix et bénédictions sur lui).',
+    category: 'Coran',
+    rating: 5.0,
+    downloads: 50000,
+  },
+  {
+    id: 105,
+    title: 'Baye Niass - Un Père du Panafricanisme',
+    titleAr: 'باي نياس - أب الوحدة الأفريقية',
+    author: 'Niane Babacar',
+    pages: 250,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/baye-niasse-un-pere-du-panafricanisme-et-figure-niane-babacar-2020.pdf'),
+    image: require('./assets/pdf/afrique.png'),
+    description: 'Biographie de Cheikh Ibrahim Niass, figure emblématique du panafricanisme et maître spirituel de la Tariqa Tijaniyya.',
+    category: 'Biographie',
+    rating: 5.0,
+    downloads: 12000,
+  },
 ];
 
 const bookCategories = [
@@ -913,16 +941,12 @@ function BooksScreen({ navigation }: any) {
                 <Text style={styles.seeAllArrow}>→</Text>
               </TouchableOpacity>
             </View>
-            <ScrollView 
-              horizontal 
-              showsHorizontalScrollIndicator={false} 
-              style={styles.horizontalScrollModern} 
-              contentContainerStyle={styles.horizontalScrollContentModern}
-            >
-              {(expandedCategory === category.id ? category.books : category.books.slice(0, 3)).map(book => (
+            {category.id === 'pdf' ? (
+              <View style={styles.booksGridContainer}>
+                {(expandedCategory === category.id ? category.books : category.books.slice(0, 9)).map(book => (
                 <TouchableOpacity
                   key={book.id}
-                  style={[styles.bookCardModern, { backgroundColor: theme.surface }]}
+                  style={[styles.bookCardGrid, { backgroundColor: theme.surface }]}
                   activeOpacity={0.8}
                   onPress={() => handleBookPress(book)}
                 >
@@ -953,8 +977,52 @@ function BooksScreen({ navigation }: any) {
                     </View>
                   </View>
                 </TouchableOpacity>
-              ))}
-            </ScrollView>
+                ))}
+              </View>
+            ) : (
+              <ScrollView 
+                horizontal 
+                showsHorizontalScrollIndicator={false} 
+                style={styles.horizontalScrollModern} 
+                contentContainerStyle={styles.horizontalScrollContentModern}
+              >
+                {(expandedCategory === category.id ? category.books : category.books.slice(0, 3)).map(book => (
+                  <TouchableOpacity
+                    key={book.id}
+                    style={[styles.bookCardModern, { backgroundColor: theme.surface }]}
+                    activeOpacity={0.8}
+                    onPress={() => handleBookPress(book)}
+                  >
+                    {book.image ? (
+                      <ImageBackground
+                        source={book.image}
+                        style={styles.bookCoverModern}
+                        imageStyle={styles.bookCoverImageStyle}
+                      >
+                        <View style={styles.bookCoverOverlay} />
+                      </ImageBackground>
+                    ) : (
+                      <LinearGradient
+                        colors={['#0F5132', '#0B3C5D', '#0F5132']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={styles.bookCoverModern}
+                      >
+                        <Text style={styles.bookCoverEmojiModern}>{book.cover || '📖'}</Text>
+                      </LinearGradient>
+                    )}
+                    <View style={styles.bookCardContentModern}>
+                      <Text style={[styles.bookTitleModern, { color: theme.text }]} numberOfLines={2}>{book.title}</Text>
+                      <Text style={[styles.bookAuthorModern, { color: theme.textSecondary }]} numberOfLines={1}>{book.author}</Text>
+                      <View style={styles.bookPagesContainerModern}>
+                        <Text style={styles.bookPagesIcon}>📄</Text>
+                        <Text style={styles.bookPagesModern}>{book.pages} pages</Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            )}
           </View>
         ))}
       </ScrollView>
@@ -5453,6 +5521,26 @@ const styles = StyleSheet.create({
   bookCardModern: {
     width: 150,
     marginRight: 15,
+    marginBottom: 15,
+    borderRadius: 18,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    elevation: 6,
+  },
+  booksGridContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+  bookCardGrid: {
+    width: (width - 48) / 3 - 10, // 3 colonnes avec marges
+    marginRight: 10,
+    marginBottom: 15,
     borderRadius: 18,
     overflow: 'hidden',
     shadowColor: '#000',
