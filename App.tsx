@@ -10,13 +10,152 @@ import * as Sharing from 'expo-sharing';
 import { StatusBar } from 'expo-status-bar';
 import { VideoView, useVideoPlayer } from 'expo-video';
 import * as React from 'react';
-import { ActivityIndicator, Alert, Animated, Dimensions, Image, ImageBackground, Modal, ScrollView, Share, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Animated, Dimensions, Image, ImageBackground, Modal, ScrollView, Share, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { Language, setLanguage, t } from './translations';
+import { sendMessageToAI, Message } from './services/aiService';
 
 const Stack = createNativeStackNavigator();
 const { width } = Dimensions.get('window');
 const Tab = createBottomTabNavigator();
+
+// Contenu HTML pour les articles Tariqa et Ma'arifa
+const getTariqaHTML = () => `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Articles sur la Tariqa Tijaniyya</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', 'Times New Roman', serif; line-height: 1.8; color: #2c3e50; background: linear-gradient(135deg, #f8f6f0 0%, #e8e5df 100%); padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border-radius: 10px; }
+        .header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 3px solid #0F5132; }
+        h1 { color: #0F5132; font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .subtitle { color: #0B3C5D; font-size: 1.2em; font-style: italic; }
+        .article { margin-bottom: 50px; padding: 30px; background: #fafafa; border-left: 5px solid #0F5132; border-radius: 8px; }
+        .article h2 { color: #0F5132; font-size: 1.8em; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #C9A24D; }
+        .article h3 { color: #0B3C5D; font-size: 1.3em; margin-top: 20px; margin-bottom: 10px; }
+        .article p { margin-bottom: 15px; text-align: justify; font-size: 1.1em; }
+        .quote { background: linear-gradient(135deg, #0F5132 0%, #0B3C5D 100%); color: white; padding: 20px; border-radius: 8px; margin: 20px 0; font-style: italic; font-size: 1.15em; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .highlight { background: #fff9e6; padding: 2px 6px; border-radius: 4px; font-weight: bold; color: #0F5132; }
+        .arabic { direction: rtl; text-align: right; font-family: 'Arial', sans-serif; font-size: 1.2em; color: #0B3C5D; margin: 10px 0; }
+        .footer { text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e0e0e0; color: #666; font-style: italic; }
+        ul { margin-left: 30px; margin-top: 15px; }
+        li { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>الطريقة التجانية</h1>
+            <h1>La Tariqa Tijaniyya</h1>
+            <p class="subtitle">Voie spirituelle de lumière et de guidance</p>
+        </div>
+        <div class="article">
+            <h2>Introduction à la Tariqa Tijaniyya</h2>
+            <p>La <span class="highlight">Tariqa Tijaniyya</span> est une voie spirituelle soufie fondée par <span class="highlight">Cheikh Ahmed Tijani</span> (1737-1815) à Fès, au Maroc. Cette voie représente l'une des plus importantes confréries soufies du monde islamique, particulièrement influente en Afrique de l'Ouest.</p>
+            <div class="quote">"La Tariqa Tijaniyya est une voie de proximité avec Allah et Son Messager, une voie de purification du cœur et d'élévation de l'âme."</div>
+            <p>Le Cheikh Ahmed Tijani reçut ses enseignements directement du Prophète Muhammad (paix et bénédictions sur lui) dans un état d'éveil, ce qui confère à cette voie une particularité unique parmi les confréries soufies.</p>
+        </div>
+        <div class="article">
+            <h2>Les Fondements de la Voie</h2>
+            <h3>1. Le Zikr (Invocation)</h3>
+            <p>Le <span class="highlight">Zikr</span> occupe une place centrale dans la pratique de la Tariqa Tijaniyya. Il s'agit de la répétition des noms d'Allah et des invocations spécifiques qui purifient le cœur et rapprochent le disciple de son Seigneur.</p>
+            <div class="arabic">"واذكر ربك في نفسك تضرعا وخيفة ودون الجهر من القول"</div>
+            <p>"Et invoque ton Seigneur en toi-même, en humilité et crainte, à voix basse, le matin et le soir" (Coran 7:205).</p>
+            <h3>2. La Salat al-Fatih</h3>
+            <p>La <span class="highlight">Salat al-Fatih</span> est une prière spéciale récitée dans la Tariqa Tijaniyya. Elle est considérée comme ayant une valeur spirituelle immense, équivalente à des milliers de récitations du Coran selon les enseignements du Cheikh.</p>
+            <h3>3. L'Attachement au Prophète</h3>
+            <p>La Tariqa Tijaniyya met un accent particulier sur l'amour et l'attachement au Prophète Muhammad (paix et bénédictions sur lui). Cette relation spirituelle est considérée comme essentielle pour progresser sur la voie.</p>
+        </div>
+        <div class="article">
+            <h2>Les Bienfaits de la Voie</h2>
+            <p>Les disciples de la Tariqa Tijaniyya témoignent de nombreux bienfaits spirituels :</p>
+            <ul>
+                <li>Purification du cœur des mauvaises qualités</li>
+                <li>Élévation spirituelle et rapprochement d'Allah</li>
+                <li>Paix intérieure et sérénité</li>
+                <li>Guidance dans les affaires de la vie</li>
+                <li>Protection contre les maux spirituels</li>
+            </ul>
+        </div>
+        <div class="footer">
+            <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
+            <p style="margin-top: 10px;">© Fayda Digital - Sagesse & Spiritualité</p>
+        </div>
+    </div>
+</body>
+</html>`;
+
+const getMaarifaHTML = () => `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ma'arifa - La Connaissance Spirituelle</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', 'Times New Roman', serif; line-height: 1.8; color: #2c3e50; background: linear-gradient(135deg, #f8f6f0 0%, #e8e5df 100%); padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border-radius: 10px; }
+        .header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 3px solid #0B3C5D; }
+        h1 { color: #0B3C5D; font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .subtitle { color: #0F5132; font-size: 1.2em; font-style: italic; }
+        .article { margin-bottom: 50px; padding: 30px; background: #fafafa; border-left: 5px solid #0B3C5D; border-radius: 8px; }
+        .article h2 { color: #0B3C5D; font-size: 1.8em; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #C9A24D; }
+        .article h3 { color: #0F5132; font-size: 1.3em; margin-top: 20px; margin-bottom: 10px; }
+        .article p { margin-bottom: 15px; text-align: justify; font-size: 1.1em; }
+        .quote { background: linear-gradient(135deg, #0B3C5D 0%, #0F5132 100%); color: white; padding: 20px; border-radius: 8px; margin: 20px 0; font-style: italic; font-size: 1.15em; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .highlight { background: #e6f3ff; padding: 2px 6px; border-radius: 4px; font-weight: bold; color: #0B3C5D; }
+        .arabic { direction: rtl; text-align: right; font-family: 'Arial', sans-serif; font-size: 1.2em; color: #0F5132; margin: 10px 0; }
+        .footer { text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e0e0e0; color: #666; font-style: italic; }
+        ul { margin-left: 30px; margin-top: 15px; }
+        li { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>المعرفة</h1>
+            <h1>Ma'arifa - La Connaissance Spirituelle</h1>
+            <p class="subtitle">La gnose divine dans la voie soufie</p>
+        </div>
+        <div class="article">
+            <h2>Qu'est-ce que la Ma'arifa ?</h2>
+            <p>La <span class="highlight">Ma'arifa</span> (المعرفة) désigne la connaissance spirituelle directe, la gnose divine qui transcende la simple compréhension intellectuelle. C'est une connaissance du cœur, une illumination qui vient d'Allah.</p>
+            <div class="quote">"La connaissance véritable n'est pas celle que l'on acquiert par l'étude, mais celle qu'Allah dépose dans le cœur de Ses serviteurs."</div>
+            <p>Dans la tradition soufie, la Ma'arifa est considérée comme le sommet de la connaissance spirituelle, accessible uniquement à ceux qui ont purifié leur cœur et se sont rapprochés d'Allah.</p>
+        </div>
+        <div class="article">
+            <h2>Les Degrés de la Connaissance</h2>
+            <h3>1. 'Ilm (La Science)</h3>
+            <p>Le premier degré est la <span class="highlight">science</span> ('ilm), qui est la connaissance acquise par l'étude et l'apprentissage. C'est la base nécessaire, mais insuffisante à elle seule.</p>
+            <h3>2. Fahm (La Compréhension)</h3>
+            <p>Le second degré est la <span class="highlight">compréhension</span> (fahm), qui va au-delà de la simple mémorisation. C'est la capacité à saisir le sens profond des enseignements.</p>
+            <h3>3. Ma'arifa (La Gnose)</h3>
+            <p>Le troisième degré est la <span class="highlight">Ma'arifa</span> elle-même, la connaissance directe et intuitive qui vient d'Allah. Cette connaissance ne s'acquiert pas par l'effort, mais est un don divin.</p>
+            <div class="arabic">"وَعَلَّمَ آدَمَ الأَسْمَاء كُلَّهَا"</div>
+            <p>"Et Il apprit à Adam tous les noms" (Coran 2:31). Cette connaissance directe est celle qu'Allah accorde à Ses serviteurs privilégiés.</p>
+        </div>
+        <div class="article">
+            <h2>La Ma'arifa dans la Tariqa Tijaniyya</h2>
+            <p>Dans la <span class="highlight">Tariqa Tijaniyya</span>, la Ma'arifa est particulièrement valorisée. Le Cheikh Ahmed Tijani enseignait que la vraie connaissance spirituelle vient de la proximité avec le Prophète Muhammad (paix et bénédictions sur lui).</p>
+            <p>Les disciples de la voie cherchent cette connaissance à travers :</p>
+            <ul>
+                <li>Le Zikr constant et assidu</li>
+                <li>L'amour et l'attachement au Prophète</li>
+                <li>La purification du cœur</li>
+                <li>L'obéissance au guide spirituel</li>
+                <li>La méditation et la contemplation</li>
+            </ul>
+        </div>
+        <div class="footer">
+            <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
+            <p style="margin-top: 10px;">© Fayda Digital - Sagesse & Spiritualité</p>
+        </div>
+    </div>
+</body>
+</html>`;
 
 // DATA - Contenu par défaut
 const continueData = [
@@ -356,6 +495,7 @@ const pdfFiles = [
     pages: 120,
     cover: '📖',
     pdfFile: require('./assets/pdf/Azal_Thierno_Hassen_Dem.pdf'),
+    image: require('./assets/pdf/cover3.png'),
     description: 'Ouvrage spirituel de grande valeur sur la vie et les enseignements de Thierno Hassane Dème.',
     category: 'Biographie',
     rating: 5.0,
@@ -369,7 +509,7 @@ const pdfFiles = [
     pages: 200,
     cover: '📖',
     pdfFile: require('./assets/pdf/diawahir_al_mahani.pdf'),
-    image: require('./assets/thierno.png'),
+    image: require('./assets/pdf/cheikh.jpeg'),
     description: 'Les perles précieuses - Un ouvrage fondamental de la Tariqa Tijaniyya contenant les enseignements spirituels et les secrets de la voie.',
     category: 'Tariqa',
     rating: 5.0,
@@ -383,10 +523,25 @@ const pdfFiles = [
     pages: 150,
     cover: '📖',
     pdfFile: require('./assets/pdf/Nour_al_Kamal_fi_Mashhad_ar_Rijal.pdf'),
+    image: require('./assets/pdf/cover2.jpeg'),
     description: 'La lumière de la perfection dans la présence des hommes - Ouvrage spirituel de grande importance.',
     category: 'Ma\'arifa',
     rating: 4.9,
     downloads: 6000,
+  },
+  {
+    id: 103,
+    title: 'Miftah al-Wusul',
+    titleAr: 'مفتاح الوصول',
+    author: 'Cheikh Ahmed Tijani',
+    pages: 180,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/miftaakhoul-woussoul.pdf'),
+    image: require('./assets/pdf/cover1.png'),
+    description: 'La clé de l\'accès - Un ouvrage spirituel fondamental sur les moyens d\'accéder à la proximité divine et aux stations spirituelles élevées.',
+    category: 'Tariqa',
+    rating: 5.0,
+    downloads: 7500,
   },
 ];
 
@@ -397,34 +552,23 @@ const bookCategories = [
     books: pdfFiles,
   },
   {
-    id: 'fiqh',
-    title: 'Fiqh (Français)',
-    books: [
-      { id: 5, title: 'Les Fondements de l\'Islam', titleAr: 'أصول الإسلام', author: 'Dr. Umar Faruq', pages: 195, cover: '📖' },
-      { id: 1, title: 'Les Perles Précieuses', titleAr: 'الجواهر النفيسة', author: 'Cheikh Ahmed Tijani', pages: 250, cover: '📖' },
-      { id: 2, title: 'Le Chemin de la Lumière', titleAr: 'طريق النور', author: 'Sidi Ali Harazim', pages: 180, cover: '📖' },
-    ]
-  },
-  {
     id: 'tariqa',
     title: 'Tariqa (Français)',
     books: [
-      { id: 14, title: 'Laylatou Katmiya', titleAr: 'ليلة الكتمية', author: 'Thierno Hassane Dème', pages: 45, cover: '📖', htmlFile: 'generate-pdf.html' },
-      { id: 13, title: 'Diawahir al Ma\'ani', titleAr: 'جواهر المعاني', author: 'Cheikh Ahmed Tijani', pages: 200, cover: '📖', htmlFile: 'diawahir-al-maani.html' },
-      { id: 5, title: 'Sur le Chemin du Prophète', titleAr: 'على طريق النبي', author: 'Professeur Zachary', pages: 260, cover: '🕌' },
-      { id: 6, title: 'La Connaissance Vivante dans l\'Islam Ouest-Africain', titleAr: 'المعرفة الحية', author: 'Professeur Zachary', pages: 351, cover: '📚' },
-      { id: 7, title: 'La Perle de la Couronne', titleAr: 'درة التاج', author: 'Abdul-Karim', pages: 245, cover: '💎' },
-      { id: 8, title: 'L\'Éveil de l\'Humanité', titleAr: 'تبصرة الإنسانية', author: 'Shaykh al-Islam', pages: 83, cover: '✨' },
+      { id: 20, title: 'Introduction à la Tariqa Tijaniyya', titleAr: 'الطريقة التجانية', author: 'Fayda Digital', pages: 25, cover: '📿', htmlFile: 'tariqa-articles.html', description: 'Découvrez les fondements, les pratiques et les bienfaits de la Tariqa Tijaniyya, voie spirituelle de lumière et de guidance.' },
+      { id: 21, title: 'Le Zikr dans la Voie Tijaniyya', titleAr: 'الذكر في الطريقة التجانية', author: 'Fayda Digital', pages: 20, cover: '🕌', htmlFile: 'tariqa-articles.html', description: 'Comprenez l\'importance et la pratique du Zikr (invocation) dans la Tariqa Tijaniyya.' },
+      { id: 22, title: 'La Salat al-Fatih', titleAr: 'صلاة الفاتح', author: 'Fayda Digital', pages: 18, cover: '📖', htmlFile: 'tariqa-articles.html', description: 'Apprenez-en plus sur la Salat al-Fatih, cette prière spéciale de la Tariqa Tijaniyya.' },
+      { id: 23, title: 'L\'Attachement au Prophète', titleAr: 'التعلق بالنبي', author: 'Fayda Digital', pages: 22, cover: '☪️', htmlFile: 'tariqa-articles.html', description: 'Explorez la relation spirituelle avec le Prophète Muhammad (paix et bénédictions sur lui) dans la voie tidiane.' },
     ]
   },
   {
     id: 'maarifa',
     title: 'Ma\'arifa (Français)',
     books: [
-      { id: 9, title: 'Ce que les Connaissants d\'Allah ont Dit', titleAr: 'ما قاله العارفون', author: 'Shaykh Ahmad', pages: 156, cover: '🌟' },
-      { id: 10, title: 'Perles du Déluge', titleAr: 'لآلئ من الفيض', author: 'Shaykh Hassan', pages: 198, cover: '💫' },
-      { id: 11, title: 'Le Voyage Nocturne', titleAr: 'الإسراء والمعراج', author: 'Shaykh Muhammad', pages: 127, cover: '🌙' },
-      { id: 12, title: 'Les Secrets de la Gnose', titleAr: 'أسرار المعرفة', author: 'Shaykh Ali', pages: 203, cover: '🔮' },
+      { id: 30, title: 'La Connaissance Spirituelle', titleAr: 'المعرفة الروحية', author: 'Fayda Digital', pages: 28, cover: '🌟', htmlFile: 'maarifa-articles.html', description: 'Découvrez ce qu\'est la Ma\'arifa, la gnose divine dans la tradition soufie.' },
+      { id: 31, title: 'Les Degrés de la Connaissance', titleAr: 'درجات المعرفة', author: 'Fayda Digital', pages: 24, cover: '💫', htmlFile: 'maarifa-articles.html', description: 'Comprenez les différents niveaux de connaissance spirituelle : science, compréhension et gnose.' },
+      { id: 32, title: 'La Ma\'arifa dans la Tariqa Tijaniyya', titleAr: 'المعرفة في الطريقة التجانية', author: 'Fayda Digital', pages: 26, cover: '🌙', htmlFile: 'maarifa-articles.html', description: 'Explorez comment la Ma\'arifa est cultivée dans la voie tidiane.' },
+      { id: 33, title: 'Le Chemin vers la Gnose', titleAr: 'طريق المعرفة', author: 'Fayda Digital', pages: 30, cover: '🔮', htmlFile: 'maarifa-articles.html', description: 'Apprenez les étapes et les qualités nécessaires pour atteindre la connaissance spirituelle.' },
     ]
   },
 ];
@@ -701,6 +845,13 @@ function BooksScreen({ navigation }: any) {
       return;
     }
     
+    // Si c'est un fichier HTML, l'ouvrir directement avec WebView
+    if (book.htmlFile) {
+      setCurrentPlayer({ item: book, type: 'book' });
+      navigation.navigate('PDFReader', { book });
+      return;
+    }
+    
     // Sinon, afficher le modal
     const fullBook = ebooks.find(b => b.id === book.id) || {
       ...book,
@@ -775,14 +926,24 @@ function BooksScreen({ navigation }: any) {
                   activeOpacity={0.8}
                   onPress={() => handleBookPress(book)}
                 >
-                  <LinearGradient
-                    colors={['#0F5132', '#0B3C5D', '#0F5132']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.bookCoverModern}
-                  >
-                    <Text style={styles.bookCoverEmojiModern}>{book.cover || '📖'}</Text>
-                  </LinearGradient>
+                  {book.image ? (
+                    <ImageBackground
+                      source={book.image}
+                      style={styles.bookCoverModern}
+                      imageStyle={styles.bookCoverImageStyle}
+                    >
+                      <View style={styles.bookCoverOverlay} />
+                    </ImageBackground>
+                  ) : (
+                    <LinearGradient
+                      colors={['#0F5132', '#0B3C5D', '#0F5132']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={styles.bookCoverModern}
+                    >
+                      <Text style={styles.bookCoverEmojiModern}>{book.cover || '📖'}</Text>
+                    </LinearGradient>
+                  )}
                   <View style={styles.bookCardContentModern}>
                     <Text style={[styles.bookTitleModern, { color: theme.text }]} numberOfLines={2}>{book.title}</Text>
                     <Text style={[styles.bookAuthorModern, { color: theme.textSecondary }]} numberOfLines={1}>{book.author}</Text>
@@ -2372,13 +2533,26 @@ function PDFReaderScreen({ route, navigation }: any) {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [pdfUri, setPdfUri] = React.useState<string | null>(null);
+  const [htmlContent, setHtmlContent] = React.useState<string | null>(null);
   const webViewRef = React.useRef<WebView>(null);
   const [zoomLevel, setZoomLevel] = React.useState(1.0);
 
   React.useEffect(() => {
-    const loadPdf = async () => {
+    const loadContent = async () => {
       try {
-        if (book?.pdfFile) {
+        if (book?.htmlFile) {
+          // Pour les fichiers HTML, utiliser le lecteur par défaut (WebView avec contenu HTML)
+          setLoading(true);
+          // Déterminer le contenu HTML selon le fichier
+          const htmlContent = book.htmlFile === 'tariqa-articles.html'
+            ? getTariqaHTML()
+            : book.htmlFile === 'maarifa-articles.html'
+            ? getMaarifaHTML()
+            : '';
+          setHtmlContent(htmlContent);
+          setLoading(false);
+        } else if (book?.pdfFile) {
+          // Charger le PDF
           setLoading(true);
           const asset = Asset.fromModule(book.pdfFile);
           await asset.downloadAsync();
@@ -2391,17 +2565,17 @@ function PDFReaderScreen({ route, navigation }: any) {
             setLoading(false);
           }
         } else {
-          setError('Aucun fichier PDF disponible');
+          setError('Aucun fichier disponible');
           setLoading(false);
         }
       } catch (err) {
-        console.error('Erreur chargement PDF:', err);
-        setError('Erreur lors du chargement du PDF');
+        console.error('Erreur chargement:', err);
+        setError('Erreur lors du chargement');
         setLoading(false);
       }
     };
 
-    loadPdf();
+    loadContent();
   }, [book]);
 
   // Fonction pour zoomer
@@ -2558,36 +2732,43 @@ function PDFReaderScreen({ route, navigation }: any) {
             {error}
           </Text>
         </View>
-      ) : pdfUri ? (
+      ) : (pdfUri || htmlContent) ? (
         <View style={{ flex: 1 }}>
           <WebView
             ref={webViewRef}
-            source={{ uri: pdfUri }}
+            source={htmlContent
+              ? { html: htmlContent }
+              : { uri: pdfUri! }
+            }
             style={{ flex: 1 }}
             startInLoadingState={true}
             renderLoading={() => (
               <View style={styles.pdfContainer}>
                 <ActivityIndicator size="large" color="#0F5132" />
                 <Text style={[styles.pdfLoadingText, { color: theme.textSecondary, marginTop: 20 }]}>
-                  Chargement du PDF...
+                  {book?.htmlFile ? 'Chargement de l\'article...' : 'Chargement du PDF...'}
                 </Text>
               </View>
             )}
             onError={(syntheticEvent) => {
               const { nativeEvent } = syntheticEvent;
               console.error('WebView Error:', nativeEvent);
-              setError('Impossible d\'afficher le PDF');
+              setError(book?.htmlFile ? 'Impossible d\'afficher l\'article' : 'Impossible d\'afficher le PDF');
             }}
             onLoadEnd={() => {
               setLoading(false);
-              // Initialiser le zoom
+              if (book?.htmlFile) {
+                // Pour les fichiers HTML, pas besoin de zoom initial
+                return;
+              }
+              // Initialiser le zoom pour les PDFs
               webViewRef.current?.injectJavaScript(`
                 document.body.style.zoom = ${zoomLevel};
                 true;
               `);
             }}
             javaScriptEnabled={true}
-            scalesPageToFit={true}
+            scalesPageToFit={!book?.htmlFile}
             allowFileAccess={true}
             originWhitelist={['*']}
           />
@@ -3031,6 +3212,200 @@ function VideoPlayerScreen({ route, navigation }: any) {
   );
 }
 
+// Écran Assistant IA
+function AIScreen({ navigation }: any) {
+  const { language, darkMode } = React.useContext(AppContext);
+  const theme = darkMode ? darkTheme : lightTheme;
+  const [messages, setMessages] = React.useState<Array<{ role: 'user' | 'assistant'; content: string }>>([
+    { role: 'assistant', content: t('assistant.welcome') }
+  ]);
+  const [inputText, setInputText] = React.useState('');
+  const [isLoading, setIsLoading] = React.useState(false);
+  const scrollViewRef = React.useRef<ScrollView>(null);
+
+  const suggestions = [
+    t('assistant.suggestion1'),
+    t('assistant.suggestion2'),
+    t('assistant.suggestion3'),
+    t('assistant.suggestion4'),
+  ];
+
+  const sendMessage = async (text?: string) => {
+    const messageText = text || inputText.trim();
+    if (!messageText || isLoading) return;
+
+    // Ajouter le message de l'utilisateur
+    const userMessage = { role: 'user' as const, content: messageText };
+    setMessages(prev => [...prev, userMessage]);
+    setInputText('');
+    setIsLoading(true);
+
+    try {
+      // Préparer l'historique des messages
+      const messageHistory: Message[] = [...messages, userMessage].map(msg => ({
+        role: msg.role,
+        content: msg.content,
+      }));
+
+      // Appeler l'API
+      const response = await sendMessageToAI(messageHistory, language);
+      
+      // Ajouter la réponse de l'assistant
+      setMessages(prev => [...prev, { role: 'assistant', content: response }]);
+    } catch (error) {
+      console.error('Erreur:', error);
+      setMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: t('assistant.error') 
+      }]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const clearConversation = () => {
+    setMessages([{ role: 'assistant', content: t('assistant.welcome') }]);
+  };
+
+  React.useEffect(() => {
+    // Scroll vers le bas quand de nouveaux messages arrivent
+    setTimeout(() => {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    }, 100);
+  }, [messages]);
+
+  return (
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <StatusBar style={darkMode ? 'light' : 'dark'} />
+      
+      {/* Header */}
+      <LinearGradient
+        colors={darkMode ? ['#0B3C5D', '#0F5132'] : ['#F8F9F6', '#ffffff']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.headerModern}
+      >
+        <View style={styles.headerContent}>
+          <View style={styles.headerLeft}>
+            <Text style={[styles.appTitleModern, { color: theme.text }]}>
+              {t('assistant.title')}
+            </Text>
+            <Text style={[styles.appSubtitle, { color: theme.textSecondary }]}>
+              {t('assistant.subtitle')}
+            </Text>
+          </View>
+          <TouchableOpacity onPress={clearConversation} style={styles.clearButton}>
+            <Text style={[styles.clearButtonText, { color: theme.primary }]}>
+              {t('assistant.clear')}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </LinearGradient>
+
+      {/* Messages */}
+      <ScrollView
+        ref={scrollViewRef}
+        style={styles.chatContainer}
+        contentContainerStyle={styles.chatContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {messages.map((message, index) => (
+          <View
+            key={index}
+            style={[
+              styles.messageContainer,
+              message.role === 'user' ? styles.userMessage : styles.assistantMessage,
+            ]}
+          >
+            <LinearGradient
+              colors={
+                message.role === 'user'
+                  ? ['#0F5132', '#0B3C5D']
+                  : darkMode
+                  ? ['#1e1e1e', '#2a2a2a']
+                  : ['#f0f0f0', '#e0e0e0']
+              }
+              style={[
+                styles.messageBubble,
+                message.role === 'user' ? styles.userMessageBubble : styles.assistantMessageBubble,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.messageText,
+                  {
+                    color: message.role === 'user' ? '#ffffff' : theme.text,
+                    textAlign: language === 'ar' ? 'right' : 'left',
+                  },
+                ]}
+              >
+                {message.content}
+              </Text>
+            </LinearGradient>
+          </View>
+        ))}
+        
+        {isLoading && (
+          <View style={styles.thinkingContainer}>
+            <ActivityIndicator size="small" color={theme.primary} />
+            <Text style={[styles.thinkingText, { color: theme.textSecondary }]}>
+              {t('assistant.thinking')}
+            </Text>
+          </View>
+        )}
+      </ScrollView>
+
+      {/* Suggestions */}
+      {messages.length === 1 && (
+        <View style={styles.suggestionsContainer}>
+          <Text style={[styles.suggestionsTitle, { color: theme.textSecondary }]}>
+            {t('assistant.suggestions')}
+          </Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {suggestions.map((suggestion, index) => (
+              <TouchableOpacity
+                key={index}
+                style={[styles.suggestionChip, { backgroundColor: theme.surface }]}
+                onPress={() => sendMessage(suggestion)}
+              >
+                <Text style={[styles.suggestionText, { color: theme.text }]}>
+                  {suggestion}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+      )}
+
+      {/* Input */}
+      <View style={[styles.inputContainer, { backgroundColor: theme.surface }]}>
+        <View style={[styles.inputWrapper, { backgroundColor: theme.background }]}>
+          <TextInput
+            style={[styles.textInput, { color: theme.text }]}
+            placeholder={t('assistant.placeholder')}
+            placeholderTextColor={theme.textSecondary}
+            value={inputText}
+            onChangeText={setInputText}
+            multiline
+            onSubmitEditing={() => sendMessage()}
+          />
+          <TouchableOpacity
+            style={[
+              styles.sendButton,
+              { backgroundColor: theme.primary },
+              (!inputText.trim() || isLoading) && styles.sendButtonDisabled,
+            ]}
+            onPress={() => sendMessage()}
+            disabled={!inputText.trim() || isLoading}
+          >
+            <Text style={styles.sendButtonText}>→</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
+}
+
 // Thèmes
 const lightTheme = {
   background: '#F8F9F6',
@@ -3216,11 +3591,19 @@ function MainTabs() {
           }}
         />
         <Tab.Screen 
-          name="Library" 
+          name="Library"
           component={LibraryScreen}
           options={{
             tabBarLabel: t('nav.library'),
             tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>📖</Text>,
+          }}
+        />
+        <Tab.Screen 
+          name="Assistant"
+          component={AIScreen}
+          options={{
+            tabBarLabel: t('assistant.title'),
+            tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>🤖</Text>,
           }}
         />
       </Tab.Navigator>
@@ -3317,6 +3700,7 @@ export default function App() {
           <Stack.Screen name="PDFReader" component={PDFReaderScreen} />
           <Stack.Screen name="VideoPlayer" component={VideoPlayerScreen} />
           <Stack.Screen name="Zikr" component={ZikrScreen} />
+          <Stack.Screen name="Assistant" component={AIScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </AppContext.Provider>
@@ -5082,6 +5466,19 @@ const styles = StyleSheet.create({
     height: 200,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  bookCoverImageStyle: {
+    resizeMode: 'cover',
+    borderRadius: 8,
+  },
+  bookCoverOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    borderRadius: 8,
   },
   bookCoverEmojiModern: {
     fontSize: 50,
@@ -7496,6 +7893,115 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#ffffff',
     fontWeight: 'bold',
+  },
+  // Styles Assistant IA
+  chatContainer: {
+    flex: 1,
+    padding: 16,
+  },
+  chatContent: {
+    paddingBottom: 20,
+  },
+  messageContainer: {
+    marginBottom: 12,
+    flexDirection: 'row',
+  },
+  userMessage: {
+    justifyContent: 'flex-end',
+  },
+  assistantMessage: {
+    justifyContent: 'flex-start',
+  },
+  messageBubble: {
+    maxWidth: '80%',
+    padding: 12,
+    borderRadius: 16,
+  },
+  userMessageBubble: {
+    borderTopRightRadius: 4,
+  },
+  assistantMessageBubble: {
+    borderTopLeftRadius: 4,
+  },
+  messageText: {
+    fontSize: 15,
+    lineHeight: 20,
+  },
+  thinkingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    marginBottom: 12,
+  },
+  thinkingText: {
+    marginLeft: 8,
+    fontSize: 14,
+    fontStyle: 'italic',
+  },
+  suggestionsContainer: {
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#e0e0e0',
+  },
+  suggestionsTitle: {
+    fontSize: 12,
+    marginBottom: 8,
+    fontWeight: '600',
+  },
+  suggestionChip: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    marginRight: 8,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  suggestionText: {
+    fontSize: 13,
+  },
+  inputContainer: {
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#e0e0e0',
+  },
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 24,
+    paddingHorizontal: 4,
+    paddingVertical: 4,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  textInput: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    fontSize: 15,
+    maxHeight: 100,
+  },
+  sendButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 8,
+  },
+  sendButtonDisabled: {
+    opacity: 0.5,
+  },
+  sendButtonText: {
+    color: '#ffffff',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  clearButton: {
+    padding: 8,
+  },
+  clearButtonText: {
+    fontSize: 12,
+    fontWeight: '600',
   },
 });
 

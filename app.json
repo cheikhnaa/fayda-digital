@@ -24,19 +24,7 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "favicon": "./assets/favicon.png",
-      "bundler": "metro",
-      "output": "single",
-      "name": "Fayda Digital",
-      "shortName": "Fayda",
-      "lang": "fr",
-      "scope": "/",
-      "themeColor": "#0F5132",
-      "backgroundColor": "#ffffff",
-      "display": "standalone",
-      "orientation": "portrait",
-      "startUrl": "/",
-      "description": "Application mobile Fayda Digital - Plateforme de contenu spirituel islamique"
+      "favicon": "./assets/favicon.png"
     }
   }
 }
