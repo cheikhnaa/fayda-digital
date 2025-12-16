@@ -12,8 +12,8 @@ import { VideoView, useVideoPlayer } from 'expo-video';
 import * as React from 'react';
 import { ActivityIndicator, Alert, Animated, Dimensions, Image, ImageBackground, Modal, ScrollView, Share, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { WebView } from 'react-native-webview';
+import { Message, sendMessageToAI } from './services/aiService';
 import { Language, setLanguage, t } from './translations';
-import { sendMessageToAI, Message } from './services/aiService';
 
 const Stack = createNativeStackNavigator();
 const { width } = Dimensions.get('window');
@@ -641,6 +641,48 @@ function LanguageSelector() {
   );
 }
 
+// Nouveau sélecteur de langue avec barre horizontale (comme dans l'image)
+function LanguageSelectorBar() {
+  const { language, setLang, darkMode } = React.useContext(AppContext);
+  const theme = darkMode ? darkTheme : lightTheme;
+  
+  const languages = [
+    { code: 'en' as Language, label: 'English' },
+    { code: 'ar' as Language, label: 'عربي' },
+    { code: 'fr' as Language, label: 'French' },
+  ];
+
+  return (
+    <View style={styles.languageBarContainer}>
+      <View style={[styles.languageBar, { backgroundColor: theme.surface }]}>
+        {languages.map((lang, index) => (
+          <React.Fragment key={lang.code}>
+            {index > 0 && <View style={[styles.languageBarSeparator, { backgroundColor: theme.textSecondary + '30' }]} />}
+            <TouchableOpacity
+              style={[
+                styles.languageBarItem,
+                language === lang.code && styles.languageBarItemActive
+              ]}
+              onPress={() => {
+                setLang(lang.code);
+                setLanguage(lang.code);
+              }}
+            >
+              <Text style={[
+                styles.languageBarText,
+                { color: language === lang.code ? theme.text : theme.textSecondary },
+                language === lang.code && styles.languageBarTextActive
+              ]}>
+                {lang.label}
+              </Text>
+            </TouchableOpacity>
+          </React.Fragment>
+        ))}
+      </View>
+    </View>
+  );
+}
+
 // Écran d'accueil
 function HomeScreen({ navigation }: any) {
   const { language, darkMode, setCurrentPlayer } = React.useContext(AppContext);
@@ -904,23 +946,18 @@ function BooksScreen({ navigation }: any) {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <StatusBar style={darkMode ? 'light' : 'dark'} />
       
-      {/* Header moderne */}
-      <LinearGradient
-        colors={darkMode ? ['#0B3C5D', '#0F5132'] : ['#F8F9F6', '#ffffff']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.headerModern}
-      >
-        <View style={styles.headerContent}>
-          <View style={styles.headerLeft}>
-            <Text style={[styles.headerTitleModern, { color: theme.text }]}>📚 Livres</Text>
-            <Text style={[styles.headerSubtitle, { color: theme.textSecondary }]}>{t('library.subtitle')}</Text>
-          </View>
-          <LanguageSelector />
-        </View>
-      </LinearGradient>
+      {/* Nouveau header avec barre de langue */}
+      <View style={[styles.booksHeaderNew, { backgroundColor: theme.background }]}>
+        <TouchableOpacity style={styles.headerIconButton}>
+          <Text style={[styles.headerIcon, { color: theme.textSecondary }]}>⚙️</Text>
+        </TouchableOpacity>
+        <LanguageSelectorBar />
+        <TouchableOpacity style={styles.headerIconButton}>
+          <Text style={[styles.headerIcon, { color: theme.textSecondary }]}>🔍</Text>
+        </TouchableOpacity>
+      </View>
 
-      <ScrollView style={styles.booksScrollModern} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.booksScrollModern} showsVerticalScrollIndicator={false} contentContainerStyle={styles.booksScrollContentNew}>
         {bookCategories.map(category => (
           <View key={category.id} style={styles.categorySectionModern}>
             <View style={styles.categoryHeaderModern}>
@@ -943,59 +980,22 @@ function BooksScreen({ navigation }: any) {
             </View>
             {category.id === 'pdf' ? (
               <View style={styles.booksGridContainer}>
-                {(expandedCategory === category.id ? category.books : category.books.slice(0, 9)).map(book => (
-                <TouchableOpacity
-                  key={book.id}
-                  style={[styles.bookCardGrid, { backgroundColor: theme.surface }]}
-                  activeOpacity={0.8}
-                  onPress={() => handleBookPress(book)}
-                >
-                  {book.image ? (
-                    <ImageBackground
-                      source={book.image}
-                      style={styles.bookCoverModern}
-                      imageStyle={styles.bookCoverImageStyle}
-                    >
-                      <View style={styles.bookCoverOverlay} />
-                    </ImageBackground>
-                  ) : (
-                    <LinearGradient
-                      colors={['#0F5132', '#0B3C5D', '#0F5132']}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 1, y: 1 }}
-                      style={styles.bookCoverModern}
-                    >
-                      <Text style={styles.bookCoverEmojiModern}>{book.cover || '📖'}</Text>
-                    </LinearGradient>
-                  )}
-                  <View style={styles.bookCardContentModern}>
-                    <Text style={[styles.bookTitleModern, { color: theme.text }]} numberOfLines={2}>{book.title}</Text>
-                    <Text style={[styles.bookAuthorModern, { color: theme.textSecondary }]} numberOfLines={1}>{book.author}</Text>
-                    <View style={styles.bookPagesContainerModern}>
-                      <Text style={styles.bookPagesIcon}>📄</Text>
-                      <Text style={styles.bookPagesModern}>{book.pages} pages</Text>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-                ))}
-              </View>
-            ) : (
-              <ScrollView 
-                horizontal 
-                showsHorizontalScrollIndicator={false} 
-                style={styles.horizontalScrollModern} 
-                contentContainerStyle={styles.horizontalScrollContentModern}
-              >
-                {(expandedCategory === category.id ? category.books : category.books.slice(0, 3)).map(book => (
+                {(expandedCategory === category.id ? category.books : category.books.slice(0, 6)).map((book, index) => {
+                  const isLastInRow = (index + 1) % 3 === 0;
+                  return (
                   <TouchableOpacity
                     key={book.id}
-                    style={[styles.bookCardModern, { backgroundColor: theme.surface }]}
+                    style={[
+                      styles.bookCardGrid, 
+                      { backgroundColor: theme.surface },
+                      isLastInRow && { marginRight: 0 } // Pas de marginRight sur la 3ème colonne
+                    ]}
                     activeOpacity={0.8}
                     onPress={() => handleBookPress(book)}
                   >
-                    {book.image ? (
+                    {(book as any).image ? (
                       <ImageBackground
-                        source={book.image}
+                        source={(book as any).image}
                         style={styles.bookCoverModern}
                         imageStyle={styles.bookCoverImageStyle}
                       >
@@ -1020,8 +1020,52 @@ function BooksScreen({ navigation }: any) {
                       </View>
                     </View>
                   </TouchableOpacity>
-                ))}
-              </ScrollView>
+                  );
+                })}
+              </View>
+            ) : (
+              <ScrollView 
+                horizontal 
+                showsHorizontalScrollIndicator={false} 
+                style={styles.horizontalScrollModern} 
+                contentContainerStyle={styles.horizontalScrollContentModern}
+              >
+                {(expandedCategory === category.id ? category.books : category.books.slice(0, 3)).map(book => (
+                <TouchableOpacity
+                  key={book.id}
+                  style={[styles.bookCardModern, { backgroundColor: theme.surface }]}
+                  activeOpacity={0.8}
+                  onPress={() => handleBookPress(book)}
+                >
+                  {(book as any).image ? (
+                    <ImageBackground
+                      source={(book as any).image}
+                      style={styles.bookCoverModern}
+                      imageStyle={styles.bookCoverImageStyle}
+                    >
+                      <View style={styles.bookCoverOverlay} />
+                    </ImageBackground>
+                  ) : (
+                    <LinearGradient
+                      colors={['#0F5132', '#0B3C5D', '#0F5132']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={styles.bookCoverModern}
+                    >
+                      <Text style={styles.bookCoverEmojiModern}>{book.cover || '📖'}</Text>
+                    </LinearGradient>
+                  )}
+                  <View style={styles.bookCardContentModern}>
+                    <Text style={[styles.bookTitleModern, { color: theme.text }]} numberOfLines={2}>{book.title}</Text>
+                    <Text style={[styles.bookAuthorModern, { color: theme.textSecondary }]} numberOfLines={1}>{book.author}</Text>
+                    <View style={styles.bookPagesContainerModern}>
+                      <Text style={styles.bookPagesIcon}>📄</Text>
+                      <Text style={styles.bookPagesModern}>{book.pages} pages</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
             )}
           </View>
         ))}
@@ -5482,9 +5526,71 @@ const styles = StyleSheet.create({
   booksScrollModern: {
     flex: 1,
   },
+  booksScrollContentNew: {
+    paddingHorizontal: 8, // Marges réduites
+  },
+  booksHeaderNew: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    paddingTop: 20, // Faire descendre le menu
+    marginTop: 20, // Espacement supplémentaire en haut
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  headerIconButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerIcon: {
+    fontSize: 20,
+  },
+  languageBarContainer: {
+    flex: 1,
+    alignItems: 'center',
+    marginHorizontal: 12,
+  },
+  languageBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 8,
+    paddingVertical: 4,
+    paddingHorizontal: 4,
+    minHeight: 36,
+  },
+  languageBarItem: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+    marginHorizontal: 2,
+  },
+  languageBarItemActive: {
+    backgroundColor: '#f0f0f0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  languageBarText: {
+    fontSize: 13,
+    fontWeight: '500',
+  },
+  languageBarTextActive: {
+    fontWeight: '600',
+  },
+  languageBarSeparator: {
+    width: 1,
+    height: 20,
+    marginHorizontal: 4,
+  },
   categorySectionModern: {
     marginBottom: 30,
-    paddingHorizontal: 20,
+    paddingHorizontal: 8, // Marges réduites
   },
   categoryHeaderModern: {
     flexDirection: 'row',
@@ -5521,7 +5627,6 @@ const styles = StyleSheet.create({
   bookCardModern: {
     width: 150,
     marginRight: 15,
-    marginBottom: 15,
     borderRadius: 18,
     overflow: 'hidden',
     shadowColor: '#000',
@@ -5533,13 +5638,13 @@ const styles = StyleSheet.create({
   booksGridContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    justifyContent: 'flex-start',
+    paddingHorizontal: 4, // Marges réduites
     paddingVertical: 10,
   },
   bookCardGrid: {
-    width: (width - 48) / 3 - 10, // 3 colonnes avec marges
-    marginRight: 10,
+    width: (width - 16) / 3, // 3 colonnes : (largeur totale - padding 8 - marges 8) / 3
+    marginRight: 4,
     marginBottom: 15,
     borderRadius: 18,
     overflow: 'hidden',
@@ -5548,6 +5653,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.12,
     shadowRadius: 10,
     elevation: 6,
+  },
+  bookCardGridLastInRow: {
+    marginRight: 0, // Pas de marge à droite pour la 3ème colonne de chaque ligne
   },
   bookCoverModern: {
     width: '100%',
