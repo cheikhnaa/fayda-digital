@@ -607,12 +607,14 @@ const AppContext = React.createContext<{
   setLang: (lang: Language) => void;
   darkMode: boolean;
   setDarkMode: (dark: boolean) => void;
-  currentPlayer: { item: any; type: 'music' | 'podcast' | 'book' | 'zikr' | null } | null;
-  setCurrentPlayer: (player: { item: any; type: 'music' | 'podcast' | 'book' | 'zikr' | null } | null) => void;
+  currentPlayer: { item: any; type: 'music' | 'podcast' | 'book' | 'zikr' | 'coran' | null } | null;
+  setCurrentPlayer: (player: { item: any; type: 'music' | 'podcast' | 'book' | 'zikr' | 'coran' | null } | null) => void;
   audioState: { isPlaying: boolean; position: number; duration: number } | null;
   setAudioState: (state: { isPlaying: boolean; position: number; duration: number } | null) => void;
   currentRoute: string | null;
   setCurrentRoute: (route: string | null) => void;
+  recentItems: Array<{id: number, type: 'pdf' | 'audio', title: string, titleAr?: string, timestamp: number, item: any}>;
+  addToHistory: (item: any, type: 'pdf' | 'audio') => void;
 }>({ 
   language: 'fr', 
   setLang: () => {},
@@ -623,7 +625,9 @@ const AppContext = React.createContext<{
   audioState: null,
   setAudioState: () => {},
   currentRoute: null,
-  setCurrentRoute: () => {}
+  setCurrentRoute: () => {},
+  recentItems: [],
+  addToHistory: () => {}
 });
 
 // Sélecteur de langue compact
@@ -685,7 +689,7 @@ function LanguageSelectorBar() {
 
 // Écran d'accueil
 function HomeScreen({ navigation }: any) {
-  const { language, darkMode, setCurrentPlayer } = React.useContext(AppContext);
+  const { language, darkMode, setCurrentPlayer, recentItems, addToHistory } = React.useContext(AppContext);
   const theme = darkMode ? darkTheme : lightTheme;
 
   return (
@@ -734,7 +738,255 @@ function HomeScreen({ navigation }: any) {
         </ImageBackground>
       </View>
 
-      {/* Continuer où vous vous êtes arrêté */}
+      {/* Rubrique 1 : Derniers articles consultés - Format cartes verticales avec portraits */}
+      {recentItems.length > 0 && (
+        <View style={styles.sectionModern}>
+          <View style={styles.sectionHeaderModern}>
+            <View style={styles.sectionTitleContainerModern}>
+              <View style={styles.sectionIconContainer}>
+                <Text style={styles.sectionIconModern}>🕐</Text>
+              </View>
+              <View>
+                <Text style={[styles.sectionTitleModern, { color: theme.text }]}>Derniers consultés</Text>
+                <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>Articles récents</Text>
+              </View>
+            </View>
+          </View>
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false} 
+            style={styles.horizontalScrollModern} 
+            contentContainerStyle={styles.horizontalScrollContentModern}
+          >
+            {recentItems.slice(0, 6).map((item, index) => {
+              // Déterminer l'image à afficher selon le type et l'ID
+              let cardImage = null;
+              if (item.type === 'pdf' && item.item) {
+                cardImage = item.item.image || null;
+              }
+              
+              return (
+                <TouchableOpacity 
+                  key={`${item.id}-${item.type}-${index}`}
+                  style={styles.recentCardVertical}
+                  activeOpacity={0.9}
+                  onPress={() => {
+                    if (item.type === 'pdf') {
+                      navigation.navigate('PDFReader', { book: item.item });
+                    } else {
+                      setCurrentPlayer({ item: item.item, type: item.item.type || 'music' });
+                    }
+                  }}
+                >
+                  <ImageBackground
+                    source={cardImage || require('./assets/thierno.png')}
+                    style={styles.recentCardImage}
+                    imageStyle={styles.recentCardImageStyle}
+                  >
+                    {/* Overlay sombre en bas pour la lisibilité du texte */}
+                    <View style={styles.recentCardOverlay} />
+                    
+                    {/* Texte superposé en bas de l'image */}
+                    <View style={styles.recentCardTextContainer}>
+                      <Text style={styles.recentCardTitle} numberOfLines={2}>
+                        {item.title}
+                      </Text>
+                      {item.titleAr && (
+                        <Text style={styles.recentCardTitleAr} numberOfLines={2}>
+                          {item.titleAr}
+                        </Text>
+                      )}
+                    </View>
+                  </ImageBackground>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+      )}
+
+      {/* Rubrique : Continuer où vous étiez */}
+      {recentItems.length > 0 && (
+        <View style={styles.sectionModern}>
+          <View style={styles.sectionHeaderModern}>
+            <View style={styles.sectionTitleContainerModern}>
+              <View style={styles.sectionIconContainer}>
+                <Text style={styles.sectionIconModern}>📖</Text>
+              </View>
+              <View>
+                <Text style={[styles.sectionTitleModern, { color: theme.text }]}>Continuer où vous étiez</Text>
+                <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>Reprenez votre lecture</Text>
+              </View>
+            </View>
+            <TouchableOpacity style={styles.seeAllButton}>
+              <Text style={styles.seeAllModern}>Voir tout</Text>
+              <Text style={styles.seeAllArrow}>→</Text>
+            </TouchableOpacity>
+          </View>
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false} 
+            style={styles.horizontalScrollModern} 
+            contentContainerStyle={styles.horizontalScrollContentModern}
+          >
+            {recentItems.slice(0, 6).map((item, index) => (
+              <TouchableOpacity 
+                key={`continue-${item.id}-${item.type}-${index}`}
+                style={[styles.continueCardModern, { backgroundColor: theme.surface }]}
+                activeOpacity={0.8}
+                onPress={() => {
+                  if (item.type === 'pdf') {
+                    navigation.navigate('PDFReader', { book: item.item });
+                  } else {
+                    setCurrentPlayer({ item: item.item, type: item.item.type || 'music' });
+                  }
+                }}
+              >
+                <LinearGradient
+                  colors={['#0F5132', '#0B3C5D', '#0F5132']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.continueIconGradientModern}
+                >
+                  <Text style={styles.continueIconTextModern}>{item.type === 'pdf' ? '📖' : '🎧'}</Text>
+                </LinearGradient>
+                <View style={styles.continueCardContent}>
+                  <Text style={[styles.continueTitleModern, { color: theme.text }]} numberOfLines={2}>{item.title}</Text>
+                  {item.titleAr && (
+                    <Text style={[styles.continueSpeakerModern, { color: theme.textSecondary }]} numberOfLines={1}>{item.titleAr}</Text>
+                  )}
+                  {item.item?.duration && (
+                    <View style={styles.continueDurationContainerModern}>
+                      <Text style={styles.continueDurationIcon}>⏱️</Text>
+                      <Text style={styles.continueDurationModern}>{item.item.duration}</Text>
+                    </View>
+                  )}
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+      )}
+
+      {/* Rubrique 2 : Banner Essentials Playlist */}
+      <View style={styles.sectionModern}>
+        <View style={styles.sectionHeaderModern}>
+          <Text style={[styles.sectionTitleModern, { color: '#0F5132', fontWeight: 'bold' }]}>Essentials Playlist</Text>
+          <TouchableOpacity style={styles.seeAllButton}>
+            <Text style={styles.seeAllModern}>View all</Text>
+            <Text style={styles.seeAllArrow}>→</Text>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity 
+          activeOpacity={0.9}
+          style={styles.essentialsBannerContainer}
+        >
+          <LinearGradient
+            colors={['#8B6F47', '#A0826D', '#8B6F47']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.essentialsBannerBackground}
+          >
+            {/* Motif géométrique en overlay */}
+            <View style={styles.essentialsBannerPattern} />
+            
+            {/* Contenu du banner */}
+            <View style={styles.essentialsBannerContent}>
+              {/* Texte à gauche */}
+              <View style={styles.essentialsBannerLeft}>
+                <Text style={styles.essentialsBannerText1}>ESSENTIALS</Text>
+                <Text style={styles.essentialsBannerText2}>PLAYLIST</Text>
+                <Text style={styles.essentialsBannerText3}>Subscribers</Text>
+                <View style={styles.essentialsBannerLogo}>
+                  <Text style={styles.essentialsBannerLogoAr}>فيضة</Text>
+                  <Text style={styles.essentialsBannerLogoText}>FAYDA DIGITAL</Text>
+                </View>
+              </View>
+
+              {/* Éléments graphiques au centre/droite */}
+              <View style={styles.essentialsBannerRight}>
+                {/* Nuages */}
+                <View style={styles.essentialsCloud1} />
+                <View style={styles.essentialsCloud2} />
+                
+                {/* Minaret */}
+                <View style={styles.essentialsMinaret} />
+                
+                {/* Dôme vert */}
+                <View style={styles.essentialsDome} />
+                
+                {/* Calligraphie arabe */}
+                <Text style={styles.essentialsCalligraphy}>الله</Text>
+              </View>
+            </View>
+          </LinearGradient>
+        </TouchableOpacity>
+      </View>
+
+      {/* Rubrique 3 : Liste des PDFs */}
+      <View style={styles.sectionModern}>
+        <View style={styles.sectionHeaderModern}>
+          <View style={styles.sectionTitleContainerModern}>
+            <View style={styles.sectionIconContainer}>
+              <Text style={styles.sectionIconModern}>📚</Text>
+            </View>
+            <View>
+              <Text style={[styles.sectionTitleModern, { color: theme.text }]}>Livres PDF</Text>
+              <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>Ouvrages spirituels</Text>
+            </View>
+          </View>
+          <TouchableOpacity style={styles.seeAllButton} onPress={() => navigation.navigate('Books')}>
+            <Text style={styles.seeAllModern}>Voir tout</Text>
+            <Text style={styles.seeAllArrow}>→</Text>
+          </TouchableOpacity>
+        </View>
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false} 
+          style={styles.horizontalScrollModern} 
+          contentContainerStyle={styles.horizontalScrollContentModern}
+        >
+          {pdfFiles.slice(0, 6).map(book => (
+            <TouchableOpacity 
+              key={book.id} 
+              style={[styles.bookCardHome, { backgroundColor: theme.surface }]}
+              activeOpacity={0.8}
+              onPress={() => {
+                addToHistory(book, 'pdf');
+                navigation.navigate('PDFReader', { book });
+              }}
+            >
+              {book.image ? (
+                <ImageBackground
+                  source={book.image}
+                  style={styles.bookCoverHome}
+                  imageStyle={styles.bookCoverImageStyle}
+                >
+                  <View style={styles.bookCoverOverlay} />
+                </ImageBackground>
+              ) : (
+                <LinearGradient
+                  colors={['#0F5132', '#0B3C5D', '#0F5132']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.bookCoverHome}
+                >
+                  <Text style={styles.bookCoverEmojiHome}>{book.cover || '📖'}</Text>
+                </LinearGradient>
+              )}
+              <View style={styles.bookCardContentHome}>
+                <Text style={[styles.bookTitleHome, { color: theme.text }]} numberOfLines={2}>{book.title}</Text>
+                {book.titleAr && (
+                  <Text style={[styles.bookAuthorHome, { color: theme.textSecondary }]} numberOfLines={1}>{book.titleAr}</Text>
+                )}
+              </View>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+
+
+      {/* Coran */}
       <View style={styles.sectionModern}>
         <View style={styles.sectionHeaderModern}>
           <View style={styles.sectionTitleContainerModern}>
@@ -742,68 +994,11 @@ function HomeScreen({ navigation }: any) {
               <Text style={styles.sectionIconModern}>📖</Text>
             </View>
             <View>
-            <Text style={[styles.sectionTitleModern, { color: theme.text }]}>{t('home.continue')}</Text>
-            <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>{t('common.continue')}</Text>
+              <Text style={[styles.sectionTitleModern, { color: theme.text }]}>Coran</Text>
+              <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>Récitations du Saint Coran</Text>
             </View>
           </View>
-          <TouchableOpacity style={styles.seeAllButton}>
-            <Text style={styles.seeAllModern}>{t('common.seeAll')}</Text>
-            <Text style={styles.seeAllArrow}>→</Text>
-          </TouchableOpacity>
-        </View>
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false} 
-          style={styles.horizontalScrollModern} 
-          contentContainerStyle={styles.horizontalScrollContentModern}
-        >
-          {continueData.map(item => (
-            <TouchableOpacity 
-              key={item.id} 
-              style={[styles.continueCardModern, { backgroundColor: theme.surface }]}
-              activeOpacity={0.8}
-              onPress={() => {
-                if (item.type === 'cours') {
-                  navigation.navigate('Library');
-                } else {
-                  setCurrentPlayer({ item, type: item.type === 'audio' ? 'podcast' : 'book' });
-                }
-              }}
-            >
-              <LinearGradient
-                colors={['#0F5132', '#0B3C5D', '#0F5132']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.continueIconGradientModern}
-              >
-                <Text style={styles.continueIconTextModern}>{item.type === 'cours' ? '📚' : item.type === 'audio' ? '🎧' : '📖'}</Text>
-              </LinearGradient>
-              <View style={styles.continueCardContent}>
-                <Text style={[styles.continueTitleModern, { color: theme.text }]} numberOfLines={2}>{item.title}</Text>
-                <Text style={[styles.continueSpeakerModern, { color: theme.textSecondary }]} numberOfLines={1}>{item.speaker}</Text>
-                <View style={styles.continueDurationContainerModern}>
-                  <Text style={styles.continueDurationIcon}>⏱️</Text>
-                  <Text style={styles.continueDurationModern}>{item.duration}</Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
-
-      {/* Playlist Essentielle */}
-      <View style={styles.sectionModern}>
-        <View style={styles.sectionHeaderModern}>
-          <View style={styles.sectionTitleContainerModern}>
-            <View style={styles.sectionIconContainer}>
-              <Text style={styles.sectionIconModern}>🎵</Text>
-            </View>
-            <View>
-            <Text style={[styles.sectionTitleModern, { color: theme.text }]}>{t('home.playlist')}</Text>
-            <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>{t('music.title')}</Text>
-            </View>
-          </View>
-          <TouchableOpacity style={styles.seeAllButton} onPress={() => navigation.navigate('Music')}>
+          <TouchableOpacity style={styles.seeAllButton} onPress={() => navigation.navigate('Coran')}>
             <Text style={styles.seeAllModern}>Voir tout</Text>
             <Text style={styles.seeAllArrow}>→</Text>
           </TouchableOpacity>
@@ -814,46 +1009,45 @@ function HomeScreen({ navigation }: any) {
           style={styles.horizontalScrollModern} 
           contentContainerStyle={styles.horizontalScrollContentModern}
         >
-          {musicTracks.slice(0, 5).map(track => (
+          {coranTracks.slice(0, 5).map(track => (
             <TouchableOpacity 
               key={track.id} 
-              style={[styles.musicCardModern, { backgroundColor: theme.surface }]}
+              style={styles.coranCardHome}
               activeOpacity={0.8}
               onPress={() => {
-                setCurrentPlayer({ item: track, type: 'music' });
-                navigation.navigate('Music');
+                navigation.navigate('Coran');
               }}
             >
-              <LinearGradient
-                colors={['#0F5132', '#0B3C5D', '#0F5132']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.musicIconGradientModern}
+              <ImageBackground
+                source={require('./assets/pdf/coran2.jpg')}
+                style={styles.coranCardImage}
+                imageStyle={styles.coranCardImageStyle}
               >
-                <Text style={styles.musicIconTextModern}>🎵</Text>
-              </LinearGradient>
-              <View style={styles.musicCardContent}>
-                <Text style={[styles.musicTitleModern, { color: theme.text }]} numberOfLines={1}>{track.title}</Text>
-                <Text style={[styles.musicArtistModern, { color: theme.textSecondary }]} numberOfLines={1}>{track.artist}</Text>
-              </View>
+                <View style={styles.coranCardOverlay} />
+                <View style={styles.coranCardContent}>
+                  <Text style={styles.coranCardTitle}>{track.title}</Text>
+                  <Text style={styles.coranCardTitleAr}>{track.titleAr}</Text>
+                  <Text style={styles.coranCardReciter}>{track.reciter}</Text>
+                </View>
+              </ImageBackground>
             </TouchableOpacity>
           ))}
         </ScrollView>
       </View>
 
-      {/* Livres Audio */}
+      {/* Zikr */}
       <View style={styles.sectionModern}>
         <View style={styles.sectionHeaderModern}>
           <View style={styles.sectionTitleContainerModern}>
             <View style={styles.sectionIconContainer}>
-              <Text style={styles.sectionIconModern}>🎧</Text>
+              <Text style={styles.sectionIconModern}>🕌</Text>
             </View>
             <View>
-            <Text style={[styles.sectionTitleModern, { color: theme.text }]}>{t('home.audiobooks')}</Text>
-            <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>{t('common.play')}</Text>
+              <Text style={[styles.sectionTitleModern, { color: theme.text }]}>Zikr</Text>
+              <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>Invocations spirituelles</Text>
             </View>
           </View>
-          <TouchableOpacity style={styles.seeAllButton} onPress={() => navigation.navigate('Podcasts')}>
+          <TouchableOpacity style={styles.seeAllButton} onPress={() => navigation.navigate('Zikr')}>
             <Text style={styles.seeAllModern}>Voir tout</Text>
             <Text style={styles.seeAllArrow}>→</Text>
           </TouchableOpacity>
@@ -864,31 +1058,25 @@ function HomeScreen({ navigation }: any) {
           style={styles.horizontalScrollModern} 
           contentContainerStyle={styles.horizontalScrollContentModern}
         >
-          {audiobooks.map(book => (
+          {zikrFiles.slice(0, 6).map(zikr => (
             <TouchableOpacity 
-              key={book.id} 
-              style={[styles.audiobookCardModern, { opacity: book.locked ? 0.7 : 1 }]}
+              key={zikr.id} 
+              style={[styles.audiobookCardModern, { opacity: 1 }]}
               activeOpacity={0.8}
               onPress={() => {
-                if (!book.locked) {
-                  setCurrentPlayer({ item: book, type: 'book' });
-                }
+                addToHistory(zikr, 'audio');
+                setCurrentPlayer({ item: zikr, type: 'zikr' });
               }}
             >
               <LinearGradient
-                colors={[book.color, book.color + 'cc', book.color]}
+                colors={['#0F5132', '#0B3C5D', '#0F5132']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.audiobookGradientModern}
               >
                 <View style={styles.audiobookContent}>
-                  <Text style={styles.audiobookTitleModern}>{book.title}</Text>
-                  <Text style={styles.audiobookTitleArModern}>{book.titleAr}</Text>
-                  {book.locked && (
-                    <View style={styles.lockedBadge}>
-                      <Text style={styles.lockedIcon}>🔒</Text>
-                    </View>
-                  )}
+                  <Text style={styles.audiobookTitleModern}>{zikr.title}</Text>
+                  <Text style={styles.audiobookTitleArModern}>{zikr.titleAr}</Text>
                 </View>
               </LinearGradient>
             </TouchableOpacity>
@@ -908,8 +1096,11 @@ function BooksScreen({ navigation }: any) {
   const [expandedCategory, setExpandedCategory] = React.useState<string | null>(null);
 
   const handleBookPress = (book: any) => {
+    const { addToHistory } = React.useContext(AppContext);
+    
     // Si c'est un PDF, l'ouvrir directement
     if (book.pdfFile) {
+      addToHistory(book, 'pdf');
       setCurrentPlayer({ item: book, type: 'book' });
       navigation.navigate('PDFReader', { book });
       return;
@@ -917,6 +1108,7 @@ function BooksScreen({ navigation }: any) {
     
     // Si c'est un fichier HTML, l'ouvrir directement avec WebView
     if (book.htmlFile) {
+      addToHistory(book, 'pdf');
       setCurrentPlayer({ item: book, type: 'book' });
       navigation.navigate('PDFReader', { book });
       return;
@@ -1388,31 +1580,31 @@ function MusicScreen({ navigation }: any) {
           </TouchableOpacity>
         </View>
 
-        {/* Section Music - Grande carte */}
+        {/* Section Coran - Grande carte */}
         <View style={styles.podcastsSection}>
           <View style={styles.podcastsSectionHeader}>
-            <Text style={[styles.podcastsSectionTitle, { color: '#0F5132' }]}>Music</Text>
+            <Text style={[styles.podcastsSectionTitle, { color: '#0F5132' }]}>Coran</Text>
             <TouchableOpacity style={styles.podcastsViewAllButton}>
               <Text style={styles.podcastsViewAllText}>View all</Text>
             </TouchableOpacity>
           </View>
           
           <TouchableOpacity 
-            style={styles.podcastMusicCard}
+            style={styles.podcastZikrCard}
             activeOpacity={0.9}
             onPress={() => {
-              setCurrentPlayer({ item: musicTracks[0], type: 'music' });
+              navigation.navigate('Coran');
             }}
           >
             <LinearGradient
-              colors={['#0F5132', '#0B3C5D', '#0F5132']}
+              colors={['#0B3C5D', '#0F5132', '#0B3C5D']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
-              style={styles.podcastMusicGradient}
+              style={styles.podcastZikrGradient}
             >
-              <View style={styles.podcastMusicPattern}>
-                <Text style={styles.podcastMusicTextAr}>موسيقى</Text>
-                <Text style={styles.podcastMusicTextLatin}>MUSIC</Text>
+              <View style={styles.podcastZikrPattern}>
+                <Text style={styles.podcastZikrTextAr}>القرآن</Text>
+                <Text style={styles.podcastZikrTextLatin}>CORAN</Text>
               </View>
             </LinearGradient>
           </TouchableOpacity>
@@ -1513,7 +1705,7 @@ function MusicScreen({ navigation }: any) {
 
 // Écran Zikr - Design selon l'image
 function ZikrScreen({ navigation }: any) {
-  const { language, darkMode, setCurrentPlayer, currentPlayer } = React.useContext(AppContext);
+  const { language, darkMode, setCurrentPlayer, currentPlayer, addToHistory } = React.useContext(AppContext);
   const theme = darkMode ? darkTheme : lightTheme;
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [position, setPosition] = React.useState(0);
@@ -1808,6 +2000,7 @@ function ZikrScreen({ navigation }: any) {
               style={[styles.zikrCard, { backgroundColor: theme.surface }]}
               activeOpacity={0.9}
               onPress={() => {
+                addToHistory(zikr, 'audio');
                 setCurrentPlayer({ item: zikr, type: 'zikr' });
               }}
             >
@@ -1965,6 +2158,568 @@ function ZikrScreen({ navigation }: any) {
                 setPosition(value);
                 // Note: currentTime est en lecture seule dans expo-audio
                 // La position sera mise à jour automatiquement par le player
+              }}
+              minimumTrackTintColor="#0F5132"
+              maximumTrackTintColor="#e0e0e0"
+              thumbTintColor="#0F5132"
+            />
+            <View style={styles.zikrPlayerTimeContainer}>
+              <Text style={[styles.zikrPlayerTimeText, { color: theme.text }]}>
+                {formatTime(position)}
+              </Text>
+              <Text style={[styles.zikrPlayerTimeText, { color: theme.text }]}>
+                {duration > 0 ? formatRemainingTime(position, duration) : '--:--'}
+              </Text>
+            </View>
+          </View>
+
+          {/* Contrôles de lecture - Design selon l'image */}
+          <View style={styles.zikrPlayerControls}>
+            {/* 30s Rewind Circle */}
+            <TouchableOpacity 
+              style={styles.zikrPlayer30sBtn}
+              onPress={handleRewind}
+              activeOpacity={0.7}
+            >
+              <View style={styles.zikrPlayer30sCircle}>
+                <Text style={styles.zikrPlayer30sText}>30s</Text>
+              </View>
+            </TouchableOpacity>
+            
+            {/* Play/Pause Button */}
+            <TouchableOpacity 
+              style={styles.zikrPlayerPlayBtn}
+              onPress={togglePlay}
+              activeOpacity={0.9}
+            >
+              <LinearGradient
+                colors={['#0F5132', '#0B3C5D']}
+                style={styles.zikrPlayerPlayBtnGradient}
+              >
+                <Text style={styles.zikrPlayerPlayIcon}>{isPlaying ? '⏸' : '▶'}</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+            
+            {/* 30s Forward Circle */}
+            <TouchableOpacity 
+              style={styles.zikrPlayer30sBtn}
+              onPress={handleForward}
+              activeOpacity={0.7}
+            >
+              <View style={styles.zikrPlayer30sCircle}>
+                <Text style={styles.zikrPlayer30sText}>30s</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+
+          {/* Contrôles supplémentaires */}
+          <View style={styles.zikrPlayerBottomControls}>
+            <TouchableOpacity 
+              style={styles.zikrPlayerSpeedControl}
+              onPress={handleSpeedChange}
+            >
+              <Text style={styles.zikrPlayerSpeedIcon}>⏱</Text>
+              <Text style={[styles.zikrPlayerSpeedText, { color: theme.text }]}>
+                {playbackSpeed.toFixed(1)}x
+              </Text>
+            </TouchableOpacity>
+            <View style={styles.zikrPlayerBottomIcons}>
+              <TouchableOpacity 
+                style={[styles.zikrPlayerBottomIcon, showSleepTimer && { backgroundColor: '#C9A24D' }]}
+                onPress={handleSleepTimer}
+              >
+                <Text style={styles.zikrPlayerBottomIconText}>Z</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
+    </View>
+  );
+}
+
+// Écran Coran - Design similaire à ZikrScreen
+function CoranScreen({ navigation }: any) {
+  const { language, darkMode, setCurrentPlayer, currentPlayer, addToHistory } = React.useContext(AppContext);
+  const theme = darkMode ? darkTheme : lightTheme;
+  const [isPlaying, setIsPlaying] = React.useState(false);
+  const [position, setPosition] = React.useState(0);
+  const [duration, setDuration] = React.useState(0);
+  const [showInfo, setShowInfo] = React.useState(false);
+  const [showCarMode, setShowCarMode] = React.useState(false);
+  const [playbackSpeed, setPlaybackSpeed] = React.useState(1.0);
+  const [showMenu, setShowMenu] = React.useState(false);
+  const [showSleepTimer, setShowSleepTimer] = React.useState(false);
+
+  // Préparer les fichiers Coran avec descriptions
+  const coranFiles = coranTracks.map(track => ({
+    id: track.id,
+    title: track.title,
+    titleAr: track.titleAr,
+    subtitle: track.reciter,
+    description: `Récitation de la sourate ${track.title} (${track.titleAr}) par ${track.reciter}. Une récitation mélodieuse et émouvante du Saint Coran.`,
+    duration: track.duration,
+    tracks: null,
+    file: track.file,
+    image: require('./assets/pdf/coran2.jpg'),
+  }));
+
+  // Utiliser expo-audio pour la lecture
+  const getAudioSource = () => {
+    if (currentPlayer?.type === 'coran' && currentPlayer.item) {
+      if (currentPlayer.item.file) {
+        return currentPlayer.item.file;
+      }
+      return require('./assets/audio/audio.mp3');
+    }
+    return require('./assets/audio/audio.mp3');
+  };
+
+  const player = useAudioPlayer(getAudioSource());
+
+  React.useEffect(() => {
+    if (player && currentPlayer?.type === 'coran') {
+      setPosition(0);
+      setDuration(0);
+      
+      // Démarrer automatiquement la lecture
+      const startPlayback = async () => {
+        try {
+          if (player && !player.playing) {
+            await player.play();
+            setIsPlaying(true);
+          }
+        } catch (error) {
+          console.log('Erreur démarrage automatique:', error);
+        }
+      };
+      
+      startPlayback();
+      
+      const updateStatus = () => {
+        try {
+          if (player) {
+            setIsPlaying(player.playing || false);
+            setPosition((player.currentTime || 0) * 1000);
+            const dur = (player.duration || 0) * 1000;
+            if (dur > 0) {
+              setDuration(dur);
+            }
+          }
+        } catch (error) {
+          console.log('Erreur mise à jour audio:', error);
+        }
+      };
+      const interval = setInterval(updateStatus, 500);
+      return () => clearInterval(interval);
+    } else {
+      setIsPlaying(false);
+      setPosition(0);
+      setDuration(0);
+    }
+  }, [player, currentPlayer]);
+
+  // Appliquer la vitesse de lecture quand elle change
+  React.useEffect(() => {
+    if (player && currentPlayer?.type === 'coran') {
+      try {
+        // Essayer d'appliquer la vitesse au player
+        if ('rate' in player) {
+          (player as any).rate = playbackSpeed;
+        }
+      } catch (error) {
+        console.log('Erreur application vitesse:', error);
+      }
+    }
+  }, [playbackSpeed, player, currentPlayer]);
+
+  const togglePlay = async () => {
+    try {
+      if (player) {
+        if (player.playing) {
+          await player.pause();
+          setIsPlaying(false);
+        } else {
+          await player.play();
+          setIsPlaying(true);
+          if (duration === 0) {
+            setTimeout(() => {
+              if (player.duration) {
+                setDuration(player.duration * 1000);
+              }
+            }, 500);
+          }
+        }
+      }
+    } catch (error) {
+      console.log('Erreur toggle play:', error);
+      setIsPlaying(!isPlaying);
+      if (!isPlaying && duration === 0) {
+        setDuration(180000);
+      }
+    }
+  };
+
+  const formatTime = (ms: number) => {
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const formatRemainingTime = (current: number, total: number) => {
+    const remaining = total - current;
+    const totalSeconds = Math.floor(remaining / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `-${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const handleRewind = async () => {
+    try {
+      if (player) {
+        const currentTime = player.currentTime || 0;
+        const newTime = Math.max(0, currentTime - 30);
+        setPosition(newTime * 1000);
+        if (player.playing) {
+          await player.pause();
+          await player.play();
+        }
+      }
+    } catch (error) {
+      console.log('Erreur rewind:', error);
+    }
+  };
+
+  const handleForward = async () => {
+    try {
+      if (player) {
+        const currentTime = player.currentTime || 0;
+        const maxTime = player.duration || 0;
+        const newTime = Math.min(maxTime, currentTime + 30);
+        setPosition(newTime * 1000);
+        if (player.playing) {
+          await player.pause();
+          await player.play();
+        }
+      }
+    } catch (error) {
+      console.log('Erreur forward:', error);
+    }
+  };
+
+  const handlePrevious = () => {
+    const currentIndex = coranFiles.findIndex(c => c.id === currentPlayer?.item?.id);
+    if (currentIndex > 0) {
+      setCurrentPlayer({ item: coranFiles[currentIndex - 1], type: 'coran' });
+    }
+  };
+
+  const handleNext = () => {
+    const currentIndex = coranFiles.findIndex(c => c.id === currentPlayer?.item?.id);
+    if (currentIndex < coranFiles.length - 1) {
+      setCurrentPlayer({ item: coranFiles[currentIndex + 1], type: 'coran' });
+    }
+  };
+
+  const handleShare = async () => {
+    if (currentPlayer?.item) {
+      try {
+        await Share.share({
+          message: `Écoutez "${currentPlayer.item.title}" - ${currentPlayer.item.titleAr} sur Fayda Digital`,
+          title: currentPlayer.item.title,
+        });
+      } catch (error) {
+        console.error('Erreur partage:', error);
+      }
+    }
+  };
+
+  const handleClosePlayer = () => {
+    setCurrentPlayer(null);
+    if (player) {
+      player.pause();
+    }
+  };
+
+  const handleSpeedChange = async () => {
+    const speeds = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
+    const currentIndex = speeds.indexOf(playbackSpeed);
+    const nextIndex = (currentIndex + 1) % speeds.length;
+    const newSpeed = speeds[nextIndex];
+    setPlaybackSpeed(newSpeed);
+    
+    try {
+      if (player && 'rate' in player) {
+        (player as any).rate = newSpeed;
+      }
+    } catch (error) {
+      console.log('Erreur changement vitesse:', error);
+    }
+  };
+
+  const handleMenuPress = () => {
+    setShowMenu(!showMenu);
+    Alert.alert(
+      'Options',
+      'Choisissez une option',
+      [
+        { text: 'Ajouter à la playlist', onPress: () => {} },
+        { text: 'Télécharger', onPress: () => {} },
+        { text: 'Supprimer', onPress: () => {}, style: 'destructive' },
+        { text: 'Annuler', style: 'cancel' },
+      ]
+    );
+  };
+
+  const handleSleepTimer = () => {
+    setShowSleepTimer(!showSleepTimer);
+    Alert.alert(
+      'Minuteur de sommeil',
+      'Choisissez la durée',
+      [
+        { text: '5 minutes', onPress: () => {} },
+        { text: '10 minutes', onPress: () => {} },
+        { text: '15 minutes', onPress: () => {} },
+        { text: '30 minutes', onPress: () => {} },
+        { text: 'Désactiver', onPress: () => setShowSleepTimer(false) },
+        { text: 'Annuler', style: 'cancel' },
+      ]
+    );
+  };
+
+  const handleBookmark = (item: any) => {
+    Alert.alert(
+      'Favoris',
+      `Ajouter "${item.title}" aux favoris ?`,
+      [
+        { text: 'Annuler', style: 'cancel' },
+        { text: 'Ajouter', onPress: () => {
+          Alert.alert('Succès', 'Ajouté aux favoris');
+        }},
+      ]
+    );
+  };
+
+  return (
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <StatusBar style={darkMode ? 'light' : 'dark'} />
+      
+      {/* Header avec bouton retour */}
+      <View style={[styles.zikrHeader, { backgroundColor: theme.surface }]}>
+        <TouchableOpacity 
+          onPress={() => navigation.goBack()}
+          style={styles.zikrBackButton}
+        >
+          <Text style={[styles.zikrBackIcon, { color: theme.text }]}>←</Text>
+        </TouchableOpacity>
+        <Text style={[styles.zikrHeaderTitle, { color: '#0F5132' }]}>Coran</Text>
+        <View style={styles.zikrHeaderSpacer} />
+      </View>
+
+      <ScrollView 
+        style={styles.zikrScrollView} 
+        contentContainerStyle={[styles.zikrScrollContent, currentPlayer?.type === 'coran' && { paddingBottom: 220 }]}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Banner Coran en haut */}
+        <View style={styles.zikrBannerContainer}>
+          <LinearGradient
+            colors={['#0B3C5D', '#0F5132', '#0B3C5D']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.zikrBannerGradient}
+          >
+            <View style={styles.zikrBannerPattern}>
+              <Text style={styles.zikrBannerTextAr}>القرآن</Text>
+              <Text style={styles.zikrBannerTextLatin}>CORAN</Text>
+            </View>
+          </LinearGradient>
+        </View>
+
+        {/* Section Header */}
+        <View style={styles.zikrSectionHeader}>
+          <Text style={[styles.zikrSectionTitle, { color: theme.text }]}>Coran</Text>
+          <Text style={[styles.zikrSectionSubtitle, { color: theme.textSecondary }]}>
+            {coranFiles.length} récitations
+          </Text>
+        </View>
+
+        {/* Liste des fichiers Coran */}
+        {coranFiles.map((coran) => {
+          const isPlaying = currentPlayer?.type === 'coran' && currentPlayer.item?.id === coran.id;
+          
+          return (
+            <TouchableOpacity
+              key={coran.id}
+              style={[styles.zikrCard, { backgroundColor: theme.surface }]}
+              activeOpacity={0.9}
+              onPress={() => {
+                addToHistory(coran, 'audio');
+                setCurrentPlayer({ item: coran, type: 'coran' });
+              }}
+            >
+              {/* Thumbnail avec overlay */}
+              <View style={styles.zikrThumbnailContainer}>
+                <Image 
+                  source={coran.image || require('./assets/pdf/coran2.jpg')} 
+                  style={styles.zikrThumbnail}
+                  resizeMode="cover"
+                />
+                <View style={styles.zikrThumbnailOverlay}>
+                  <Text style={styles.zikrThumbnailOverlayText}>
+                    {coran.subtitle?.toUpperCase() || coran.title.toUpperCase()}
+                  </Text>
+                </View>
+              </View>
+
+              {/* Contenu de la carte */}
+              <View style={styles.zikrCardContent}>
+                <Text style={[styles.zikrCardTitleAr, { color: theme.text }]} numberOfLines={1}>
+                  {coran.titleAr}
+                </Text>
+                <Text style={[styles.zikrCardTitle, { color: theme.text }]} numberOfLines={2}>
+                  {coran.title}
+                </Text>
+                {coran.subtitle && (
+                  <Text style={[styles.zikrCardSubtitle, { color: theme.textSecondary }]} numberOfLines={1}>
+                    {coran.subtitle}
+                  </Text>
+                )}
+                <Text style={[styles.zikrCardDescription, { color: theme.textSecondary }]} numberOfLines={2}>
+                  {coran.description}
+                </Text>
+                
+                {/* Métadonnées */}
+                <View style={styles.zikrCardFooter}>
+                  <View style={styles.zikrCardFooterLeft}>
+                    <Text style={styles.zikrCardFooterIcon}>🎧</Text>
+                    <Text style={[styles.zikrCardFooterText, { color: theme.textSecondary }]}>
+                      {coran.duration || coran.tracks || '--:--'}
+                    </Text>
+                  </View>
+                  <View style={styles.zikrCardFooterRight}>
+                    <TouchableOpacity 
+                      style={styles.zikrCardFooterButton}
+                      onPress={() => handleBookmark(coran)}
+                    >
+                      <Text style={styles.zikrCardFooterButtonIcon}>🔖</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                      style={styles.zikrCardFooterButton}
+                      onPress={() => {
+                        Alert.alert(
+                          coran.title,
+                          coran.description,
+                          [{ text: 'OK' }]
+                        );
+                      }}
+                    >
+                      <Text style={styles.zikrCardFooterButtonIcon}>ℹ️</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+
+      {/* Lecteur audio selon l'image - Design complet */}
+      {currentPlayer?.type === 'coran' && currentPlayer.item && (
+        <View style={styles.zikrPlayerContainer}>
+          {/* Header avec icônes */}
+          <View style={styles.zikrPlayerHeader}>
+            <TouchableOpacity 
+              onPress={handleClosePlayer}
+              style={styles.zikrPlayerHeaderIcon}
+            >
+              <Text style={styles.zikrPlayerHeaderIconText}>←</Text>
+            </TouchableOpacity>
+            <View style={styles.zikrPlayerHeaderIcons}>
+              <TouchableOpacity 
+                style={[styles.zikrPlayerHeaderIcon, showCarMode && { backgroundColor: '#0F5132', borderRadius: 20 }]}
+                onPress={() => setShowCarMode(!showCarMode)}
+              >
+                <Text style={styles.zikrPlayerHeaderIconText}>🚗</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.zikrPlayerHeaderIcon}
+                onPress={handleShare}
+              >
+                <Text style={styles.zikrPlayerHeaderIconText}>📤</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.zikrPlayerHeaderIcon}
+                onPress={() => {
+                  setShowInfo(!showInfo);
+                  if (currentPlayer?.item) {
+                    Alert.alert(
+                      currentPlayer.item.title,
+                      currentPlayer.item.description || 'Informations sur cette récitation',
+                      [{ text: 'OK' }]
+                    );
+                  }
+                }}
+              >
+                <Text style={styles.zikrPlayerHeaderIconText}>ℹ️</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Carte principale avec image */}
+          <View style={styles.zikrPlayerCard}>
+            <ImageBackground
+              source={currentPlayer.item.image || require('./assets/pdf/coran2.jpg')}
+              style={styles.zikrPlayerImage}
+              resizeMode="cover"
+              imageStyle={styles.zikrPlayerImageStyle}
+            >
+              {/* Overlay avec texte doré */}
+              <View style={styles.zikrPlayerOverlay}>
+                <Text style={styles.zikrPlayerOverlayText}>CORAN</Text>
+                <Text style={styles.zikrPlayerOverlayText}>القرآن الكريم</Text>
+              </View>
+            </ImageBackground>
+            
+            {/* Section turquoise avec motif */}
+            <LinearGradient
+              colors={['#20B2AA', '#17A2B8', '#20B2AA']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.zikrPlayerTealSection}
+            >
+              <View style={styles.zikrPlayerLogos}>
+                <View style={styles.zikrPlayerFaydaLogo}>
+                  <Text style={styles.zikrPlayerFaydaLogoAr}>فيضة</Text>
+                  <Text style={styles.zikrPlayerFaydaLogoText}>FAYDA DIGITAL</Text>
+                </View>
+              </View>
+            </LinearGradient>
+          </View>
+
+          {/* Titre de la piste */}
+          <View style={styles.zikrPlayerTrackInfo}>
+            <Text style={[styles.zikrPlayerTrackTitle, { color: theme.text }]} numberOfLines={1}>
+              {currentPlayer.item.titleAr} {currentPlayer.item.title}
+            </Text>
+            <TouchableOpacity 
+              style={styles.zikrPlayerOptions}
+              onPress={handleMenuPress}
+            >
+              <Text style={styles.zikrPlayerOptionsIcon}>☰</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Barre de progression */}
+          <View style={styles.zikrPlayerProgressContainer}>
+            <Slider
+              style={styles.zikrPlayerSlider}
+              value={position}
+              maximumValue={duration || 100}
+              minimumValue={0}
+              onValueChange={(value) => {
+                setPosition(value);
               }}
               minimumTrackTintColor="#0F5132"
               maximumTrackTintColor="#e0e0e0"
@@ -3662,7 +4417,7 @@ function MainTabs() {
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
-          tabBarActiveTintColor: '#0F5132',
+          tabBarActiveTintColor: '#999',
           tabBarInactiveTintColor: '#999',
           tabBarStyle: {
             backgroundColor: darkMode ? darkTheme.surface : lightTheme.surface,
@@ -3773,10 +4528,28 @@ function LoadingScreen() {
 export default function App() {
   const [language, setLang] = React.useState<Language>('fr');
   const [darkMode, setDarkMode] = React.useState(false);
-  const [currentPlayer, setCurrentPlayer] = React.useState<{ item: any; type: 'music' | 'podcast' | 'book' | 'zikr' | null } | null>(null);
+  const [currentPlayer, setCurrentPlayer] = React.useState<{ item: any; type: 'music' | 'podcast' | 'book' | 'zikr' | 'coran' | null } | null>(null);
   const [audioState, setAudioState] = React.useState<{ isPlaying: boolean; position: number; duration: number } | null>(null);
   const [currentRoute, setCurrentRoute] = React.useState<string | null>(null);
+  const [recentItems, setRecentItems] = React.useState<Array<{id: number, type: 'pdf' | 'audio', title: string, titleAr?: string, timestamp: number, item: any}>>([]);
   const [isLoading, setIsLoading] = React.useState(true);
+
+  const addToHistory = React.useCallback((item: any, type: 'pdf' | 'audio') => {
+    setRecentItems(prev => {
+      const newItem = {
+        id: item.id || Date.now(),
+        type,
+        title: item.title || item.name || 'Sans titre',
+        titleAr: item.titleAr,
+        timestamp: Date.now(),
+        item: item
+      };
+      // Retirer les doublons et garder seulement les 6 plus récents
+      const filtered = prev.filter(i => !(i.id === newItem.id && i.type === type));
+      const updated = [newItem, ...filtered].slice(0, 6);
+      return updated.sort((a, b) => b.timestamp - a.timestamp);
+    });
+  }, []);
 
   React.useEffect(() => {
     setLanguage(language);
@@ -3803,6 +4576,8 @@ export default function App() {
       setAudioState,
       currentRoute,
       setCurrentRoute,
+      recentItems,
+      addToHistory,
     }}>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Onboarding">
@@ -3812,6 +4587,7 @@ export default function App() {
           <Stack.Screen name="PDFReader" component={PDFReaderScreen} />
           <Stack.Screen name="VideoPlayer" component={VideoPlayerScreen} />
           <Stack.Screen name="Zikr" component={ZikrScreen} />
+          <Stack.Screen name="Coran" component={CoranScreen} />
           <Stack.Screen name="Assistant" component={AIScreen} />
         </Stack.Navigator>
       </NavigationContainer>
@@ -5643,8 +6419,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   bookCardGrid: {
-    width: (width - 16) / 3, // 3 colonnes : (largeur totale - padding 8 - marges 8) / 3
-    marginRight: 4,
+    width: '32%', // 3 colonnes : 32% × 3 = 96%, reste 4% pour les espaces
+    marginRight: '1%',
     marginBottom: 15,
     borderRadius: 18,
     overflow: 'hidden',
@@ -8198,6 +8974,284 @@ const styles = StyleSheet.create({
   clearButtonText: {
     fontSize: 12,
     fontWeight: '600',
+  },
+  // Styles banner Essentials Playlist
+  essentialsBannerContainer: {
+    marginHorizontal: 16,
+    marginTop: 10,
+    borderRadius: 16,
+    overflow: 'hidden',
+    height: 200,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  essentialsBannerBackground: {
+    width: '100%',
+    height: '100%',
+    position: 'relative',
+  },
+  essentialsBannerPattern: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    opacity: 0.15,
+    backgroundColor: 'transparent',
+    // Pattern géométrique simplifié - utiliser des formes répétées
+  },
+  essentialsBannerContent: {
+    flex: 1,
+    flexDirection: 'row',
+    padding: 20,
+    position: 'relative',
+  },
+  essentialsBannerLeft: {
+    flex: 1,
+    justifyContent: 'space-between',
+    zIndex: 2,
+  },
+  essentialsBannerText1: {
+    fontSize: 14,
+    fontWeight: '300',
+    color: '#F5E6D3',
+    letterSpacing: 2,
+    marginBottom: 4,
+  },
+  essentialsBannerText2: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#F5E6D3',
+    fontStyle: 'italic',
+    marginBottom: 8,
+  },
+  essentialsBannerText3: {
+    fontSize: 16,
+    fontStyle: 'italic',
+    color: '#F5E6D3',
+    opacity: 0.9,
+    marginTop: 10,
+  },
+  essentialsBannerLogo: {
+    marginTop: 'auto',
+  },
+  essentialsBannerLogoAr: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    marginBottom: 4,
+  },
+  essentialsBannerLogoText: {
+    fontSize: 12,
+    color: '#ffffff',
+    fontWeight: '600',
+    letterSpacing: 1,
+  },
+  essentialsBannerRight: {
+    flex: 1,
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  essentialsCloud1: {
+    position: 'absolute',
+    top: 15,
+    left: 15,
+    width: 70,
+    height: 35,
+    backgroundColor: '#ffffff',
+    borderRadius: 35,
+    opacity: 0.85,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  essentialsCloud2: {
+    position: 'absolute',
+    top: 35,
+    left: 5,
+    width: 60,
+    height: 30,
+    backgroundColor: '#ffffff',
+    borderRadius: 30,
+    opacity: 0.75,
+  },
+  essentialsMinaret: {
+    position: 'absolute',
+    left: 25,
+    bottom: 35,
+    width: 24,
+    height: 90,
+    backgroundColor: '#D4A574',
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#B8956A',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  essentialsDome: {
+    position: 'absolute',
+    right: 35,
+    bottom: 25,
+    width: 90,
+    height: 70,
+    backgroundColor: '#0F5132',
+    borderRadius: 45,
+    borderWidth: 3,
+    borderColor: '#0B3C5D',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+  },
+  essentialsCalligraphy: {
+    position: 'absolute',
+    right: 15,
+    top: 25,
+    fontSize: 52,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    opacity: 0.95,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+  },
+  // Styles cartes PDF pour la page d'accueil
+  bookCardHome: {
+    width: 140,
+    marginRight: 12,
+    borderRadius: 12,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  bookCoverHome: {
+    width: '100%',
+    height: 200,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bookCoverEmojiHome: {
+    fontSize: 40,
+  },
+  bookCardContentHome: {
+    padding: 12,
+  },
+  bookTitleHome: {
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  bookAuthorHome: {
+    fontSize: 12,
+  },
+  // Styles pour les cartes récentes verticales avec portraits
+  recentCardVertical: {
+    width: 160,
+    marginRight: 16,
+    borderRadius: 12,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  recentCardImage: {
+    width: '100%',
+    height: 240,
+    justifyContent: 'flex-end',
+  },
+  recentCardImageStyle: {
+    borderRadius: 12,
+    resizeMode: 'cover',
+  },
+  recentCardOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 100,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  recentCardTextContainer: {
+    padding: 12,
+    zIndex: 1,
+    position: 'relative',
+  },
+  recentCardTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#ffffff',
+    marginBottom: 4,
+    lineHeight: 18,
+  },
+  recentCardTitleAr: {
+    fontSize: 12,
+    color: '#ffffff',
+    lineHeight: 16,
+    textAlign: 'right',
+    opacity: 0.9,
+  },
+  // Styles pour les cartes Coran avec image
+  coranCardHome: {
+    width: 180,
+    height: 240,
+    marginRight: 12,
+    borderRadius: 12,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  coranCardImage: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'flex-end',
+  },
+  coranCardImageStyle: {
+    borderRadius: 12,
+    resizeMode: 'cover',
+  },
+  coranCardOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 120,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  coranCardContent: {
+    padding: 16,
+    zIndex: 1,
+  },
+  coranCardTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    marginBottom: 4,
+  },
+  coranCardTitleAr: {
+    fontSize: 14,
+    color: '#ffffff',
+    marginBottom: 8,
+    textAlign: 'right',
+  },
+  coranCardReciter: {
+    fontSize: 12,
+    color: '#F5E6D3',
+    opacity: 0.9,
   },
 });
 
