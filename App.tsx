@@ -4,6 +4,7 @@ import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Asset } from 'expo-asset';
 import { useAudioPlayer } from 'expo-audio';
+import { Audio } from 'expo-av';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
@@ -329,10 +330,11 @@ const musicTracks = [
 ];
 
 // Podcasts avec design inspiré de l'image - Basé sur les fichiers du dossier podcasts
+// Note: Les fichiers audio sont chargés dynamiquement via getPodcastFile() pour éviter les problèmes de bundling avec les gros fichiers
 const podcasts = [
   { 
     id: 1, 
-    title: 'ARCHIVE-AUDIO WAKHTANU THIERNO ASSANE DEME CI TARBIYA ILALAH - MALBN TV', 
+    title: 'WAKHTANU THIERNO ASSANE DEME CI TARBIYA ILALAH', 
     titleAr: 'أرشيف صوتي - وختنو ثيرنو آسان ديم في التربية الإلهية',
     subtitle: 'Archive audio - Wakhtanu Thierno Assane Deme',
     host: 'Thierno Assane Deme', 
@@ -345,7 +347,7 @@ const podcasts = [
     description: 'Archive audio de Wakhtanu Thierno Assane Deme sur la Tarbiya Ilalah (Éducation divine).',
     locked: false,
     episodeType: 'Archive',
-    file: require('./assets/podcasts/ARCHIVE-AUDIO WAKHTANU THIERNO ASSANE DEME CI TARBIYA ILALAH - MALBN TV.mp3'),
+    fileName: 'wakhtanu-thierno-assane-deme-tarbiya-ilalah.mp3',
   },
   { 
     id: 2, 
@@ -362,7 +364,7 @@ const podcasts = [
     description: 'Explication de la wazifa d\'un Arif Bilah (Celui qui connaît Allah) par Cheikh Assane Dème.',
     locked: false,
     episodeType: 'Enseignement',
-    file: require('./assets/podcasts/Qu\'est ce que la wazifa d\'un Arif Bilah par Cheikh Assane Dème.mp3'),
+    fileName: 'wazifa-arif-bilah-cheikh-assane-deme.mp3',
   },
   { 
     id: 3, 
@@ -379,9 +381,19 @@ const podcasts = [
     description: 'Paroles et enseignements du Cheikh Thierno Assane Dème.',
     locked: false,
     episodeType: 'Enseignement',
-    file: require('./assets/podcasts/waxtanou-cheikh-thierno-assane-dème-ra.mp3'),
+    fileName: 'waxtanou-cheikh-thierno-assane-deme-ra.mp3',
   },
 ];
+
+// Fonction helper pour obtenir le fichier audio d'un podcast
+const getPodcastFile = (fileName: string) => {
+  const podcastFiles: { [key: string]: any } = {
+    'wakhtanu-thierno-assane-deme-tarbiya-ilalah.mp3': require('./assets/podcasts/wakhtanu-thierno-assane-deme-tarbiya-ilalah.mp3'),
+    'wazifa-arif-bilah-cheikh-assane-deme.mp3': require('./assets/podcasts/wazifa-arif-bilah-cheikh-assane-deme.mp3'),
+    'waxtanou-cheikh-thierno-assane-deme-ra.mp3': require('./assets/podcasts/waxtanou-cheikh-thierno-assane-deme-ra.mp3'),
+  };
+  return podcastFiles[fileName] || require('./assets/audio/audio.mp3');
+};
 
 const courses = [
   { id: 1, title: 'Introduction au Soufisme', instructor: 'Sheikh Muhammad Al-Tijani', lessons: 12, duration: '6 semaines', level: 'Débutant' },
@@ -970,6 +982,53 @@ function HomeScreen({ navigation }: any) {
           ))}
         </ScrollView>
       </View>
+
+      {/* Rubrique Podcasts */}
+      <View style={styles.sectionModern}>
+        <View style={styles.sectionHeaderModern}>
+          <View style={styles.sectionTitleContainerModern}>
+            <View style={styles.sectionIconContainer}>
+              <Text style={styles.sectionIconModern}>🎙️</Text>
+            </View>
+            <View>
+              <Text style={[styles.sectionTitleModern, { color: theme.text }]}>Podcasts</Text>
+              <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>Enseignements audio</Text>
+            </View>
+          </View>
+          <TouchableOpacity style={styles.seeAllButton} onPress={() => navigation.navigate('Podcasts')}>
+            <Text style={styles.seeAllModern}>Voir tout</Text>
+            <Text style={styles.seeAllArrow}>→</Text>
+          </TouchableOpacity>
+        </View>
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false} 
+          style={styles.horizontalScrollModern} 
+          contentContainerStyle={styles.horizontalScrollContentModern}
+        >
+          {podcasts.slice(0, 5).map(podcast => (
+            <TouchableOpacity 
+              key={podcast.id} 
+              style={styles.podcastCardHome}
+              activeOpacity={0.8}
+              onPress={() => {
+                navigation.navigate('Podcasts');
+              }}
+            >
+              <ImageBackground
+                source={podcast.image || require('./assets/thierno.png')} 
+                style={styles.podcastCardImageHome}
+                imageStyle={styles.podcastCardImageStyleHome}
+              >
+                <View style={styles.podcastCardOverlayHome}>
+                  <Text style={styles.podcastCardTitleHome} numberOfLines={2}>{podcast.title}</Text>
+                  <Text style={styles.podcastCardSubtitleHome} numberOfLines={1}>{podcast.host}</Text>
+                </View>
+              </ImageBackground>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
     </ScrollView>
   );
 }
@@ -1242,12 +1301,21 @@ function MusicScreen({ navigation }: any) {
   const [showInfo, setShowInfo] = React.useState(false);
   const [showMenu, setShowMenu] = React.useState(false);
 
-  // Utiliser expo-audio pour la lecture - Utiliser le fichier audio de la piste sélectionnée
+  // Utiliser expo-audio pour la lecture - Utiliser le fichier audio de la piste sélectionnée (musique ou podcast)
   const getAudioSource = () => {
-    if (currentPlayer?.type === 'music' && currentPlayer.item) {
-      // Si c'est une sourate du Coran, utiliser son fichier
+    if ((currentPlayer?.type === 'music' || currentPlayer?.type === 'podcast') && currentPlayer.item) {
+      // Si c'est une sourate du Coran ou un podcast, utiliser son fichier
       if (currentPlayer.item.file) {
         return currentPlayer.item.file;
+      }
+      // Pour les podcasts, utiliser le fileName pour charger le fichier via getPodcastFile
+      if (currentPlayer.item.fileName && currentPlayer?.type === 'podcast') {
+        try {
+          return getPodcastFile(currentPlayer.item.fileName);
+        } catch (error) {
+          console.log('Erreur chargement fichier podcast:', error);
+          return require('./assets/audio/audio.mp3');
+        }
       }
       // Sinon, utiliser le fichier par défaut
       return require('./assets/audio/audio.mp3');
@@ -1258,7 +1326,7 @@ function MusicScreen({ navigation }: any) {
   const player = useAudioPlayer(getAudioSource());
 
   React.useEffect(() => {
-    if (player && currentPlayer?.type === 'music') {
+    if (player && (currentPlayer?.type === 'music' || currentPlayer?.type === 'podcast')) {
       // Réinitialiser la position quand on change de piste
       setPosition(0);
       setDuration(0);
@@ -1497,8 +1565,8 @@ function MusicScreen({ navigation }: any) {
         </View>
       </ScrollView>
 
-      {/* Lecteur audio intégré en bas - Moderne */}
-      {currentPlayer?.type === 'music' && currentPlayer.item && (
+      {/* Lecteur audio intégré en bas - Moderne (pour musique et podcasts) */}
+      {(currentPlayer?.type === 'music' || currentPlayer?.type === 'podcast') && currentPlayer.item && (
         <LinearGradient
           colors={darkMode ? ['#0B3C5D', '#0F5132'] : ['#ffffff', '#F8F9F6']}
           start={{ x: 0, y: 0 }}
@@ -1511,7 +1579,7 @@ function MusicScreen({ navigation }: any) {
                 {currentPlayer.item.title}
               </Text>
               <Text style={[styles.musicPlayerTrackArtistModern, { color: theme.textSecondary }]} numberOfLines={1}>
-                {currentPlayer.item.artist}
+                {currentPlayer.item.artist || currentPlayer.item.host || t('player.artist')}
               </Text>
             </View>
             <View style={styles.musicPlayerHeaderActionsModern}>
@@ -2688,108 +2756,32 @@ function CoranScreen({ navigation }: any) {
 
 // Écran de podcasts - Design amélioré
 function PodcastsScreen({ navigation }: any) {
-  const { language, darkMode, setCurrentPlayer, currentPlayer } = React.useContext(AppContext);
+  const { language, darkMode, setCurrentPlayer, currentPlayer, addToHistory } = React.useContext(AppContext);
   const theme = darkMode ? darkTheme : lightTheme;
   const [subscribedPodcasts, setSubscribedPodcasts] = React.useState<number[]>([]);
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [position, setPosition] = React.useState(0);
   const [duration, setDuration] = React.useState(0);
-  const [showCarMode, setShowCarMode] = React.useState(false);
-  const [showInfo, setShowInfo] = React.useState(false);
-  const [showMenu, setShowMenu] = React.useState(false);
+  const [selectedPodcast, setSelectedPodcast] = React.useState<any>(null);
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [showSearch, setShowSearch] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState('');
 
-  // Fonction pour obtenir la source audio du podcast sélectionné
-  const getAudioSource = () => {
-    if (currentPlayer?.type === 'podcast' && currentPlayer.item) {
-      // Si le podcast a un fichier audio, l'utiliser
-      if (currentPlayer.item.file) {
-        return currentPlayer.item.file;
-      }
-    }
-    // Sinon, utiliser le fichier par défaut
-    return require('./assets/audio/audio.mp3');
+  const handlePodcastPress = (podcast: any) => {
+    setSelectedPodcast(podcast);
+    setModalVisible(true);
   };
 
-  // Utiliser expo-audio pour la lecture
-  const player = useAudioPlayer(getAudioSource());
-
-  React.useEffect(() => {
-    if (player && currentPlayer?.type === 'podcast') {
-      // Réinitialiser la position quand on change de podcast
-      setPosition(0);
-      setDuration(0);
-      
-      const updateStatus = () => {
-        try {
-          if (player) {
-            setIsPlaying(player.playing || false);
-            setPosition((player.currentTime || 0) * 1000);
-            const dur = (player.duration || 0) * 1000;
-            if (dur > 0) {
-              setDuration(dur);
-            }
-          }
-        } catch (error) {
-          console.log('Erreur mise à jour audio:', error);
-        }
-      };
-      const interval = setInterval(updateStatus, 500);
-      return () => clearInterval(interval);
-    } else {
-      // Réinitialiser quand on n'a plus de lecteur actif
-      setIsPlaying(false);
-      setPosition(0);
-      setDuration(0);
-    }
-  }, [player, currentPlayer]);
-
-  const togglePlay = async () => {
-    try {
-      if (player) {
-        if (player.playing) {
-          await player.pause();
-          setIsPlaying(false);
-        } else {
-          await player.play();
-          setIsPlaying(true);
-          // Si la durée n'est pas encore chargée, attendre un peu
-          if (duration === 0) {
-            setTimeout(() => {
-              if (player.duration) {
-                setDuration(player.duration * 1000);
-              }
-            }, 500);
-          }
-        }
-      }
-    } catch (error) {
-      console.log('Erreur toggle play:', error);
-      setIsPlaying(!isPlaying);
-      if (!isPlaying && duration === 0) {
-        setDuration(180000);
-      }
+  const handlePlayPodcast = () => {
+    if (selectedPodcast) {
+      addToHistory(selectedPodcast, 'audio');
+      setCurrentPlayer({ item: selectedPodcast, type: 'podcast' });
+      setModalVisible(false);
+      // Naviguer vers le lecteur plein écran
+      navigation.navigate('PodcastPlayer', { podcast: selectedPodcast });
     }
   };
 
-  const handleShare = async () => {
-    if (currentPlayer?.item) {
-      try {
-        await Share.share({
-          message: `Écoutez "${currentPlayer.item.title}" sur Hassaniya Digital`,
-          title: currentPlayer.item.title,
-        });
-      } catch (error) {
-        console.error('Erreur partage:', error);
-      }
-    }
-  };
-
-  const formatTime = (ms: number) => {
-    const totalSeconds = Math.floor(ms / 1000);
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  };
 
   const handleSubscribe = (id: number) => {
     setSubscribedPodcasts(prev => 
@@ -2816,7 +2808,12 @@ function PodcastsScreen({ navigation }: any) {
       
       {/* Header avec pills et icônes */}
       <View style={[styles.podcastsHeaderNew, { backgroundColor: theme.surface }]}>
-        <TouchableOpacity style={styles.podcastsHeaderIconBtn}>
+        <TouchableOpacity 
+          style={styles.podcastsHeaderIconBtn}
+          onPress={() => {
+            Alert.alert('Paramètres', 'Options de paramètres des podcasts');
+          }}
+        >
           <Text style={[styles.podcastsHeaderIconNew, { color: theme.text }]}>⚙️</Text>
         </TouchableOpacity>
         
@@ -2851,7 +2848,10 @@ function PodcastsScreen({ navigation }: any) {
           </TouchableOpacity>
         </View>
         
-        <TouchableOpacity style={styles.podcastsHeaderIconBtn}>
+        <TouchableOpacity 
+          style={styles.podcastsHeaderIconBtn}
+          onPress={() => setShowSearch(!showSearch)}
+        >
           <Text style={[styles.podcastsHeaderIconNew, { color: theme.text }]}>🔍</Text>
         </TouchableOpacity>
       </View>
@@ -2877,9 +2877,7 @@ function PodcastsScreen({ navigation }: any) {
             <TouchableOpacity
               style={styles.podcastThumbnailContainer}
               activeOpacity={0.9}
-              onPress={() => {
-                setCurrentPlayer({ item: podcast, type: 'podcast' });
-              }}
+              onPress={() => handlePodcastPress(podcast)}
             >
               <Image 
                 source={podcast.image || require('./assets/thierno.png')} 
@@ -2937,7 +2935,13 @@ function PodcastsScreen({ navigation }: any) {
                 </TouchableOpacity>
                 <TouchableOpacity 
                   style={styles.podcastCardFooterButton}
-                  onPress={() => setShowInfo(!showInfo)}
+                  onPress={() => {
+                    Alert.alert(
+                      podcast.title,
+                      podcast.description || 'Podcast spirituel de grande valeur.',
+                      [{ text: 'OK' }]
+                    );
+                  }}
                 >
                   <Text style={styles.podcastCardFooterIcon}>ℹ️</Text>
                 </TouchableOpacity>
@@ -2947,94 +2951,108 @@ function PodcastsScreen({ navigation }: any) {
         ))}
       </ScrollView>
 
-      {/* Lecteur audio intégré en bas - Moderne */}
-      {currentPlayer?.type === 'podcast' && currentPlayer.item && (
-        <LinearGradient
-          colors={darkMode ? ['#0B3C5D', '#0F5132'] : ['#ffffff', '#F8F9F6']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.musicPlayerContainerModern}
-        >
-          <View style={styles.musicPlayerHeaderModern}>
-            <View style={styles.musicPlayerTrackInfoModern}>
-              <Text style={[styles.musicPlayerTrackTitleModern, { color: theme.text }]} numberOfLines={1}>
-                {currentPlayer.item.title}
-              </Text>
-              <Text style={[styles.musicPlayerTrackArtistModern, { color: theme.textSecondary }]} numberOfLines={1}>
-                {currentPlayer.item.host || currentPlayer.item.artist || t('player.artist')}
-              </Text>
-            </View>
-            <View style={styles.musicPlayerHeaderActionsModern}>
-              <TouchableOpacity 
-                onPress={() => setShowCarMode(!showCarMode)} 
-                style={[styles.musicPlayerHeaderButtonModern, showCarMode && styles.musicPlayerHeaderButtonActive]}
-              >
-                <Text style={styles.musicPlayerHeaderIconModern}>🚗</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleShare} style={styles.musicPlayerHeaderButtonModern}>
-                <Text style={styles.musicPlayerHeaderIconModern}>📤</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setShowInfo(!showInfo)} style={styles.musicPlayerHeaderButtonModern}>
-                <Text style={styles.musicPlayerHeaderIconModern}>ℹ️</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setShowMenu(!showMenu)} style={styles.musicPlayerHeaderButtonModern}>
-                <Text style={styles.musicPlayerHeaderIconModern}>☰</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+      {/* Modal de détail du podcast */}
+      <Modal
+        visible={modalVisible}
+        transparent={false}
+        animationType="slide"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={[styles.podcastModalContainer, { backgroundColor: theme.surface }]}>
+              {selectedPodcast && (
+                <>
+                  {/* Header avec X et Bookmark */}
+                  <View style={styles.podcastModalHeader}>
+                    <TouchableOpacity 
+                      style={styles.podcastModalCloseBtn}
+                      onPress={() => setModalVisible(false)}
+                    >
+                      <Text style={[styles.podcastModalCloseIcon, { color: theme.text }]}>✕</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.podcastModalBookmarkBtn}>
+                      <Text style={[styles.podcastModalBookmarkIcon, { color: theme.text }]}>🔖</Text>
+                    </TouchableOpacity>
+                  </View>
 
-          <View style={styles.musicPlayerControlsModern}>
-            <TouchableOpacity style={styles.musicPlayerControlBtnModern} activeOpacity={0.7}>
-              <Text style={styles.musicPlayerControlIconModern}>⏮️</Text>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={styles.musicPlayerPlayBtnModern}
-              onPress={togglePlay}
-              activeOpacity={0.9}
-            >
-              <LinearGradient
-                colors={['#0F5132', '#0B3C5D']}
-                style={styles.musicPlayerPlayBtnGradient}
-              >
-                <Text style={styles.musicPlayerPlayIconModern}>{isPlaying ? '⏸️' : '▶️'}</Text>
-              </LinearGradient>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.musicPlayerControlBtnModern} activeOpacity={0.7}>
-              <Text style={styles.musicPlayerControlIconModern}>⏭️</Text>
-            </TouchableOpacity>
-          </View>
+                  <ScrollView
+                    style={styles.podcastModalScroll}
+                    contentContainerStyle={styles.podcastModalContent}
+                    showsVerticalScrollIndicator={false}
+                  >
+                    {/* Image avec texte superposé */}
+                    <View style={styles.podcastModalImageContainer}>
+                      <ImageBackground
+                        source={selectedPodcast.image || require('./assets/thierno.png')}
+                        style={styles.podcastModalImage}
+                        imageStyle={styles.podcastModalImageStyle}
+                      >
+                        <View style={styles.podcastModalImageOverlay}>
+                          <Text style={styles.podcastModalImageTitle}>{selectedPodcast.title}</Text>
+                          <Text style={styles.podcastModalImageSubtitle}>
+                            {selectedPodcast.subtitle || `Par ${selectedPodcast.host}`}
+                          </Text>
+                        </View>
+                      </ImageBackground>
+                    </View>
 
-          <View style={styles.musicPlayerProgressContainerModern}>
-            <Slider
-              style={styles.musicPlayerSliderModern}
-              value={position}
-              maximumValue={duration || 100}
-              minimumValue={0}
-              onValueChange={(value) => {
-                setPosition(value);
-                try {
-                  if (player) {
-                    player.currentTime = value / 1000;
-                  }
-                } catch (error) {
-                  console.log('Erreur seek:', error);
-                }
-              }}
-              minimumTrackTintColor="#0F5132"
-              maximumTrackTintColor="#e0e0e0"
-              thumbTintColor="#0F5132"
-            />
-            <View style={styles.musicPlayerTimeContainerModern}>
-              <Text style={[styles.musicPlayerTimeTextModern, { color: theme.textSecondary }]}>
-                {formatTime(position)}
-              </Text>
-              <Text style={[styles.musicPlayerTimeTextModern, { color: theme.textSecondary }]}>
-                {formatTime(duration)}
-              </Text>
-            </View>
-          </View>
-        </LinearGradient>
-      )}
+                    {/* Titre principal */}
+                    <Text style={[styles.podcastModalMainTitle, { color: theme.text }]}>
+                      {selectedPodcast.title}
+                    </Text>
+
+                    {/* Métadonnées */}
+                    <View style={styles.podcastModalMetadata}>
+                      <Text style={[styles.podcastModalMetadataText, { color: theme.textSecondary }]}>
+                        {selectedPodcast.duration || '--:--'} • {selectedPodcast.date}
+                      </Text>
+                      {selectedPodcast.locked && (
+                        <Text style={styles.podcastModalLockIcon}>🔒</Text>
+                      )}
+                    </View>
+
+                    {/* Boutons de contrôle */}
+                    <View style={styles.podcastModalControls}>
+                      <TouchableOpacity 
+                        style={styles.podcastModalPlayButton}
+                        onPress={handlePlayPodcast}
+                        activeOpacity={0.9}
+                      >
+                        <LinearGradient
+                          colors={['#0F5132', '#0B3C5D']}
+                          style={styles.podcastModalPlayButtonGradient}
+                        >
+                          <Text style={styles.podcastModalPlayIcon}>▶</Text>
+                          <Text style={styles.podcastModalPlayText}>Play</Text>
+                        </LinearGradient>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.podcastModalMenuButton}>
+                        <Text style={styles.podcastModalMenuIcon}>⋯</Text>
+                      </TouchableOpacity>
+                    </View>
+
+                    {/* Section About */}
+                    <View style={styles.podcastModalAboutSection}>
+                      <Text style={[styles.podcastModalSectionTitle, { color: theme.text }]}>About</Text>
+                      <Text style={[styles.podcastModalAboutText, { color: theme.text }]}>
+                        {selectedPodcast.description || 'Podcast spirituel de grande valeur.'}
+                      </Text>
+                    </View>
+
+                    {/* Section Tags */}
+                    <View style={styles.podcastModalTagsSection}>
+                      <Text style={[styles.podcastModalSectionTitle, { color: theme.text }]}>Tags</Text>
+                      <View style={styles.podcastModalTagsContainer}>
+                        <TouchableOpacity style={styles.podcastModalTagButton}>
+                          <Text style={styles.podcastModalTagText}>Podcasts</Text>
+                          <Text style={styles.podcastModalTagIcon}>▶</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </ScrollView>
+                </>
+              )}
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -3286,6 +3304,372 @@ function LibraryScreen({ navigation }: any) {
           </View>
         </View>
       )}
+    </View>
+  );
+}
+
+// Écran de lecteur podcast plein écran - Design selon l'image
+function PodcastPlayerScreen({ route, navigation }: any) {
+  const { podcast } = route.params || {};
+  const { darkMode } = React.useContext(AppContext);
+  const theme = darkMode ? darkTheme : lightTheme;
+  const [isPlaying, setIsPlaying] = React.useState(false);
+  const [position, setPosition] = React.useState(0);
+  const [duration, setDuration] = React.useState(0);
+  const [playbackSpeed, setPlaybackSpeed] = React.useState(1.0);
+  const [showCarMode, setShowCarMode] = React.useState(false);
+  const [showInfo, setShowInfo] = React.useState(false);
+  const [showMenu, setShowMenu] = React.useState(false);
+  const [showSleepTimer, setShowSleepTimer] = React.useState(false);
+  const [sound, setSound] = React.useState<Audio.Sound | null>(null);
+  const soundRef = React.useRef<Audio.Sound | null>(null);
+
+  // Utiliser expo-av pour la lecture avec contrôle de vitesse et seek
+  React.useEffect(() => {
+    let isMounted = true;
+
+    const loadAndPlay = async () => {
+      try {
+        // Désactiver le mode audio pour permettre la lecture en arrière-plan
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS: false,
+          staysActiveInBackground: true,
+          playsInSilentModeIOS: true,
+        });
+
+        // Obtenir la source audio
+        const audioSource = podcast?.fileName 
+          ? getPodcastFile(podcast.fileName)
+          : require('./assets/audio/audio.mp3');
+
+        // Créer et charger le son
+        const { sound: newSound } = await Audio.Sound.createAsync(
+          audioSource,
+          { shouldPlay: true, rate: playbackSpeed },
+          (status) => {
+            if (!isMounted) return;
+            if (status.isLoaded) {
+              setIsPlaying(status.isPlaying || false);
+              setPosition((status.positionMillis || 0));
+              if (status.durationMillis && status.durationMillis > 0) {
+                setDuration(status.durationMillis);
+              }
+            }
+          }
+        );
+
+        if (isMounted) {
+          setSound(newSound);
+          soundRef.current = newSound;
+          setIsPlaying(true);
+        }
+      } catch (error) {
+        console.log('Erreur chargement audio:', error);
+      }
+    };
+
+    if (podcast) {
+      loadAndPlay();
+    }
+
+    return () => {
+      isMounted = false;
+      if (soundRef.current) {
+        soundRef.current.unloadAsync().catch(() => {});
+      }
+    };
+  }, [podcast]);
+
+  // Appliquer la vitesse de lecture quand elle change
+  React.useEffect(() => {
+    const currentSound = sound || soundRef.current;
+    if (currentSound) {
+      currentSound.setRateAsync(playbackSpeed, true).catch((error) => {
+        console.log('Erreur application vitesse:', error);
+      });
+    }
+  }, [playbackSpeed, sound]);
+
+  const togglePlay = async () => {
+    try {
+      const currentSound = sound || soundRef.current;
+      if (currentSound) {
+        const status = await currentSound.getStatusAsync();
+        if (status.isLoaded) {
+          if (status.isPlaying) {
+            await currentSound.pauseAsync();
+            setIsPlaying(false);
+          } else {
+            await currentSound.playAsync();
+            setIsPlaying(true);
+          }
+        }
+      }
+    } catch (error) {
+      console.log('Erreur toggle play:', error);
+    }
+  };
+
+  const formatTime = (ms: number) => {
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const formatRemainingTime = (current: number, total: number) => {
+    const remaining = total - current;
+    return formatTime(remaining);
+  };
+
+  const handleRewind = async () => {
+    try {
+      const currentSound = sound || soundRef.current;
+      if (currentSound) {
+        const status = await currentSound.getStatusAsync();
+        if (status.isLoaded && status.positionMillis !== undefined) {
+          const newPosition = Math.max(0, status.positionMillis - 30000);
+          await currentSound.setPositionAsync(newPosition);
+          setPosition(newPosition);
+        }
+      }
+    } catch (error) {
+      console.log('Erreur rewind:', error);
+    }
+  };
+
+  const handleForward = async () => {
+    try {
+      const currentSound = sound || soundRef.current;
+      if (currentSound) {
+        const status = await currentSound.getStatusAsync();
+        if (status.isLoaded && status.positionMillis !== undefined && status.durationMillis !== undefined) {
+          const newPosition = Math.min(status.durationMillis, status.positionMillis + 30000);
+          await currentSound.setPositionAsync(newPosition);
+          setPosition(newPosition);
+        }
+      }
+    } catch (error) {
+      console.log('Erreur forward:', error);
+    }
+  };
+
+  const handleShare = async () => {
+    try {
+      await Share.share({
+        message: `Écoutez "${podcast?.title}" sur Fayda Digital`,
+        title: podcast?.title,
+      });
+    } catch (error) {
+      console.log('Erreur partage:', error);
+    }
+  };
+
+  const handleSpeedChange = () => {
+    const speeds = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
+    const currentIndex = speeds.indexOf(playbackSpeed);
+    const nextIndex = (currentIndex + 1) % speeds.length;
+    setPlaybackSpeed(speeds[nextIndex]);
+  };
+
+  const handleMenuPress = () => {
+    Alert.alert(
+      'Options',
+      'Choisissez une option',
+      [
+        { text: 'Ajouter aux favoris', onPress: () => {} },
+        { text: 'Télécharger', onPress: () => {} },
+        { text: 'Partager', onPress: handleShare },
+        { text: 'Annuler', style: 'cancel' },
+      ]
+    );
+  };
+
+  const handleSleepTimer = () => {
+    Alert.alert(
+      'Minuteur de sommeil',
+      'Choisissez la durée',
+      [
+        { text: '15 min', onPress: () => setShowSleepTimer(true) },
+        { text: '30 min', onPress: () => setShowSleepTimer(true) },
+        { text: '60 min', onPress: () => setShowSleepTimer(true) },
+        { text: 'Annuler', style: 'cancel' },
+      ]
+    );
+  };
+
+  if (!podcast) return null;
+
+  return (
+    <View style={[styles.podcastPlayerScreen, { backgroundColor: '#ffffff' }]}>
+      <StatusBar style="dark" />
+      
+      {/* Header avec icônes */}
+      <View style={styles.podcastPlayerHeader}>
+        <TouchableOpacity 
+          onPress={() => navigation.goBack()}
+          style={styles.podcastPlayerHeaderIcon}
+        >
+          <Text style={styles.podcastPlayerHeaderIconText}>←</Text>
+        </TouchableOpacity>
+        <View style={styles.podcastPlayerHeaderIcons}>
+          <TouchableOpacity 
+            style={[styles.podcastPlayerHeaderIcon, showCarMode && { backgroundColor: '#0F5132', borderRadius: 20 }]}
+            onPress={() => setShowCarMode(!showCarMode)}
+          >
+            <Text style={styles.podcastPlayerHeaderIconText}>🚗</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.podcastPlayerHeaderIcon}
+            onPress={handleShare}
+          >
+            <Text style={styles.podcastPlayerHeaderIconText}>📤</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.podcastPlayerHeaderIcon}
+            onPress={() => {
+              setShowInfo(!showInfo);
+              Alert.alert(
+                podcast.title,
+                podcast.description || 'Podcast spirituel de grande valeur.',
+                [{ text: 'OK' }]
+              );
+            }}
+          >
+            <Text style={styles.podcastPlayerHeaderIconText}>ℹ️</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <ScrollView 
+        style={styles.podcastPlayerScroll}
+        contentContainerStyle={styles.podcastPlayerContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Image principale avec overlay */}
+        <View style={styles.podcastPlayerImageContainer}>
+          <ImageBackground
+            source={podcast.image || require('./assets/thierno.png')}
+            style={styles.podcastPlayerImage}
+            resizeMode="cover"
+            imageStyle={styles.podcastPlayerImageStyle}
+          >
+            <View style={styles.podcastPlayerImageOverlay}>
+              <Text style={styles.podcastPlayerImageTitle}>{podcast.title}</Text>
+              <Text style={styles.podcastPlayerImageSubtitle}>
+                {podcast.subtitle || `Par ${podcast.host}`}
+              </Text>
+            </View>
+          </ImageBackground>
+        </View>
+
+        {/* Titre de la piste */}
+        <View style={styles.podcastPlayerTrackInfo}>
+          <Text style={[styles.podcastPlayerTrackTitle, { color: theme.text }]} numberOfLines={2}>
+            {podcast.title}
+          </Text>
+          <TouchableOpacity 
+            style={styles.podcastPlayerOptions}
+            onPress={handleMenuPress}
+          >
+            <Text style={styles.podcastPlayerOptionsIcon}>☰</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Barre de progression */}
+        <View style={styles.podcastPlayerProgressContainer}>
+          <Slider
+            style={styles.podcastPlayerSlider}
+            value={position}
+            maximumValue={duration || 100}
+            minimumValue={0}
+            onValueChange={(value) => {
+              setPosition(value);
+            }}
+            onSlidingComplete={async (value) => {
+              try {
+                const currentSound = sound || soundRef.current;
+                if (currentSound) {
+                  await currentSound.setPositionAsync(value);
+                }
+              } catch (error) {
+                console.log('Erreur seek:', error);
+              }
+            }}
+            minimumTrackTintColor="#0F5132"
+            maximumTrackTintColor="#e0e0e0"
+            thumbTintColor="#0F5132"
+          />
+          <View style={styles.podcastPlayerTimeContainer}>
+            <Text style={[styles.podcastPlayerTimeText, { color: theme.text }]}>
+              {formatTime(position)}
+            </Text>
+            <Text style={[styles.podcastPlayerTimeText, { color: theme.text }]}>
+              {duration > 0 ? formatRemainingTime(position, duration) : '--:--'}
+            </Text>
+          </View>
+        </View>
+
+        {/* Contrôles de lecture */}
+        <View style={styles.podcastPlayerControls}>
+          {/* 30s Rewind Circle */}
+          <TouchableOpacity 
+            style={styles.podcastPlayer30sBtn}
+            onPress={handleRewind}
+            activeOpacity={0.7}
+          >
+            <View style={styles.podcastPlayer30sCircle}>
+              <Text style={styles.podcastPlayer30sText}>30s</Text>
+            </View>
+          </TouchableOpacity>
+          
+          {/* Play/Pause Button */}
+          <TouchableOpacity 
+            style={styles.podcastPlayerPlayBtn}
+            onPress={togglePlay}
+            activeOpacity={0.9}
+          >
+            <LinearGradient
+              colors={['#0F5132', '#0B3C5D']}
+              style={styles.podcastPlayerPlayBtnGradient}
+            >
+              <Text style={styles.podcastPlayerPlayIcon}>{isPlaying ? '⏸' : '▶'}</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+          
+          {/* 30s Forward Circle */}
+          <TouchableOpacity 
+            style={styles.podcastPlayer30sBtn}
+            onPress={handleForward}
+            activeOpacity={0.7}
+          >
+            <View style={styles.podcastPlayer30sCircle}>
+              <Text style={styles.podcastPlayer30sText}>30s</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        {/* Contrôles supplémentaires */}
+        <View style={styles.podcastPlayerBottomControls}>
+          <TouchableOpacity 
+            style={styles.podcastPlayerSpeedControl}
+            onPress={handleSpeedChange}
+          >
+            <Text style={styles.podcastPlayerSpeedIcon}>⏱</Text>
+            <Text style={[styles.podcastPlayerSpeedText, { color: theme.text }]}>
+              {playbackSpeed.toFixed(1)}x
+            </Text>
+          </TouchableOpacity>
+          <View style={styles.podcastPlayerBottomIcons}>
+            <TouchableOpacity 
+              style={[styles.podcastPlayerBottomIcon, showSleepTimer && { backgroundColor: '#C9A24D' }]}
+              onPress={handleSleepTimer}
+            >
+              <Text style={styles.podcastPlayerBottomIconText}>Z</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
     </View>
   );
 }
@@ -4478,6 +4862,7 @@ export default function App() {
           <Stack.Screen name="VideoPlayer" component={VideoPlayerScreen} />
           <Stack.Screen name="Zikr" component={ZikrScreen} />
           <Stack.Screen name="Coran" component={CoranScreen} />
+          <Stack.Screen name="PodcastPlayer" component={PodcastPlayerScreen} />
           <Stack.Screen name="Assistant" component={AIScreen} />
         </Stack.Navigator>
       </NavigationContainer>
@@ -4885,9 +5270,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   modalDescription: {
-    fontSize: 14,
-    lineHeight: 22,
-    marginBottom: 15,
+    fontSize: 15,
+    lineHeight: 24,
+    textAlign: 'left',
+    marginTop: 8,
   },
   modalInfo: {
     flexDirection: 'row',
@@ -6882,6 +7268,414 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
     letterSpacing: 0.5,
+  },
+  modalContentScroll: {
+    flex: 1,
+  },
+  modalContentContainer: {
+    padding: 20,
+  },
+  modalPodcastImage: {
+    width: '100%',
+    height: 200,
+    borderRadius: 12,
+    marginBottom: 20,
+  },
+  modalDescriptionSection: {
+    marginBottom: 20,
+    paddingBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  modalDescriptionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 12,
+  },
+  // Styles pour le modal podcast (design selon l'image)
+  podcastModalContainer: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+  },
+  podcastModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 50,
+    paddingBottom: 20,
+  },
+  podcastModalCloseBtn: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  podcastModalCloseIcon: {
+    fontSize: 24,
+    fontWeight: '300',
+  },
+  podcastModalBookmarkBtn: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  podcastModalBookmarkIcon: {
+    fontSize: 24,
+  },
+  podcastModalScroll: {
+    flex: 1,
+  },
+  podcastModalContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 30,
+  },
+  podcastModalImageContainer: {
+    width: '100%',
+    aspectRatio: 1,
+    marginBottom: 20,
+    borderRadius: 16,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  podcastModalImage: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'flex-end',
+  },
+  podcastModalImageStyle: {
+    borderRadius: 16,
+    resizeMode: 'cover',
+  },
+  podcastModalImageOverlay: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    padding: 16,
+    paddingBottom: 20,
+  },
+  podcastModalImageTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    fontStyle: 'italic',
+    color: '#ffffff',
+    marginBottom: 4,
+  },
+  podcastModalImageSubtitle: {
+    fontSize: 14,
+    color: '#ffffff',
+    opacity: 0.9,
+  },
+  podcastModalMainTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 12,
+    textAlign: 'left',
+  },
+  podcastModalMetadata: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  podcastModalMetadataText: {
+    fontSize: 14,
+    marginRight: 8,
+  },
+  podcastModalLockIcon: {
+    fontSize: 16,
+  },
+  podcastModalControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 30,
+    gap: 12,
+  },
+  podcastModalPlayButton: {
+    flex: 1,
+    borderRadius: 12,
+    overflow: 'hidden',
+    shadowColor: '#0F5132',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  podcastModalPlayButtonGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    gap: 10,
+  },
+  podcastModalPlayIcon: {
+    fontSize: 20,
+    color: '#ffffff',
+    fontWeight: 'bold',
+  },
+  podcastModalPlayText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#ffffff',
+  },
+  podcastModalMenuButton: {
+    width: 56,
+    height: 56,
+    borderRadius: 12,
+    backgroundColor: '#0F5132',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#0F5132',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  podcastModalMenuIcon: {
+    fontSize: 24,
+    color: '#ffffff',
+    fontWeight: 'bold',
+    lineHeight: 24,
+  },
+  podcastModalAboutSection: {
+    marginBottom: 25,
+  },
+  podcastModalSectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 12,
+  },
+  podcastModalAboutText: {
+    fontSize: 15,
+    lineHeight: 24,
+    textAlign: 'left',
+  },
+  podcastModalTagsSection: {
+    marginBottom: 20,
+  },
+  podcastModalTagsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  podcastModalTagButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 20,
+    backgroundColor: '#C9A24D',
+    gap: 8,
+  },
+  podcastModalTagText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#000000',
+  },
+  podcastModalTagIcon: {
+    fontSize: 12,
+    color: '#000000',
+  },
+  // Styles pour le lecteur podcast plein écran
+  podcastPlayerScreen: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+  },
+  podcastPlayerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 50,
+    paddingBottom: 15,
+  },
+  podcastPlayerHeaderIcon: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  podcastPlayerHeaderIconText: {
+    fontSize: 24,
+    color: '#000000',
+  },
+  podcastPlayerHeaderIcons: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  podcastPlayerScroll: {
+    flex: 1,
+  },
+  podcastPlayerContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 30,
+  },
+  podcastPlayerImageContainer: {
+    width: '100%',
+    aspectRatio: 1,
+    marginBottom: 20,
+    borderRadius: 16,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  podcastPlayerImage: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'flex-end',
+  },
+  podcastPlayerImageStyle: {
+    borderRadius: 16,
+    resizeMode: 'cover',
+  },
+  podcastPlayerImageOverlay: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    padding: 16,
+    paddingBottom: 20,
+  },
+  podcastPlayerImageTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    fontStyle: 'italic',
+    color: '#ffffff',
+    marginBottom: 4,
+  },
+  podcastPlayerImageSubtitle: {
+    fontSize: 14,
+    color: '#ffffff',
+    opacity: 0.9,
+  },
+  podcastPlayerTrackInfo: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  podcastPlayerTrackTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    flex: 1,
+    marginRight: 15,
+  },
+  podcastPlayerOptions: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  podcastPlayerOptionsIcon: {
+    fontSize: 24,
+    color: '#000000',
+  },
+  podcastPlayerProgressContainer: {
+    marginBottom: 30,
+  },
+  podcastPlayerSlider: {
+    width: '100%',
+    height: 40,
+  },
+  podcastPlayerTimeContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
+  podcastPlayerTimeText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  podcastPlayerControls: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 30,
+    gap: 20,
+  },
+  podcastPlayer30sBtn: {
+    width: 60,
+    height: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  podcastPlayer30sCircle: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#f0f0f0',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#0F5132',
+  },
+  podcastPlayer30sText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#0F5132',
+  },
+  podcastPlayerPlayBtn: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    overflow: 'hidden',
+    shadowColor: '#0F5132',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  podcastPlayerPlayBtnGradient: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  podcastPlayerPlayIcon: {
+    fontSize: 36,
+    color: '#ffffff',
+  },
+  podcastPlayerBottomControls: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  podcastPlayerSpeedControl: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderRadius: 20,
+    backgroundColor: '#f0f0f0',
+    gap: 8,
+  },
+  podcastPlayerSpeedIcon: {
+    fontSize: 18,
+  },
+  podcastPlayerSpeedText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  podcastPlayerBottomIcons: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  podcastPlayerBottomIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#f0f0f0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  podcastPlayerBottomIconText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#0F5132',
   },
   // Styles nouveau lecteur audio (comme l'image)
   audioPlayerScreenNew: {
@@ -9095,6 +9889,44 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   // Styles pour les cartes Coran avec image
+  podcastCardHome: {
+    width: 180,
+    height: 240,
+    marginRight: 12,
+    borderRadius: 12,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  podcastCardImageHome: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'flex-end',
+  },
+  podcastCardImageStyleHome: {
+    borderRadius: 12,
+  },
+  podcastCardOverlayHome: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+    padding: 12,
+    borderRadius: 12,
+  },
+  podcastCardTitleHome: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    marginBottom: 4,
+  },
+  podcastCardSubtitleHome: {
+    fontSize: 12,
+    color: '#ffffff',
+    opacity: 0.9,
+  },
   coranCardHome: {
     width: 180,
     height: 240,
