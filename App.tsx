@@ -195,17 +195,6 @@ const zikrTracks = [
 // Fichiers Zikr depuis le dossier assets/zikr
 const zikrFiles = [
   { 
-    id: 1, 
-    title: 'Zikr Imam al-Fayda Shaykh Tijani Cisse', 
-    titleAr: 'ذكر إمام الفيض الشيخ التجاني سي',
-    subtitle: 'Zikr Imam al-Fayda Shaykh Tijani Cisse',
-    description: 'This beautiful Zikr is the heartfelt chant of the Imam of the Fayda, Shaykh Tijani Cisse, bringing peace and spiritual elevation.',
-    duration: '10:00',
-    tracks: null,
-    file: require('./assets/zikr/babacar-thiam-zikr-3.mp3'),
-    image: require('./assets/thierno.png'),
-  },
-  { 
     id: 2, 
     title: 'Secrets of Ziyara Rihla (2024)', 
     titleAr: 'أسرار الزيارة',
@@ -339,39 +328,58 @@ const musicTracks = [
   { id: 8, title: 'Asma Allah Al-Husna', artist: 'Mishary Rashid', duration: '8:30' },
 ];
 
-// Podcasts avec design inspiré de l'image
+// Podcasts avec design inspiré de l'image - Basé sur les fichiers du dossier podcasts
 const podcasts = [
   { 
     id: 1, 
-    title: 'Concealed Conversations - Sufism & the Tijani way', 
-    titleAr: 'محادثات مخفية',
-    subtitle: 'Sufism and the Tijani way',
-    host: 'Shaykh Hassan Cisse', 
-    episodes: 60, 
-    subscribers: 8500, 
+    title: 'ARCHIVE-AUDIO WAKHTANU THIERNO ASSANE DEME CI TARBIYA ILALAH - MALBN TV', 
+    titleAr: 'أرشيف صوتي - وختنو ثيرنو آسان ديم في التربية الإلهية',
+    subtitle: 'Archive audio - Wakhtanu Thierno Assane Deme',
+    host: 'Thierno Assane Deme', 
+    episodes: 1, 
+    subscribers: 0, 
     subscribed: false,
-    duration: '02:00:39',
-    date: '27 August 2023',
+    duration: '00:00',
+    date: new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }),
     image: require('./assets/thierno.png'),
-    description: 'A collection of spiritual conversations about Sufism and the Tijani way.',
+    description: 'Archive audio de Wakhtanu Thierno Assane Deme sur la Tarbiya Ilalah (Éducation divine).',
     locked: false,
-    episodeType: 'Weekly',
+    episodeType: 'Archive',
+    file: require('./assets/podcasts/ARCHIVE-AUDIO WAKHTANU THIERNO ASSANE DEME CI TARBIYA ILALAH - MALBN TV.mp3'),
   },
   { 
     id: 2, 
-    title: 'Shaykh Hassan Cisse Talks', 
-    titleAr: 'محاضرات الشيخ حسن سيسي',
-    subtitle: 'A collection of speeches and talks',
-    host: 'Shaykh Hassan Cisse', 
-    episodes: 10, 
-    subscribers: 12300, 
+    title: 'Qu\'est ce que la wazifa d\'un Arif Bilah par Cheikh Assane Dème', 
+    titleAr: 'ما هي وظيفة العارف بالله للشيخ آسان ديم',
+    subtitle: 'La wazifa d\'un Arif Bilah',
+    host: 'Cheikh Assane Dème', 
+    episodes: 1, 
+    subscribers: 0, 
     subscribed: false,
-    duration: '01:30:00',
-    date: '26 August 2023',
+    duration: '00:00',
+    date: new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }),
     image: require('./assets/thierno.png'),
-    description: 'A collection of speeches and talks of Imam Shaykh Hassan Cisse.',
-    locked: true,
-    episodeType: 'Episodes 1 - 10',
+    description: 'Explication de la wazifa d\'un Arif Bilah (Celui qui connaît Allah) par Cheikh Assane Dème.',
+    locked: false,
+    episodeType: 'Enseignement',
+    file: require('./assets/podcasts/Qu\'est ce que la wazifa d\'un Arif Bilah par Cheikh Assane Dème.mp3'),
+  },
+  { 
+    id: 3, 
+    title: 'Waxtanou Cheikh Thierno Assane Dème', 
+    titleAr: 'وختنو الشيخ ثيرنو آسان ديم',
+    subtitle: 'Paroles du Cheikh Thierno Assane Dème',
+    host: 'Cheikh Thierno Assane Dème', 
+    episodes: 1, 
+    subscribers: 0, 
+    subscribed: false,
+    duration: '00:00',
+    date: new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }),
+    image: require('./assets/thierno.png'),
+    description: 'Paroles et enseignements du Cheikh Thierno Assane Dème.',
+    locked: false,
+    episodeType: 'Enseignement',
+    file: require('./assets/podcasts/waxtanou-cheikh-thierno-assane-dème-ra.mp3'),
   },
 ];
 
@@ -717,7 +725,7 @@ function HomeScreen({ navigation }: any) {
         <ImageBackground 
           source={require('./assets/thierno.png')} 
           style={styles.heroImageModern}
-          imageStyle={{ opacity: 0.15 }}
+          imageStyle={{ opacity: 1 }}
         >
           <LinearGradient
             colors={darkMode 
@@ -727,9 +735,6 @@ function HomeScreen({ navigation }: any) {
             style={styles.heroGradientModern}
           >
             <View style={styles.heroContentModern}>
-              <View style={styles.heroIconContainer}>
-                <Text style={styles.heroIcon}>☪️</Text>
-              </View>
               <Text style={styles.heroTitleModern}>Bienvenue</Text>
               <Text style={styles.heroSubtitleModern}>Explorez la sagesse islamique</Text>
               <View style={styles.heroDecorativeLine} />
@@ -747,7 +752,7 @@ function HomeScreen({ navigation }: any) {
                 <Text style={styles.sectionIconModern}>🕐</Text>
               </View>
               <View>
-                <Text style={[styles.sectionTitleModern, { color: theme.text }]}>Derniers consultés</Text>
+                <Text style={[styles.sectionTitleModern, { color: theme.text }]}>Derniers articles consultés</Text>
                 <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>Articles récents</Text>
               </View>
             </View>
@@ -804,124 +809,6 @@ function HomeScreen({ navigation }: any) {
           </ScrollView>
         </View>
       )}
-
-      {/* Rubrique : Continuer où vous étiez */}
-      {recentItems.length > 0 && (
-        <View style={styles.sectionModern}>
-          <View style={styles.sectionHeaderModern}>
-            <View style={styles.sectionTitleContainerModern}>
-              <View style={styles.sectionIconContainer}>
-                <Text style={styles.sectionIconModern}>📖</Text>
-              </View>
-              <View>
-                <Text style={[styles.sectionTitleModern, { color: theme.text }]}>Continuer où vous étiez</Text>
-                <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>Reprenez votre lecture</Text>
-              </View>
-            </View>
-            <TouchableOpacity style={styles.seeAllButton}>
-              <Text style={styles.seeAllModern}>Voir tout</Text>
-              <Text style={styles.seeAllArrow}>→</Text>
-            </TouchableOpacity>
-          </View>
-          <ScrollView 
-            horizontal 
-            showsHorizontalScrollIndicator={false} 
-            style={styles.horizontalScrollModern} 
-            contentContainerStyle={styles.horizontalScrollContentModern}
-          >
-            {recentItems.slice(0, 6).map((item, index) => (
-              <TouchableOpacity 
-                key={`continue-${item.id}-${item.type}-${index}`}
-                style={[styles.continueCardModern, { backgroundColor: theme.surface }]}
-                activeOpacity={0.8}
-                onPress={() => {
-                  if (item.type === 'pdf') {
-                    navigation.navigate('PDFReader', { book: item.item });
-                  } else {
-                    setCurrentPlayer({ item: item.item, type: item.item.type || 'music' });
-                  }
-                }}
-              >
-                <LinearGradient
-                  colors={['#0F5132', '#0B3C5D', '#0F5132']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={styles.continueIconGradientModern}
-                >
-                  <Text style={styles.continueIconTextModern}>{item.type === 'pdf' ? '📖' : '🎧'}</Text>
-                </LinearGradient>
-                <View style={styles.continueCardContent}>
-                  <Text style={[styles.continueTitleModern, { color: theme.text }]} numberOfLines={2}>{item.title}</Text>
-                  {item.titleAr && (
-                    <Text style={[styles.continueSpeakerModern, { color: theme.textSecondary }]} numberOfLines={1}>{item.titleAr}</Text>
-                  )}
-                  {item.item?.duration && (
-                    <View style={styles.continueDurationContainerModern}>
-                      <Text style={styles.continueDurationIcon}>⏱️</Text>
-                      <Text style={styles.continueDurationModern}>{item.item.duration}</Text>
-                    </View>
-                  )}
-                </View>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
-      )}
-
-      {/* Rubrique 2 : Banner Essentials Playlist */}
-      <View style={styles.sectionModern}>
-        <View style={styles.sectionHeaderModern}>
-          <Text style={[styles.sectionTitleModern, { color: '#0F5132', fontWeight: 'bold' }]}>Essentials Playlist</Text>
-          <TouchableOpacity style={styles.seeAllButton}>
-            <Text style={styles.seeAllModern}>View all</Text>
-            <Text style={styles.seeAllArrow}>→</Text>
-          </TouchableOpacity>
-        </View>
-        <TouchableOpacity 
-          activeOpacity={0.9}
-          style={styles.essentialsBannerContainer}
-        >
-          <LinearGradient
-            colors={['#8B6F47', '#A0826D', '#8B6F47']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.essentialsBannerBackground}
-          >
-            {/* Motif géométrique en overlay */}
-            <View style={styles.essentialsBannerPattern} />
-            
-            {/* Contenu du banner */}
-            <View style={styles.essentialsBannerContent}>
-              {/* Texte à gauche */}
-              <View style={styles.essentialsBannerLeft}>
-                <Text style={styles.essentialsBannerText1}>ESSENTIALS</Text>
-                <Text style={styles.essentialsBannerText2}>PLAYLIST</Text>
-                <Text style={styles.essentialsBannerText3}>Subscribers</Text>
-                <View style={styles.essentialsBannerLogo}>
-                  <Text style={styles.essentialsBannerLogoAr}>فيضة</Text>
-                  <Text style={styles.essentialsBannerLogoText}>FAYDA DIGITAL</Text>
-                </View>
-              </View>
-
-              {/* Éléments graphiques au centre/droite */}
-              <View style={styles.essentialsBannerRight}>
-                {/* Nuages */}
-                <View style={styles.essentialsCloud1} />
-                <View style={styles.essentialsCloud2} />
-                
-                {/* Minaret */}
-                <View style={styles.essentialsMinaret} />
-                
-                {/* Dôme vert */}
-                <View style={styles.essentialsDome} />
-                
-                {/* Calligraphie arabe */}
-                <Text style={styles.essentialsCalligraphy}>الله</Text>
-              </View>
-            </View>
-          </LinearGradient>
-        </TouchableOpacity>
-      </View>
 
       {/* Rubrique 3 : Liste des PDFs */}
       <View style={styles.sectionModern}>
@@ -1089,15 +976,13 @@ function HomeScreen({ navigation }: any) {
 
 // Écran des livres
 function BooksScreen({ navigation }: any) {
-  const { language, darkMode, setCurrentPlayer } = React.useContext(AppContext);
+  const { language, darkMode, setCurrentPlayer, addToHistory } = React.useContext(AppContext);
   const theme = darkMode ? darkTheme : lightTheme;
   const [selectedBook, setSelectedBook] = React.useState<any>(null);
   const [modalVisible, setModalVisible] = React.useState(false);
   const [expandedCategory, setExpandedCategory] = React.useState<string | null>(null);
 
   const handleBookPress = (book: any) => {
-    const { addToHistory } = React.useContext(AppContext);
-    
     // Si c'est un PDF, l'ouvrir directement
     if (book.pdfFile) {
       addToHistory(book, 'pdf');
@@ -1347,7 +1232,7 @@ function BooksScreen({ navigation }: any) {
 
 // Écran de musique
 function MusicScreen({ navigation }: any) {
-  const { language, darkMode, setCurrentPlayer, currentPlayer } = React.useContext(AppContext);
+  const { language, darkMode, setCurrentPlayer, currentPlayer, addToHistory } = React.useContext(AppContext);
   const theme = darkMode ? darkTheme : lightTheme;
   const [selectedTrack, setSelectedTrack] = React.useState<any>(null);
   const [isPlaying, setIsPlaying] = React.useState(false);
@@ -1493,8 +1378,8 @@ function MusicScreen({ navigation }: any) {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.podcastsHorizontalScroll}
           >
-            {zikrTracks.slice(0, 3).map((track) => {
-              const isPlaying = currentPlayer?.type === 'music' && currentPlayer.item?.id === track.id;
+            {zikrFiles.slice(0, 3).map((track) => {
+              const isPlaying = currentPlayer?.type === 'zikr' && currentPlayer.item?.id === track.id;
               
               return (
                 <TouchableOpacity
@@ -1502,13 +1387,14 @@ function MusicScreen({ navigation }: any) {
                   style={styles.podcastCardHorizontal}
                   activeOpacity={0.9}
                   onPress={() => {
-                    setCurrentPlayer({ item: track, type: 'music' });
+                    addToHistory(track, 'audio');
+                    setCurrentPlayer({ item: track, type: 'zikr' });
                   }}
                 >
                   {/* Image d'album avec texte */}
                   <View style={styles.podcastAlbumContainer}>
                     <Image 
-                      source={require('./assets/thierno.png')} 
+                      source={track.image || require('./assets/thierno.png')} 
                       style={styles.podcastAlbumImage}
                       resizeMode="cover"
                     />
@@ -2812,8 +2698,20 @@ function PodcastsScreen({ navigation }: any) {
   const [showInfo, setShowInfo] = React.useState(false);
   const [showMenu, setShowMenu] = React.useState(false);
 
+  // Fonction pour obtenir la source audio du podcast sélectionné
+  const getAudioSource = () => {
+    if (currentPlayer?.type === 'podcast' && currentPlayer.item) {
+      // Si le podcast a un fichier audio, l'utiliser
+      if (currentPlayer.item.file) {
+        return currentPlayer.item.file;
+      }
+    }
+    // Sinon, utiliser le fichier par défaut
+    return require('./assets/audio/audio.mp3');
+  };
+
   // Utiliser expo-audio pour la lecture
-  const player = useAudioPlayer(require('./assets/audio/audio.mp3'));
+  const player = useAudioPlayer(getAudioSource());
 
   React.useEffect(() => {
     if (player && currentPlayer?.type === 'podcast') {
@@ -4458,14 +4356,6 @@ function MainTabs() {
           }}
         />
         <Tab.Screen 
-          name="Library"
-          component={LibraryScreen}
-          options={{
-            tabBarLabel: t('nav.library'),
-            tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>📖</Text>,
-          }}
-        />
-        <Tab.Screen 
           name="Assistant"
           component={AIScreen}
           options={{
@@ -5984,8 +5874,9 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     paddingBottom: 20,
     paddingHorizontal: 20,
-    borderBottomLeftRadius: 25,
-    borderBottomRightRadius: 25,
+    width: '100%',
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
@@ -6019,11 +5910,11 @@ const styles = StyleSheet.create({
   },
   // Styles modernes - Hero
   heroSectionModern: {
-    height: 220,
-    marginHorizontal: 20,
+    height: 280,
+    width: '100%',
     marginTop: 20,
     marginBottom: 30,
-    borderRadius: 25,
+    borderRadius: 0,
     overflow: 'hidden',
     shadowColor: '#0F5132',
     shadowOffset: { width: 0, height: 8 },
@@ -9156,20 +9047,21 @@ const styles = StyleSheet.create({
   },
   // Styles pour les cartes récentes verticales avec portraits
   recentCardVertical: {
-    width: 160,
-    marginRight: 16,
-    borderRadius: 12,
+    width: 120,
+    marginRight: 12,
+    borderRadius: 10,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    elevation: 3,
   },
   recentCardImage: {
     width: '100%',
-    height: 240,
+    height: 180,
     justifyContent: 'flex-end',
+    position: 'relative',
   },
   recentCardImageStyle: {
     borderRadius: 12,
@@ -9180,25 +9072,25 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: 100,
+    height: 70,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   recentCardTextContainer: {
-    padding: 12,
+    padding: 8,
     zIndex: 1,
     position: 'relative',
   },
   recentCardTitle: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '600',
     color: '#ffffff',
-    marginBottom: 4,
-    lineHeight: 18,
+    marginBottom: 3,
+    lineHeight: 16,
   },
   recentCardTitleAr: {
-    fontSize: 12,
+    fontSize: 10,
     color: '#ffffff',
-    lineHeight: 16,
+    lineHeight: 14,
     textAlign: 'right',
     opacity: 0.9,
   },
