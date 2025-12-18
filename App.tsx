@@ -4,7 +4,6 @@ import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Asset } from 'expo-asset';
 import { useAudioPlayer } from 'expo-audio';
-import { Audio } from 'expo-av';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
@@ -3321,88 +3320,73 @@ function PodcastPlayerScreen({ route, navigation }: any) {
   const [showInfo, setShowInfo] = React.useState(false);
   const [showMenu, setShowMenu] = React.useState(false);
   const [showSleepTimer, setShowSleepTimer] = React.useState(false);
-  const [sound, setSound] = React.useState<Audio.Sound | null>(null);
-  const soundRef = React.useRef<Audio.Sound | null>(null);
 
-  // Utiliser expo-av pour la lecture avec contrôle de vitesse et seek
-  React.useEffect(() => {
-    let isMounted = true;
-
-    const loadAndPlay = async () => {
+  // Utiliser expo-audio pour la lecture
+  const getAudioSource = () => {
+    if (podcast?.fileName) {
       try {
-        // Désactiver le mode audio pour permettre la lecture en arrière-plan
-        await Audio.setAudioModeAsync({
-          allowsRecordingIOS: false,
-          staysActiveInBackground: true,
-          playsInSilentModeIOS: true,
-        });
+        return getPodcastFile(podcast.fileName);
+      } catch (error) {
+        console.log('Erreur chargement fichier podcast:', error);
+        return require('./assets/audio/audio.mp3');
+      }
+    }
+    return require('./assets/audio/audio.mp3');
+  };
 
-        // Obtenir la source audio
-        const audioSource = podcast?.fileName 
-          ? getPodcastFile(podcast.fileName)
-          : require('./assets/audio/audio.mp3');
+  const player = useAudioPlayer(getAudioSource());
 
-        // Créer et charger le son
-        const { sound: newSound } = await Audio.Sound.createAsync(
-          audioSource,
-          { shouldPlay: true, rate: playbackSpeed },
-          (status) => {
-            if (!isMounted) return;
-            if (status.isLoaded) {
-              setIsPlaying(status.isPlaying || false);
-              setPosition((status.positionMillis || 0));
-              if (status.durationMillis && status.durationMillis > 0) {
-                setDuration(status.durationMillis);
-              }
+  React.useEffect(() => {
+    if (player && podcast) {
+      setPosition(0);
+      setDuration(0);
+      
+      // Démarrer automatiquement la lecture
+      const startPlayback = async () => {
+        try {
+          if (player && !player.playing) {
+            await player.play();
+            setIsPlaying(true);
+          }
+        } catch (error) {
+          console.log('Erreur démarrage automatique:', error);
+        }
+      };
+      
+      startPlayback();
+      
+      const updateStatus = () => {
+        try {
+          if (player) {
+            setIsPlaying(player.playing || false);
+            setPosition((player.currentTime || 0) * 1000);
+            const dur = (player.duration || 0) * 1000;
+            if (dur > 0) {
+              setDuration(dur);
             }
           }
-        );
-
-        if (isMounted) {
-          setSound(newSound);
-          soundRef.current = newSound;
-          setIsPlaying(true);
+        } catch (error) {
+          console.log('Erreur mise à jour audio:', error);
         }
-      } catch (error) {
-        console.log('Erreur chargement audio:', error);
-      }
-    };
-
-    if (podcast) {
-      loadAndPlay();
+      };
+      const interval = setInterval(updateStatus, 500);
+      return () => clearInterval(interval);
+    } else {
+      setIsPlaying(false);
+      setPosition(0);
+      setDuration(0);
     }
-
-    return () => {
-      isMounted = false;
-      if (soundRef.current) {
-        soundRef.current.unloadAsync().catch(() => {});
-      }
-    };
-  }, [podcast]);
-
-  // Appliquer la vitesse de lecture quand elle change
-  React.useEffect(() => {
-    const currentSound = sound || soundRef.current;
-    if (currentSound) {
-      currentSound.setRateAsync(playbackSpeed, true).catch((error) => {
-        console.log('Erreur application vitesse:', error);
-      });
-    }
-  }, [playbackSpeed, sound]);
+  }, [player, podcast]);
 
   const togglePlay = async () => {
     try {
-      const currentSound = sound || soundRef.current;
-      if (currentSound) {
-        const status = await currentSound.getStatusAsync();
-        if (status.isLoaded) {
-          if (status.isPlaying) {
-            await currentSound.pauseAsync();
-            setIsPlaying(false);
-          } else {
-            await currentSound.playAsync();
-            setIsPlaying(true);
-          }
+      if (player) {
+        if (player.playing) {
+          await player.pause();
+          setIsPlaying(false);
+        } else {
+          await player.play();
+          setIsPlaying(true);
         }
       }
     } catch (error) {
@@ -3424,14 +3408,12 @@ function PodcastPlayerScreen({ route, navigation }: any) {
 
   const handleRewind = async () => {
     try {
-      const currentSound = sound || soundRef.current;
-      if (currentSound) {
-        const status = await currentSound.getStatusAsync();
-        if (status.isLoaded && status.positionMillis !== undefined) {
-          const newPosition = Math.max(0, status.positionMillis - 30000);
-          await currentSound.setPositionAsync(newPosition);
-          setPosition(newPosition);
+      if (player) {
+        const newPosition = Math.max(0, (player.currentTime || 0) - 30);
+        if ('currentTime' in player && typeof (player as any).currentTime !== 'undefined') {
+          (player as any).currentTime = newPosition;
         }
+        setPosition(newPosition * 1000);
       }
     } catch (error) {
       console.log('Erreur rewind:', error);
@@ -3440,14 +3422,12 @@ function PodcastPlayerScreen({ route, navigation }: any) {
 
   const handleForward = async () => {
     try {
-      const currentSound = sound || soundRef.current;
-      if (currentSound) {
-        const status = await currentSound.getStatusAsync();
-        if (status.isLoaded && status.positionMillis !== undefined && status.durationMillis !== undefined) {
-          const newPosition = Math.min(status.durationMillis, status.positionMillis + 30000);
-          await currentSound.setPositionAsync(newPosition);
-          setPosition(newPosition);
+      if (player && player.duration) {
+        const newPosition = Math.min(player.duration, (player.currentTime || 0) + 30);
+        if ('currentTime' in player && typeof (player as any).currentTime !== 'undefined') {
+          (player as any).currentTime = newPosition;
         }
+        setPosition(newPosition * 1000);
       }
     } catch (error) {
       console.log('Erreur forward:', error);
@@ -3585,12 +3565,9 @@ function PodcastPlayerScreen({ route, navigation }: any) {
             minimumValue={0}
             onValueChange={(value) => {
               setPosition(value);
-            }}
-            onSlidingComplete={async (value) => {
               try {
-                const currentSound = sound || soundRef.current;
-                if (currentSound) {
-                  await currentSound.setPositionAsync(value);
+                if (player && 'currentTime' in player) {
+                  (player as any).currentTime = value / 1000;
                 }
               } catch (error) {
                 console.log('Erreur seek:', error);
