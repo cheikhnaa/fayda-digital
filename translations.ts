@@ -1,4 +1,4 @@
-export type Language = 'fr' | 'en' | 'ar';
+export type Language = 'fr' | 'en' | 'ar' | null;
 
 export const translations: Record<Language, Record<string, string>> = {
   fr: {
@@ -276,13 +276,19 @@ export const translations: Record<Language, Record<string, string>> = {
   },
 };
 
-let currentLanguage: Language = 'fr';
+let currentLanguage: Language = null;
 
 export const setLanguage = (lang: Language) => {
-  currentLanguage = lang;
+  if (lang) {
+    currentLanguage = lang;
+  }
 };
 
 export const t = (key: string): string => {
+  if (!currentLanguage) {
+    // Si aucune langue n'est sélectionnée, utiliser le français par défaut pour les traductions
+    return translations['fr'][key] || key;
+  }
   return translations[currentLanguage][key] || key;
 };
 

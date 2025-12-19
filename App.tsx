@@ -505,7 +505,8 @@ const ebooks = [
 ];
 
 // Fichiers PDF depuis le dossier assets/pdf
-const pdfFiles = [
+// Tous les PDFs (racine + tous les sous-dossiers)
+const allPdfFiles = [
   {
     id: 100,
     title: 'Azal Thierno Hassen Dem',
@@ -590,14 +591,351 @@ const pdfFiles = [
     rating: 5.0,
     downloads: 12000,
   },
+  {
+    id: 106,
+    title: 'Afakhou Shiria',
+    titleAr: 'أفاخو شريعة',
+    author: 'Cheikh Ibrahim Niass',
+    pages: 180,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/Afakhou Shiria -- Cheikh Ibrahim Niass.pdf'),
+    image: require('./assets/pdf/cover3.png'),
+    description: 'Ouvrage important de Cheikh Ibrahim Niass.',
+    category: 'Tariqa',
+    rating: 4.8,
+    downloads: 7000,
+  },
+  {
+    id: 107,
+    title: 'Kashf al-Albas',
+    titleAr: 'كشف الألباس',
+    author: 'Cheikh Ahmed Tijani',
+    pages: 160,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/kashf-al-albas.pdf'),
+    image: require('./assets/pdf/cover2.jpeg'),
+    description: 'Ouvrage spirituel de grande valeur.',
+    category: 'Tariqa',
+    rating: 4.9,
+    downloads: 6500,
+  },
+  {
+    id: 108,
+    title: 'Rouhul Adab',
+    titleAr: 'روح الأدب',
+    author: 'Cheikh Ahmed Tijani',
+    pages: 200,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/ilide.info-rouhul-adab-pr_952fa5e35b9e6fece2a51010881a7978.pdf'),
+    image: require('./assets/pdf/cover1.png'),
+    description: 'L\'esprit de la politesse et des bonnes manières.',
+    category: 'Tariqa',
+    rating: 5.0,
+    downloads: 9000,
+  },
+  {
+    id: 109,
+    title: 'The Divine Flood',
+    titleAr: 'الفيض الإلهي',
+    author: 'Rüdiger Seesemann',
+    pages: 400,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/The divine flood - Ibrāhīm Niasse and the roots of a -- Rüdiger Seesemann.pdf'),
+    image: require('./assets/pdf/cover3.png'),
+    description: 'Étude académique sur Cheikh Ibrahim Niass.',
+    category: 'Biographie',
+    rating: 4.7,
+    downloads: 5500,
+  },
+  {
+    id: 110,
+    title: 'The Hajj Experiences of Shaykh Ibrahim Niasse',
+    titleAr: 'تجارب الحج للشيخ إبراهيم نياس',
+    author: 'Imam Fakhri Owaisi',
+    pages: 150,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/the-hajj-experiences-of-shaykh-ibrahim-niasse-by-imam-fakhri-owaisi.pdf'),
+    image: require('./assets/pdf/cover2.jpeg'),
+    description: 'Récit des expériences du Hajj de Cheikh Ibrahim Niass.',
+    category: 'Biographie',
+    rating: 4.8,
+    downloads: 6000,
+  },
+  {
+    id: 111,
+    title: 'Congratulations to Ibrahim',
+    titleAr: 'تهاني لإبراهيم',
+    author: 'Fayda Digital',
+    pages: 100,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/ed-congratulations-to-ibrahim-whenever-his-month-appears.pdf'),
+    image: require('./assets/pdf/cover1.png'),
+    description: 'Ouvrage sur Cheikh Ibrahim Niass.',
+    category: 'Biographie',
+    rating: 4.6,
+    downloads: 5000,
+  },
 ];
 
-const bookCategories = [
+// PDFs du dossier français uniquement
+const frenchPdfFiles = [
   {
-    id: 'pdf',
-    title: 'Livres PDF',
-    books: pdfFiles,
+    id: 201,
+    title: 'Baye Niass - Un Père du Panafricanisme',
+    titleAr: 'باي نياس - أب الوحدة الأفريقية',
+    author: 'Niane Babacar',
+    pages: 250,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/francais/baye-niasse-un-pere-du-panafricanisme-et-figure-niane-babacar-2020.pdf'),
+    image: require('./assets/pdf/afrique.png'),
+    description: 'Biographie de Cheikh Ibrahim Niass.',
+    category: 'Biographie',
+    rating: 5.0,
+    downloads: 12000,
   },
+  {
+    id: 202,
+    title: 'Diawahir al Mahani',
+    titleAr: 'جواهر المعاني',
+    author: 'Cheikh Ahmed Tijani',
+    pages: 200,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/francais/diawahir_al_mahani.pdf'),
+    image: require('./assets/pdf/cheikh.jpeg'),
+    description: 'Les perles précieuses - Un ouvrage fondamental de la Tariqa Tijaniyya.',
+    category: 'Tariqa',
+    rating: 5.0,
+    downloads: 8000,
+  },
+  {
+    id: 203,
+    title: 'Rouhul Adab',
+    titleAr: 'روح الأدب',
+    author: 'Cheikh Ahmed Tijani',
+    pages: 200,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/francais/ilide.info-rouhul-adab-pr_952fa5e35b9e6fece2a51010881a7978.pdf'),
+    image: require('./assets/pdf/cover1.png'),
+    description: 'L\'esprit de la politesse et des bonnes manières.',
+    category: 'Tariqa',
+    rating: 5.0,
+    downloads: 9000,
+  },
+];
+
+// PDFs du dossier anglais uniquement
+const englishPdfFiles = [
+  {
+    id: 300,
+    title: 'Congratulations to Ibrahim',
+    titleAr: 'تهاني لإبراهيم',
+    author: 'Fayda Digital',
+    pages: 100,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/anglais/ed-congratulations-to-ibrahim-whenever-his-month-appears.pdf'),
+    image: require('./assets/pdf/cover1.png'),
+    description: 'Ouvrage sur Cheikh Ibrahim Niass.',
+    category: 'Biographie',
+    rating: 4.6,
+    downloads: 5000,
+  },
+  {
+    id: 301,
+    title: 'The Hajj Experiences of Shaykh Ibrahim Niasse',
+    titleAr: 'تجارب الحج للشيخ إبراهيم نياس',
+    author: 'Imam Fakhri Owaisi',
+    pages: 150,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/anglais/the-hajj-experiences-of-shaykh-ibrahim-niasse-by-imam-fakhri-owaisi.pdf'),
+    image: require('./assets/pdf/cover2.jpeg'),
+    description: 'Récit des expériences du Hajj de Cheikh Ibrahim Niass.',
+    category: 'Biographie',
+    rating: 4.8,
+    downloads: 6000,
+  },
+  {
+    id: 302,
+    title: 'The Divine Flood',
+    titleAr: 'الفيض الإلهي',
+    author: 'Rüdiger Seesemann',
+    pages: 400,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/anglais/The divine flood - Ibrāhīm Niasse and the roots of a -- Rüdiger Seesemann -- ( WeLib.org ).pdf'),
+    image: require('./assets/pdf/cover3.png'),
+    description: 'Étude académique sur Cheikh Ibrahim Niass.',
+    category: 'Biographie',
+    rating: 4.7,
+    downloads: 5500,
+  },
+];
+
+// PDFs du dossier arabe uniquement
+const arabicPdfFiles = [
+  {
+    id: 400,
+    title: 'Azal Thierno Hassen Dem',
+    titleAr: 'أزل تيرنو حسن ديم',
+    author: 'Thierno Hassane Dème',
+    pages: 120,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/arabe/Azal_Thierno_Hassen_Dem.pdf'),
+    image: require('./assets/pdf/cover3.png'),
+    description: 'Ouvrage spirituel de grande valeur sur la vie et les enseignements de Thierno Hassane Dème.',
+    category: 'Biographie',
+    rating: 5.0,
+    downloads: 5000,
+  },
+  {
+    id: 401,
+    title: 'Diawahir al Mahani',
+    titleAr: 'جواهر المعاني',
+    author: 'Cheikh Ahmed Tijani',
+    pages: 200,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/arabe/diawahir_al_mahani.pdf'),
+    image: require('./assets/pdf/cheikh.jpeg'),
+    description: 'Les perles précieuses - Un ouvrage fondamental de la Tariqa Tijaniyya.',
+    category: 'Tariqa',
+    rating: 5.0,
+    downloads: 8000,
+  },
+  {
+    id: 402,
+    title: 'Nour al Kamal fi Mashhad ar-Rijal',
+    titleAr: 'نور الكمال في مشهد الرجال',
+    author: 'Shaykh al-Islam',
+    pages: 150,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/arabe/Nour_al_Kamal_fi_Mashhad_ar_Rijal.pdf'),
+    image: require('./assets/pdf/cover2.jpeg'),
+    description: 'La lumière de la perfection dans la présence des hommes.',
+    category: 'Ma\'arifa',
+    rating: 4.9,
+    downloads: 6000,
+  },
+  {
+    id: 403,
+    title: 'Miftah al-Wusul',
+    titleAr: 'مفتاح الوصول',
+    author: 'Cheikh Ahmed Tijani',
+    pages: 180,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/arabe/miftaakhoul-woussoul.pdf'),
+    image: require('./assets/pdf/cover1.png'),
+    description: 'La clé de l\'accès - Un ouvrage spirituel fondamental.',
+    category: 'Tariqa',
+    rating: 5.0,
+    downloads: 7500,
+  },
+  {
+    id: 404,
+    title: 'Kashf al-Albas',
+    titleAr: 'كشف الألباس',
+    author: 'Cheikh Ahmed Tijani',
+    pages: 160,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/arabe/kashf-al-albas.pdf'),
+    image: require('./assets/pdf/cover2.jpeg'),
+    description: 'Ouvrage spirituel de grande valeur.',
+    category: 'Tariqa',
+    rating: 4.9,
+    downloads: 6500,
+  },
+  {
+    id: 405,
+    title: 'Boughiyat',
+    titleAr: 'البغية',
+    author: 'Cheikh Ahmed Tijani',
+    pages: 180,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/arabe/boughiyat.pdf'),
+    image: require('./assets/pdf/cover1.png'),
+    description: 'Ouvrage spirituel important.',
+    category: 'Tariqa',
+    rating: 4.8,
+    downloads: 6000,
+  },
+  {
+    id: 406,
+    title: 'Kachf al-Hijab',
+    titleAr: 'كشف الحجاب',
+    author: 'Cheikh Ahmed Tijani',
+    pages: 170,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/arabe/kachf-al-hijab.pdf'),
+    image: require('./assets/pdf/cover2.jpeg'),
+    description: 'Ouvrage spirituel de grande valeur.',
+    category: 'Tariqa',
+    rating: 4.9,
+    downloads: 6200,
+  },
+  {
+    id: 407,
+    title: 'Afakhou Shiria',
+    titleAr: 'أفاخو شريعة',
+    author: 'Cheikh Ibrahim Niass',
+    pages: 180,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/arabe/Afakhou Shiria -- Cheikh Ibrahim Niass -- ( WeLib.org ).pdf'),
+    image: require('./assets/pdf/cover3.png'),
+    description: 'Ouvrage important de Cheikh Ibrahim Niass.',
+    category: 'Tariqa',
+    rating: 4.8,
+    downloads: 7000,
+  },
+  {
+    id: 408,
+    title: 'The Hajj Experiences of Shaykh Ibrahim Niasse',
+    titleAr: 'تجارب الحج للشيخ إبراهيم نياس',
+    author: 'Imam Fakhri Owaisi',
+    pages: 150,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/arabe/the-hajj-experiences-of-shaykh-ibrahim-niasse-by-imam-fakhri-owaisi.pdf'),
+    image: require('./assets/pdf/cover2.jpeg'),
+    description: 'Récit des expériences du Hajj de Cheikh Ibrahim Niass.',
+    category: 'Biographie',
+    rating: 4.8,
+    downloads: 6000,
+  },
+  {
+    id: 409,
+    title: 'Congratulations to Ibrahim',
+    titleAr: 'تهاني لإبراهيم',
+    author: 'Fayda Digital',
+    pages: 100,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/arabe/ed-congratulations-to-ibrahim-whenever-his-month-appears.pdf'),
+    image: require('./assets/pdf/cover1.png'),
+    description: 'Ouvrage sur Cheikh Ibrahim Niass.',
+    category: 'Biographie',
+    rating: 4.6,
+    downloads: 5000,
+  },
+];
+
+// Garder pdfFiles pour la compatibilité avec le code existant (page d'accueil)
+const pdfFiles = allPdfFiles;
+
+// Fonction pour obtenir les catégories de livres filtrées selon la langue
+const getBookCategories = (language: Language | null) => {
+  // Déterminer quels PDFs afficher selon la langue
+  let pdfsToShow = allPdfFiles; // Par défaut (null), tous les PDFs
+  
+  if (language === 'fr') {
+    pdfsToShow = frenchPdfFiles; // Seulement les PDFs français
+  } else if (language === 'en') {
+    pdfsToShow = englishPdfFiles; // Seulement les PDFs anglais
+  } else if (language === 'ar') {
+    pdfsToShow = arabicPdfFiles; // Seulement les PDFs arabes
+  }
+  // Si language === null, on garde allPdfFiles
+
+  return [
+    {
+      id: 'pdf',
+      title: 'Livres PDF',
+      books: pdfsToShow,
+    },
   {
     id: 'tariqa',
     title: 'Tariqa (Français)',
@@ -618,12 +956,13 @@ const bookCategories = [
       { id: 33, title: 'Le Chemin vers la Gnose', titleAr: 'طريق المعرفة', author: 'Fayda Digital', pages: 30, cover: '🔮', htmlFile: 'maarifa-articles.html', description: 'Apprenez les étapes et les qualités nécessaires pour atteindre la connaissance spirituelle.' },
     ]
   },
-];
+  ];
+};
 
 // Context pour la langue et le mode sombre
 const AppContext = React.createContext<{
-  language: Language;
-  setLang: (lang: Language) => void;
+  language: Language | null;
+  setLang: (lang: Language | null) => void;
   darkMode: boolean;
   setDarkMode: (dark: boolean) => void;
   currentPlayer: { item: any; type: 'music' | 'podcast' | 'book' | 'zikr' | 'coran' | null } | null;
@@ -635,7 +974,7 @@ const AppContext = React.createContext<{
   recentItems: Array<{id: number, type: 'pdf' | 'audio', title: string, titleAr?: string, timestamp: number, item: any}>;
   addToHistory: (item: any, type: 'pdf' | 'audio') => void;
 }>({ 
-  language: 'fr', 
+  language: null, 
   setLang: () => {},
   darkMode: false,
   setDarkMode: () => {},
@@ -670,6 +1009,7 @@ function LanguageSelectorBar() {
   const theme = darkMode ? darkTheme : lightTheme;
   
   const languages = [
+    { code: null as Language | null, label: 'Tous' },
     { code: 'en' as Language, label: 'English' },
     { code: 'ar' as Language, label: 'عربي' },
     { code: 'fr' as Language, label: 'French' },
@@ -679,7 +1019,7 @@ function LanguageSelectorBar() {
     <View style={styles.languageBarContainer}>
       <View style={[styles.languageBar, { backgroundColor: theme.surface }]}>
         {languages.map((lang, index) => (
-          <React.Fragment key={lang.code}>
+          <React.Fragment key={lang.code || 'all'}>
             {index > 0 && <View style={[styles.languageBarSeparator, { backgroundColor: theme.textSecondary + '30' }]} />}
             <TouchableOpacity
               style={[
@@ -688,7 +1028,9 @@ function LanguageSelectorBar() {
               ]}
               onPress={() => {
                 setLang(lang.code);
-                setLanguage(lang.code);
+                if (lang.code) {
+                  setLanguage(lang.code);
+                }
               }}
             >
               <Text style={[
@@ -1076,6 +1418,9 @@ function BooksScreen({ navigation }: any) {
       setModalVisible(false);
     }
   };
+
+  // Obtenir les catégories filtrées selon la langue
+  const bookCategories = getBookCategories(language);
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -4374,7 +4719,7 @@ function AIScreen({ navigation }: any) {
       }));
 
       // Appeler l'API
-      const response = await sendMessageToAI(messageHistory, language);
+      const response = await sendMessageToAI(messageHistory, language || 'fr');
       
       // Ajouter la réponse de l'assistant
       setMessages(prev => [...prev, { role: 'assistant', content: response }]);
@@ -4777,7 +5122,7 @@ function LoadingScreen() {
 
 // Composant principal
 export default function App() {
-  const [language, setLang] = React.useState<Language>('fr');
+  const [language, setLang] = React.useState<Language | null>(null);
   const [darkMode, setDarkMode] = React.useState(false);
   const [currentPlayer, setCurrentPlayer] = React.useState<{ item: any; type: 'music' | 'podcast' | 'book' | 'zikr' | 'coran' | null } | null>(null);
   const [audioState, setAudioState] = React.useState<{ isPlaying: boolean; position: number; duration: number } | null>(null);
@@ -4803,7 +5148,9 @@ export default function App() {
   }, []);
 
   React.useEffect(() => {
-    setLanguage(language);
+    if (language) {
+      setLanguage(language);
+    }
     // Simuler un chargement de 2 secondes
     const timer = setTimeout(() => {
       setIsLoading(false);
