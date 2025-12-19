@@ -599,7 +599,7 @@ const allPdfFiles = [
     pages: 180,
     cover: '📖',
     pdfFile: require('./assets/pdf/Afakhou Shiria -- Cheikh Ibrahim Niass.pdf'),
-    image: require('./assets/pdf/cover3.png'),
+    image: require('./assets/pdf/afakhou.png'),
     description: 'Ouvrage important de Cheikh Ibrahim Niass.',
     category: 'Tariqa',
     rating: 4.8,
@@ -613,7 +613,7 @@ const allPdfFiles = [
     pages: 160,
     cover: '📖',
     pdfFile: require('./assets/pdf/kashf-al-albas.pdf'),
-    image: require('./assets/pdf/cover2.jpeg'),
+    image: require('./assets/pdf/kachif.png'),
     description: 'Ouvrage spirituel de grande valeur.',
     category: 'Tariqa',
     rating: 4.9,
@@ -627,7 +627,7 @@ const allPdfFiles = [
     pages: 200,
     cover: '📖',
     pdfFile: require('./assets/pdf/ilide.info-rouhul-adab-pr_952fa5e35b9e6fece2a51010881a7978.pdf'),
-    image: require('./assets/pdf/cover1.png'),
+    image: require('./assets/pdf/rouhou.png'),
     description: 'L\'esprit de la politesse et des bonnes manières.',
     category: 'Tariqa',
     rating: 5.0,
@@ -641,7 +641,7 @@ const allPdfFiles = [
     pages: 400,
     cover: '📖',
     pdfFile: require('./assets/pdf/The divine flood - Ibrāhīm Niasse and the roots of a -- Rüdiger Seesemann.pdf'),
-    image: require('./assets/pdf/cover3.png'),
+    image: require('./assets/pdf/divineflood.png'),
     description: 'Étude académique sur Cheikh Ibrahim Niass.',
     category: 'Biographie',
     rating: 4.7,
@@ -655,7 +655,7 @@ const allPdfFiles = [
     pages: 150,
     cover: '📖',
     pdfFile: require('./assets/pdf/the-hajj-experiences-of-shaykh-ibrahim-niasse-by-imam-fakhri-owaisi.pdf'),
-    image: require('./assets/pdf/cover2.jpeg'),
+    image: require('./assets/pdf/hajj.png'),
     description: 'Récit des expériences du Hajj de Cheikh Ibrahim Niass.',
     category: 'Biographie',
     rating: 4.8,
@@ -669,7 +669,7 @@ const allPdfFiles = [
     pages: 100,
     cover: '📖',
     pdfFile: require('./assets/pdf/ed-congratulations-to-ibrahim-whenever-his-month-appears.pdf'),
-    image: require('./assets/pdf/cover1.png'),
+    image: require('./assets/pdf/congr.png'),
     description: 'Ouvrage sur Cheikh Ibrahim Niass.',
     category: 'Biographie',
     rating: 4.6,
@@ -715,7 +715,7 @@ const frenchPdfFiles = [
     pages: 200,
     cover: '📖',
     pdfFile: require('./assets/pdf/francais/ilide.info-rouhul-adab-pr_952fa5e35b9e6fece2a51010881a7978.pdf'),
-    image: require('./assets/pdf/cover1.png'),
+    image: require('./assets/pdf/rouhou.png'),
     description: 'L\'esprit de la politesse et des bonnes manières.',
     category: 'Tariqa',
     rating: 5.0,
@@ -733,7 +733,7 @@ const englishPdfFiles = [
     pages: 100,
     cover: '📖',
     pdfFile: require('./assets/pdf/anglais/ed-congratulations-to-ibrahim-whenever-his-month-appears.pdf'),
-    image: require('./assets/pdf/cover1.png'),
+    image: require('./assets/pdf/congr.png'),
     description: 'Ouvrage sur Cheikh Ibrahim Niass.',
     category: 'Biographie',
     rating: 4.6,
@@ -747,7 +747,7 @@ const englishPdfFiles = [
     pages: 150,
     cover: '📖',
     pdfFile: require('./assets/pdf/anglais/the-hajj-experiences-of-shaykh-ibrahim-niasse-by-imam-fakhri-owaisi.pdf'),
-    image: require('./assets/pdf/cover2.jpeg'),
+    image: require('./assets/pdf/hajj.png'),
     description: 'Récit des expériences du Hajj de Cheikh Ibrahim Niass.',
     category: 'Biographie',
     rating: 4.8,
@@ -761,7 +761,7 @@ const englishPdfFiles = [
     pages: 400,
     cover: '📖',
     pdfFile: require('./assets/pdf/anglais/The divine flood - Ibrāhīm Niasse and the roots of a -- Rüdiger Seesemann -- ( WeLib.org ).pdf'),
-    image: require('./assets/pdf/cover3.png'),
+    image: require('./assets/pdf/divineflood.png'),
     description: 'Étude académique sur Cheikh Ibrahim Niass.',
     category: 'Biographie',
     rating: 4.7,
@@ -835,7 +835,7 @@ const arabicPdfFiles = [
     pages: 160,
     cover: '📖',
     pdfFile: require('./assets/pdf/arabe/kashf-al-albas.pdf'),
-    image: require('./assets/pdf/cover2.jpeg'),
+    image: require('./assets/pdf/kachif.png'),
     description: 'Ouvrage spirituel de grande valeur.',
     category: 'Tariqa',
     rating: 4.9,
@@ -849,7 +849,7 @@ const arabicPdfFiles = [
     pages: 180,
     cover: '📖',
     pdfFile: require('./assets/pdf/arabe/boughiyat.pdf'),
-    image: require('./assets/pdf/cover1.png'),
+    image: require('./assets/pdf/boughiyat.png'),
     description: 'Ouvrage spirituel important.',
     category: 'Tariqa',
     rating: 4.8,
@@ -863,7 +863,7 @@ const arabicPdfFiles = [
     pages: 170,
     cover: '📖',
     pdfFile: require('./assets/pdf/arabe/kachf-al-hijab.pdf'),
-    image: require('./assets/pdf/cover2.jpeg'),
+    image: require('./assets/pdf/khidiab.png'),
     description: 'Ouvrage spirituel de grande valeur.',
     category: 'Tariqa',
     rating: 4.9,
@@ -877,7 +877,7 @@ const arabicPdfFiles = [
     pages: 180,
     cover: '📖',
     pdfFile: require('./assets/pdf/arabe/Afakhou Shiria -- Cheikh Ibrahim Niass -- ( WeLib.org ).pdf'),
-    image: require('./assets/pdf/cover3.png'),
+    image: require('./assets/pdf/afakhou.png'),
     description: 'Ouvrage important de Cheikh Ibrahim Niass.',
     category: 'Tariqa',
     rating: 4.8,
@@ -891,7 +891,7 @@ const arabicPdfFiles = [
     pages: 150,
     cover: '📖',
     pdfFile: require('./assets/pdf/arabe/the-hajj-experiences-of-shaykh-ibrahim-niasse-by-imam-fakhri-owaisi.pdf'),
-    image: require('./assets/pdf/cover2.jpeg'),
+    image: require('./assets/pdf/hajj.png'),
     description: 'Récit des expériences du Hajj de Cheikh Ibrahim Niass.',
     category: 'Biographie',
     rating: 4.8,
@@ -905,7 +905,7 @@ const arabicPdfFiles = [
     pages: 100,
     cover: '📖',
     pdfFile: require('./assets/pdf/arabe/ed-congratulations-to-ibrahim-whenever-his-month-appears.pdf'),
-    image: require('./assets/pdf/cover1.png'),
+    image: require('./assets/pdf/congr.png'),
     description: 'Ouvrage sur Cheikh Ibrahim Niass.',
     category: 'Biographie',
     rating: 4.6,
@@ -1255,7 +1255,9 @@ function HomeScreen({ navigation }: any) {
               style={styles.coranCardHome}
               activeOpacity={0.8}
               onPress={() => {
-                navigation.navigate('Coran');
+                addToHistory(track, 'audio');
+                setCurrentPlayer({ item: { ...track, type: 'coran' }, type: 'coran' });
+                navigation.navigate('Coran'); // Naviguer vers CoranScreen qui démarre automatiquement
               }}
             >
               <ImageBackground
@@ -1306,6 +1308,7 @@ function HomeScreen({ navigation }: any) {
               onPress={() => {
                 addToHistory(zikr, 'audio');
                 setCurrentPlayer({ item: zikr, type: 'zikr' });
+                navigation.navigate('Zikr'); // Naviguer vers ZikrScreen qui démarre automatiquement
               }}
             >
               <LinearGradient
@@ -1353,7 +1356,8 @@ function HomeScreen({ navigation }: any) {
               style={styles.podcastCardHome}
               activeOpacity={0.8}
               onPress={() => {
-                navigation.navigate('Podcasts');
+                addToHistory(podcast, 'audio');
+                navigation.navigate('Podcasts', { selectedPodcast: podcast }); // Naviguer vers PodcastsScreen avec le podcast sélectionné
               }}
             >
               <ImageBackground
@@ -1674,6 +1678,21 @@ function MusicScreen({ navigation }: any) {
       // Réinitialiser la position quand on change de piste
       setPosition(0);
       setDuration(0);
+      
+      // Démarrer automatiquement la lecture pour les podcasts
+      if (currentPlayer?.type === 'podcast') {
+        const startPlayback = async () => {
+          try {
+            if (player && !player.playing) {
+              await player.play();
+              setIsPlaying(true);
+            }
+          } catch (error) {
+            console.log('Erreur démarrage automatique podcast:', error);
+          }
+        };
+        startPlayback();
+      }
       
       const updateStatus = () => {
         try {
@@ -3099,17 +3118,25 @@ function CoranScreen({ navigation }: any) {
 }
 
 // Écran de podcasts - Design amélioré
-function PodcastsScreen({ navigation }: any) {
+function PodcastsScreen({ navigation, route }: any) {
   const { language, darkMode, setCurrentPlayer, currentPlayer, addToHistory } = React.useContext(AppContext);
   const theme = darkMode ? darkTheme : lightTheme;
   const [subscribedPodcasts, setSubscribedPodcasts] = React.useState<number[]>([]);
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [position, setPosition] = React.useState(0);
   const [duration, setDuration] = React.useState(0);
-  const [selectedPodcast, setSelectedPodcast] = React.useState<any>(null);
-  const [modalVisible, setModalVisible] = React.useState(false);
+  const [selectedPodcast, setSelectedPodcast] = React.useState<any>(route.params?.selectedPodcast || null);
+  const [modalVisible, setModalVisible] = React.useState(route.params?.selectedPodcast ? true : false);
   const [showSearch, setShowSearch] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState('');
+
+  // Ouvrir automatiquement le modal si un podcast est passé en paramètre
+  React.useEffect(() => {
+    if (route.params?.selectedPodcast) {
+      setSelectedPodcast(route.params.selectedPodcast);
+      setModalVisible(true);
+    }
+  }, [route.params?.selectedPodcast]);
 
   const handlePodcastPress = (podcast: any) => {
     setSelectedPodcast(podcast);
@@ -4903,6 +4930,7 @@ function OnboardingScreen({ navigation }: any) {
   const [currentSlide, setCurrentSlide] = React.useState(0);
   const { darkMode } = React.useContext(AppContext);
   const theme = darkMode ? darkTheme : lightTheme;
+  const scrollViewRef = React.useRef<ScrollView>(null);
 
   const slides = [
     {
@@ -4931,71 +4959,89 @@ function OnboardingScreen({ navigation }: any) {
     },
   ];
 
-  const nextSlide = () => {
-    if (currentSlide < slides.length - 1) {
-      setCurrentSlide(currentSlide + 1);
-    } else {
-      // Naviguer vers l'accueil
-      navigation.replace('MainTabs');
-    }
-  };
-
-  const prevSlide = () => {
-    if (currentSlide > 0) {
-      setCurrentSlide(currentSlide - 1);
-    }
+  const handleScroll = (event: any) => {
+    const slideWidth = event.nativeEvent.layoutMeasurement.width;
+    const offset = event.nativeEvent.contentOffset.x;
+    const index = Math.round(offset / slideWidth);
+    setCurrentSlide(index);
   };
 
   const goToHome = () => {
     navigation.replace('MainTabs');
   };
 
-  const slide = slides[currentSlide];
-
   return (
-    <View style={[styles.onboardingContainer, { backgroundColor: slide.color }]}>
+    <View style={styles.onboardingContainer}>
       <StatusBar style="light" />
-      <LinearGradient
-        colors={[slide.color, slide.color + 'dd']}
-        style={styles.onboardingGradient}
+      <ScrollView
+        ref={scrollViewRef}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        style={styles.onboardingScrollView}
       >
-        <View style={styles.onboardingContent}>
-          <Text style={styles.onboardingIcon}>{slide.icon}</Text>
-          <Text style={styles.onboardingTitle}>{slide.title}</Text>
-          <Text style={styles.onboardingSubtitle}>{slide.subtitle}</Text>
-          <Text style={styles.onboardingDescription}>{slide.description}</Text>
-        </View>
+        {slides.map((slide, index) => (
+          <View key={slide.id} style={[styles.onboardingSlide, { backgroundColor: slide.color }]}>
+            <LinearGradient
+              colors={[slide.color, slide.color + 'dd']}
+              style={styles.onboardingGradient}
+            >
+              <View style={styles.onboardingContent}>
+                <Text style={styles.onboardingIcon}>{slide.icon}</Text>
+                <Text style={styles.onboardingTitle}>{slide.title}</Text>
+                <Text style={styles.onboardingSubtitle}>{slide.subtitle}</Text>
+                <Text style={styles.onboardingDescription}>{slide.description}</Text>
+              </View>
+            </LinearGradient>
+          </View>
+        ))}
+      </ScrollView>
 
-        <View style={styles.onboardingIndicators}>
-          {slides.map((_, index) => (
-            <View
-              key={index}
-              style={[
-                styles.indicator,
-                index === currentSlide && styles.indicatorActive,
-              ]}
-            />
-          ))}
-        </View>
+      {/* Indicateurs de pagination - remontés */}
+      <View style={styles.onboardingIndicators}>
+        {slides.map((_, index) => (
+          <View
+            key={index}
+            style={[
+              styles.indicator,
+              index === currentSlide && styles.indicatorActive,
+            ]}
+          />
+        ))}
+      </View>
 
-        <View style={styles.onboardingControls}>
-          {currentSlide > 0 && (
-            <TouchableOpacity style={styles.onboardingArrowLeft} onPress={prevSlide}>
-              <Text style={styles.onboardingArrowText}>←</Text>
-            </TouchableOpacity>
-          )}
-          <View style={{ flex: 1 }} />
-          {currentSlide < slides.length - 1 ? (
-            <TouchableOpacity style={styles.onboardingArrowRight} onPress={nextSlide}>
-              <Text style={styles.onboardingArrowText}>→</Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity style={styles.onboardingButton} onPress={goToHome}>
-              <Text style={styles.onboardingButtonText}>Continuer</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      </LinearGradient>
+      {/* Flèches de navigation - relevées */}
+      <View style={styles.onboardingArrowsContainer}>
+        {currentSlide > 0 && (
+          <TouchableOpacity 
+            style={styles.onboardingArrowLeft} 
+            onPress={() => {
+              scrollViewRef.current?.scrollTo({ x: (currentSlide - 1) * width, animated: true });
+            }}
+          >
+            <Text style={styles.onboardingArrowText}>←</Text>
+          </TouchableOpacity>
+        )}
+        {currentSlide < slides.length - 1 && (
+          <TouchableOpacity 
+            style={styles.onboardingArrowRight} 
+            onPress={() => {
+              scrollViewRef.current?.scrollTo({ x: (currentSlide + 1) * width, animated: true });
+            }}
+          >
+            <Text style={styles.onboardingArrowText}>→</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+
+      {/* Bouton continuer centré sur toutes les pages */}
+      <View style={styles.onboardingButtonContainer}>
+        <TouchableOpacity style={styles.onboardingButton} onPress={goToHome}>
+          <Text style={styles.onboardingButtonText}>Continuer</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -6154,6 +6200,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 15,
+    paddingTop: 50,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
@@ -6479,9 +6526,17 @@ const styles = StyleSheet.create({
   onboardingContainer: {
     flex: 1,
   },
+  onboardingScrollView: {
+    flex: 1,
+  },
+  onboardingSlide: {
+    width: width,
+    flex: 1,
+  },
   onboardingGradient: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 40,
     paddingTop: 80,
     paddingBottom: 60,
@@ -6521,11 +6576,14 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   onboardingIndicators: {
+    position: 'absolute',
+    bottom: 150,
+    left: 0,
+    right: 0,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     gap: 8,
-    marginBottom: 30,
   },
   indicator: {
     width: 8,
@@ -6537,10 +6595,23 @@ const styles = StyleSheet.create({
     width: 24,
     backgroundColor: '#fff',
   },
-  onboardingControls: {
+  onboardingArrowsContainer: {
+    position: 'absolute',
+    bottom: 100,
+    left: 0,
+    right: 0,
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  onboardingButtonContainer: {
+    position: 'absolute',
+    bottom: 40,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    paddingHorizontal: 40,
   },
   onboardingArrowLeft: {
     width: 50,
