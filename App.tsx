@@ -19,66 +19,36 @@ const Stack = createNativeStackNavigator();
 const { width } = Dimensions.get('window');
 const Tab = createBottomTabNavigator();
 
-// Contenu HTML pour les articles Tariqa et Ma'arifa
-const getTariqaHTML = () => `<!DOCTYPE html>
+// Contenu HTML pour chaque article Tariqa séparément
+const getIntroductionTariqaHTML = () => `<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Articles sur la Tariqa Tijaniyya</title>
+    <title>Introduction à la Tariqa Tijaniyya</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Georgia', 'Times New Roman', serif; line-height: 1.8; color: #2c3e50; background: linear-gradient(135deg, #f8f6f0 0%, #e8e5df 100%); padding: 20px; }
         .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border-radius: 10px; }
         .header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 3px solid #0F5132; }
         h1 { color: #0F5132; font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
-        .subtitle { color: #0B3C5D; font-size: 1.2em; font-style: italic; }
         .article { margin-bottom: 50px; padding: 30px; background: #fafafa; border-left: 5px solid #0F5132; border-radius: 8px; }
         .article h2 { color: #0F5132; font-size: 1.8em; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #C9A24D; }
-        .article h3 { color: #0B3C5D; font-size: 1.3em; margin-top: 20px; margin-bottom: 10px; }
         .article p { margin-bottom: 15px; text-align: justify; font-size: 1.1em; }
         .quote { background: linear-gradient(135deg, #0F5132 0%, #0B3C5D 100%); color: white; padding: 20px; border-radius: 8px; margin: 20px 0; font-style: italic; font-size: 1.15em; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .highlight { background: #fff9e6; padding: 2px 6px; border-radius: 4px; font-weight: bold; color: #0F5132; }
-        .arabic { direction: rtl; text-align: right; font-family: 'Arial', sans-serif; font-size: 1.2em; color: #0B3C5D; margin: 10px 0; }
         .footer { text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e0e0e0; color: #666; font-style: italic; }
-        ul { margin-left: 30px; margin-top: 15px; }
-        li { margin-bottom: 10px; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>الطريقة التجانية</h1>
-            <h1>La Tariqa Tijaniyya</h1>
-            <p class="subtitle">Voie spirituelle de lumière et de guidance</p>
+            <h1>Introduction à la Tariqa Tijaniyya</h1>
         </div>
         <div class="article">
-            <h2>Introduction à la Tariqa Tijaniyya</h2>
             <p>La <span class="highlight">Tariqa Tijaniyya</span> est une voie spirituelle soufie fondée par <span class="highlight">Cheikh Ahmed Tijani</span> (1737-1815) à Fès, au Maroc. Cette voie représente l'une des plus importantes confréries soufies du monde islamique, particulièrement influente en Afrique de l'Ouest.</p>
             <div class="quote">"La Tariqa Tijaniyya est une voie de proximité avec Allah et Son Messager, une voie de purification du cœur et d'élévation de l'âme."</div>
             <p>Le Cheikh Ahmed Tijani reçut ses enseignements directement du Prophète Muhammad (paix et bénédictions sur lui) dans un état d'éveil, ce qui confère à cette voie une particularité unique parmi les confréries soufies.</p>
-        </div>
-        <div class="article">
-            <h2>Les Fondements de la Voie</h2>
-            <h3>1. Le Zikr (Invocation)</h3>
-            <p>Le <span class="highlight">Zikr</span> occupe une place centrale dans la pratique de la Tariqa Tijaniyya. Il s'agit de la répétition des noms d'Allah et des invocations spécifiques qui purifient le cœur et rapprochent le disciple de son Seigneur.</p>
-            <div class="arabic">"واذكر ربك في نفسك تضرعا وخيفة ودون الجهر من القول"</div>
-            <p>"Et invoque ton Seigneur en toi-même, en humilité et crainte, à voix basse, le matin et le soir" (Coran 7:205).</p>
-            <h3>2. La Salat al-Fatih</h3>
-            <p>La <span class="highlight">Salat al-Fatih</span> est une prière spéciale récitée dans la Tariqa Tijaniyya. Elle est considérée comme ayant une valeur spirituelle immense, équivalente à des milliers de récitations du Coran selon les enseignements du Cheikh.</p>
-            <h3>3. L'Attachement au Prophète</h3>
-            <p>La Tariqa Tijaniyya met un accent particulier sur l'amour et l'attachement au Prophète Muhammad (paix et bénédictions sur lui). Cette relation spirituelle est considérée comme essentielle pour progresser sur la voie.</p>
-        </div>
-        <div class="article">
-            <h2>Les Bienfaits de la Voie</h2>
-            <p>Les disciples de la Tariqa Tijaniyya témoignent de nombreux bienfaits spirituels :</p>
-            <ul>
-                <li>Purification du cœur des mauvaises qualités</li>
-                <li>Élévation spirituelle et rapprochement d'Allah</li>
-                <li>Paix intérieure et sérénité</li>
-                <li>Guidance dans les affaires de la vie</li>
-                <li>Protection contre les maux spirituels</li>
-            </ul>
         </div>
         <div class="footer">
             <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
@@ -88,43 +58,341 @@ const getTariqaHTML = () => `<!DOCTYPE html>
 </body>
 </html>`;
 
-const getMaarifaHTML = () => `<!DOCTYPE html>
+const getZikrTariqaHTML = () => `<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ma'arifa - La Connaissance Spirituelle</title>
+    <title>Le Zikr dans la Voie Tijaniyya</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', 'Times New Roman', serif; line-height: 1.8; color: #2c3e50; background: linear-gradient(135deg, #f8f6f0 0%, #e8e5df 100%); padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border-radius: 10px; }
+        .header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 3px solid #0F5132; }
+        h1 { color: #0F5132; font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .article { margin-bottom: 50px; padding: 30px; background: #fafafa; border-left: 5px solid #0F5132; border-radius: 8px; }
+        .article h2 { color: #0F5132; font-size: 1.8em; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #C9A24D; }
+        .article p { margin-bottom: 15px; text-align: justify; font-size: 1.1em; }
+        .highlight { background: #fff9e6; padding: 2px 6px; border-radius: 4px; font-weight: bold; color: #0F5132; }
+        .arabic { direction: rtl; text-align: right; font-family: 'Arial', sans-serif; font-size: 1.2em; color: #0B3C5D; margin: 10px 0; }
+        .footer { text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e0e0e0; color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Le Zikr dans la Voie Tijaniyya</h1>
+        </div>
+        <div class="article">
+            <p>Le <span class="highlight">Zikr</span> occupe une place centrale dans la pratique de la Tariqa Tijaniyya. Il s'agit de la répétition des noms d'Allah et des invocations spécifiques qui purifient le cœur et rapprochent le disciple de son Seigneur.</p>
+            <div class="arabic">"واذكر ربك في نفسك تضرعا وخيفة ودون الجهر من القول"</div>
+            <p>"Et invoque ton Seigneur en toi-même, en humilité et crainte, à voix basse, le matin et le soir" (Coran 7:205).</p>
+        </div>
+        <div class="footer">
+            <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
+            <p style="margin-top: 10px;">© Fayda Digital - Sagesse & Spiritualité</p>
+        </div>
+    </div>
+</body>
+</html>`;
+
+const getSalatFatihHTML = () => `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Salat al-Fatih</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', 'Times New Roman', serif; line-height: 1.8; color: #2c3e50; background: linear-gradient(135deg, #f8f6f0 0%, #e8e5df 100%); padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border-radius: 10px; }
+        .header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 3px solid #0F5132; }
+        h1 { color: #0F5132; font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .article { margin-bottom: 50px; padding: 30px; background: #fafafa; border-left: 5px solid #0F5132; border-radius: 8px; }
+        .article h2 { color: #0F5132; font-size: 1.8em; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #C9A24D; }
+        .article p { margin-bottom: 15px; text-align: justify; font-size: 1.1em; }
+        .highlight { background: #fff9e6; padding: 2px 6px; border-radius: 4px; font-weight: bold; color: #0F5132; }
+        .footer { text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e0e0e0; color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>La Salat al-Fatih</h1>
+        </div>
+        <div class="article">
+            <p>La <span class="highlight">Salat al-Fatih</span> est une prière spéciale récitée dans la Tariqa Tijaniyya. Elle est considérée comme ayant une valeur spirituelle immense, équivalente à des milliers de récitations du Coran selon les enseignements du Cheikh.</p>
+        </div>
+        <div class="footer">
+            <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
+            <p style="margin-top: 10px;">© Fayda Digital - Sagesse & Spiritualité</p>
+        </div>
+    </div>
+</body>
+</html>`;
+
+const getAttachementPropheteHTML = () => `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L'Attachement au Prophète</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', 'Times New Roman', serif; line-height: 1.8; color: #2c3e50; background: linear-gradient(135deg, #f8f6f0 0%, #e8e5df 100%); padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border-radius: 10px; }
+        .header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 3px solid #0F5132; }
+        h1 { color: #0F5132; font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .article { margin-bottom: 50px; padding: 30px; background: #fafafa; border-left: 5px solid #0F5132; border-radius: 8px; }
+        .article h2 { color: #0F5132; font-size: 1.8em; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #C9A24D; }
+        .article p { margin-bottom: 15px; text-align: justify; font-size: 1.1em; }
+        .highlight { background: #fff9e6; padding: 2px 6px; border-radius: 4px; font-weight: bold; color: #0F5132; }
+        .footer { text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e0e0e0; color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>L'Attachement au Prophète</h1>
+        </div>
+        <div class="article">
+            <p>La Tariqa Tijaniyya met un accent particulier sur l'amour et l'attachement au Prophète Muhammad (paix et bénédictions sur lui). Cette relation spirituelle est considérée comme essentielle pour progresser sur la voie.</p>
+        </div>
+        <div class="footer">
+            <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
+            <p style="margin-top: 10px;">© Fayda Digital - Sagesse & Spiritualité</p>
+        </div>
+    </div>
+</body>
+</html>`;
+
+const getDouaWazifaHTML = () => `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doua Wazifa</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', 'Times New Roman', serif; line-height: 1.8; color: #2c3e50; background: linear-gradient(135deg, #f8f6f0 0%, #e8e5df 100%); padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border-radius: 10px; }
+        .header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 3px solid #0F5132; }
+        h1 { color: #0F5132; font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .article { margin-bottom: 50px; padding: 30px; background: #fafafa; border-left: 5px solid #0F5132; border-radius: 8px; }
+        .article h2 { color: #0F5132; font-size: 1.8em; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #C9A24D; }
+        .article p { margin-bottom: 15px; text-align: justify; font-size: 1.1em; }
+        .footer { text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e0e0e0; color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Doua Wazifa</h1>
+        </div>
+        <div class="article">
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Allahoumma antal awwalou falaÏssa khablaka chaÏ-oune<br>
+                Wa antal aakhirou falaÏssa bahdaka chaÏ-oune<br>
+                Wa antaz zaahirou falaïssa fawkhaka chaï-oune<br>
+                Wa antal baatinou falaïssa dounaka chaï-oune
+            </div>
+            <p><strong>Oh Dieu, Tu es le Premier et tu n'y trouvas rien. Tu es le Dernier, et tu n'y laisseras rien. Tu es l'Apparent et rien te voile. Tu es le tout le Caché</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Fakoune lanaa yaa awwalou yaa aakhirou yaa zaahirou yaa<br>
+                Baatinou waliyane wanaciirane anta waliyounaa wa mawlaanaa<br>
+                Fanihmal mawlaa wa nihman nacirou
+            </div>
+            <p><strong>Sois pour nous, Oh Toi le Premier, le Dernier, l'Apparent, le Caché, un Ami et un Secours. Tu es notre Seigneur, et quel meilleur Seigneur, quel meilleur Secours!</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Allahoumma innaa nas-alouka bifaatihiyatil faatihi alfat –ha<br>
+                Ataama wabi khaatimiyatil khaatimi housnal khitaam
+            </div>
+            <p><strong>Oh Dieu, nous te demandons, par la clé de l'Ouverture (Mouhammad, psl), la grande ouverture; et par le caractère fermé de la fermeture (Mouhammad), une beau devenir et une belle fin.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Allahoumma innaa nas-alouka minal khaïri koullihii handjilihii wa hadjilihii maa<br>
+                halimnaa minehou wamaa lame nahlame ;<br>
+                Wanahounzou bika mina charri koullihii handjilihii wa hadjilihii maa halimnaa minehou<br>
+                wamaa lame nahlame
+            </div>
+            <p><strong>Oh Dieu, Nous te demandons des tous tes bienfaits, à nous connus ou inconnus. Nous nous protégeons en toi contres tous les maux, à nous connus ou inconnus.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Allahoumma innaa nas-aloukal diannata wamaa kharraba ilaïhaa mine khawline wa<br>
+                hamaline Wanahouzou bika minan naari wamaa kharraba ilaïhaa mine khawline wa<br>
+                hamaline
+            </div>
+            <p><strong>Oh Dieu, nous Te demandons le paradis ainsi que les actes et les paroles qui en rapprochent. Nous nous protégeons en Toi contre l'enfer ainsi que des actes et paroles qui en rapprochent.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Allahoumma innaa nas-aloukal hafwa wal haafiyata wal mouhaafata<br>
+                Addaa-imata fid diini wad dounyaa wal aakhirati
+            </div>
+            <p><strong>Oh Dieu, nous Te demandons le pardon, la santé et la protection, dans la religion, dans ce bas monde et dans l'au-delà.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Allahoumma inna nas-alouka ridaaka wa ridaa nabiyyika Seydina Muhammadin çalla<br>
+                llahu aleyhi wa sallama wa ridal ach-yaakhi wa ridal waalidaïni
+            </div>
+            <p><strong>Oh Dieu, nous te demandons Ton agrément, celui des maîtres et des parents.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Allahoumma idjhal maa nouhibbou fiimaa touhibbou watardaa<br>
+                Allahoumma idjhal fikh tiyaarika ikhtiyaaranaa walaa tadjhal illaa ilaîka idtiraaranaa
+            </div>
+            <p><strong>Oh Dieu, fais que nous aimions ce que Tu aimes. Mets ton choix dans le nôtre. Fais que nous n'ayons besoin que de Toi.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Yaa rabbanaa yaa khaalikhal hawaalimi ; houl baïnanaa wabaïna koulli zaalimi.<br>
+                Wadjzi likoulli mane ilaïnaa ahsanaa ; wa diaaziihi hannaal diazaa al ahsanaa
+            </div>
+            <p><strong>Oh Dieu, Toi qui a crée les mondes, interpose- Toi entre nous et tout Prédicateur. Récompense celui qui nous fait du bien, de la meilleure façon.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Allahoumma irfah hannal diahda wal diouhan wal hourya wakchif hannaa i minal<br>
+                balaa– i maalaa yakchifouhou khaïrouka
+            </div>
+            <p><strong>Oh Dieu, éloigne nous des dures conditions de vie, de la faim et de la nudité. Eloigne de nous les épreuves, dont Tu es le seul à pouvoir alléger.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Allahoumma faridje hane oummati sayyidinaa mouhammadine. (s.a.w) 3 fois
+            </div>
+            <p><strong>Oh Seigneur, répand ta grâce et ta paix sur la communauté de notre Maitre Muhammad. (SAS) 3 fois</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Rabbana atina fid dounya hassanatan wafil aakhirati hassanatane wakhinaa hazaaban<br>
+                naari
+            </div>
+            <p><strong>(C.2.201) Seigneur donne-nous une belle part ici-bas, une belle part aussi dans l'au-delà; et garde nous du châtiment de l'enfer.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Rabbanaa laa tou - aakhiznaa ine naciynaa aw akhtahnaa. Rabbanaa walaa tahmil<br>
+                halaïnaa israne kamaa hamaltahou halal laziina mine khablinaa<br>
+                Rabbanaa walaa touhammilnaa maa laataakhata lanaa bihii wahfou hannaa wakhfir<br>
+                lanaa warham naa anta mawlaanaa fansournaa halal khawmil kaafiriina
+            </div>
+            <p><strong>(C.2.286) Seigneur, ne T'en prends pas à nous s'il nous arrive d'oublier, ou de commettre l'erreur. Seigneur! Ne nous charge pas d'un fardeau lourd comme Tu as chargé ceux qui furent avant nous. Seigneur! Et ne nous impose pas ce pour quoi nous n'avons point de force. Et donne-nous absolution et donne-nous pardon et aie pour nous miséricorde. Tu es notre patron : donne-nous donc secours contre le peuple mécréant.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Rabbanaa laa touzikh khouloubanaa bahda iz hadaïtanaa wa hab lanaa mine ladounka<br>
+                rahmatane innaka antal wah haabou
+            </div>
+            <p><strong>Seigneur, ne fais pas dévier nos cœurs après que Tu nous as guidés; et donne nous miséricorde de Ta part. Tu es, Toi, le grand donateur.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Rabbanaa innanaa samihnaa mounaadiyane younaadii lil iimaani an aaminou<br>
+                birabbikoume fa aamannaa.<br>
+                Rabbanaa fakhfir lanaa zounoubanaa wakaffir hannaa seyyi – aatinaa watawaf fanaa<br>
+                mahal abraari
+            </div>
+            <p><strong>(C3.193) Seigneur ! Oui, nous avons entendu un héraut appeler ainsi à la foi : "Croyez en votre Seigneur!" Et nous avons cru. Seigneur pardonne nous donc nos péchés, efface de nous nos méfaits, et fais-nous achever la vie en compagnie de charitables.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Rabbanaa wa aatinaa maa wahattanaa halaa roussoulika walaa toukhziinaa yawmal<br>
+                khiyaamati innaka laa toukhlifoul miihaad
+            </div>
+            <p><strong>(C3.194) Seigneur! Et donne-nous ce que Tu as promis par Tes messagers; et ne nous couvre pas d'ignominie au jour de la Résurrection. En vérité, Tu ne manques pas au rendez-vous.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Rabbanaa zalamnaa anfousanaa wa – ine lame takhfirlanaa watarhamnaa<br>
+                lanakounanna minal khaciriina
+            </div>
+            <p><strong>(C7.23) Ô Seigneur, nous nous sommes manqué à nous mêmes. Et si Tu ne nous pardonne pas et ne nous fais pas miséricorde, alors nous serons très certainement du nombre des perdants.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Rabbanaa aatinaa mine ladounka rahmatane wa hayyih lanaa mine amrinaa rach<br>
+                chadane
+            </div>
+            <p><strong>(C18.10) Seigneur, apporte-nous de Ta part une miséricorde; et arrange-nous une bonne conduite de notre affaire.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Rabbanaa hablanaa mine azwaadjinaa wazouriya tinaa khourrata ah – younine<br>
+                wadjhalnaa lilmouttakhiina imaamane
+            </div>
+            <p><strong>(C25.74) Seigneur, donne-nous, en nos épouses et nos descendants, fraîcheur des yeux, et assigne-nous pour dirigeants aux pieux.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Allahoumma ikhfir lihayyinaa wa mayyitinaa wa kabiirinaa wa sakhiirinaa wa zakarinaa<br>
+                wa ounsaanaa wa haadirinaa wa khaa- ibinaa wa hourrinaa wa habdinaa wa taahi-i-naa<br>
+                wa hansinaa. (SALATOUL FATIHA)
+            </div>
+            <p><strong>Oh Dieu, pardonne à nos frères et sœurs, vivants ou nos morts, âgées ou jeunes, hommes ou femmes, présents ou absents, obéissants ou non. (SALATOUL FATIHA)</strong></p>
+        </div>
+        <div class="footer">
+            <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
+            <p style="margin-top: 10px;">© Fayda Digital - Sagesse & Spiritualité</p>
+        </div>
+    </div>
+</body>
+</html>`;
+
+// Contenu HTML pour chaque article Ma'arifa séparément
+const getConnaissanceSpirituelleHTML = () => `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Connaissance Spirituelle</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Georgia', 'Times New Roman', serif; line-height: 1.8; color: #2c3e50; background: linear-gradient(135deg, #f8f6f0 0%, #e8e5df 100%); padding: 20px; }
         .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border-radius: 10px; }
         .header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 3px solid #0B3C5D; }
         h1 { color: #0B3C5D; font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
-        .subtitle { color: #0F5132; font-size: 1.2em; font-style: italic; }
         .article { margin-bottom: 50px; padding: 30px; background: #fafafa; border-left: 5px solid #0B3C5D; border-radius: 8px; }
         .article h2 { color: #0B3C5D; font-size: 1.8em; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #C9A24D; }
-        .article h3 { color: #0F5132; font-size: 1.3em; margin-top: 20px; margin-bottom: 10px; }
         .article p { margin-bottom: 15px; text-align: justify; font-size: 1.1em; }
         .quote { background: linear-gradient(135deg, #0B3C5D 0%, #0F5132 100%); color: white; padding: 20px; border-radius: 8px; margin: 20px 0; font-style: italic; font-size: 1.15em; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
         .highlight { background: #e6f3ff; padding: 2px 6px; border-radius: 4px; font-weight: bold; color: #0B3C5D; }
-        .arabic { direction: rtl; text-align: right; font-family: 'Arial', sans-serif; font-size: 1.2em; color: #0F5132; margin: 10px 0; }
         .footer { text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e0e0e0; color: #666; font-style: italic; }
-        ul { margin-left: 30px; margin-top: 15px; }
-        li { margin-bottom: 10px; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>المعرفة</h1>
-            <h1>Ma'arifa - La Connaissance Spirituelle</h1>
-            <p class="subtitle">La gnose divine dans la voie soufie</p>
+            <h1>La Connaissance Spirituelle</h1>
         </div>
         <div class="article">
             <h2>Qu'est-ce que la Ma'arifa ?</h2>
             <p>La <span class="highlight">Ma'arifa</span> (المعرفة) désigne la connaissance spirituelle directe, la gnose divine qui transcende la simple compréhension intellectuelle. C'est une connaissance du cœur, une illumination qui vient d'Allah.</p>
             <div class="quote">"La connaissance véritable n'est pas celle que l'on acquiert par l'étude, mais celle qu'Allah dépose dans le cœur de Ses serviteurs."</div>
             <p>Dans la tradition soufie, la Ma'arifa est considérée comme le sommet de la connaissance spirituelle, accessible uniquement à ceux qui ont purifié leur cœur et se sont rapprochés d'Allah.</p>
+        </div>
+        <div class="footer">
+            <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
+            <p style="margin-top: 10px;">© Fayda Digital - Sagesse & Spiritualité</p>
+        </div>
+    </div>
+</body>
+</html>`;
+
+const getDegresConnaissanceHTML = () => `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les Degrés de la Connaissance</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', 'Times New Roman', serif; line-height: 1.8; color: #2c3e50; background: linear-gradient(135deg, #f8f6f0 0%, #e8e5df 100%); padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border-radius: 10px; }
+        .header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 3px solid #0B3C5D; }
+        h1 { color: #0B3C5D; font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .article { margin-bottom: 50px; padding: 30px; background: #fafafa; border-left: 5px solid #0B3C5D; border-radius: 8px; }
+        .article h2 { color: #0B3C5D; font-size: 1.8em; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #C9A24D; }
+        .article h3 { color: #0F5132; font-size: 1.3em; margin-top: 20px; margin-bottom: 10px; }
+        .article p { margin-bottom: 15px; text-align: justify; font-size: 1.1em; }
+        .highlight { background: #e6f3ff; padding: 2px 6px; border-radius: 4px; font-weight: bold; color: #0B3C5D; }
+        .arabic { direction: rtl; text-align: right; font-family: 'Arial', sans-serif; font-size: 1.2em; color: #0F5132; margin: 10px 0; }
+        .footer { text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e0e0e0; color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Les Degrés de la Connaissance</h1>
         </div>
         <div class="article">
             <h2>Les Degrés de la Connaissance</h2>
@@ -137,6 +405,40 @@ const getMaarifaHTML = () => `<!DOCTYPE html>
             <div class="arabic">"وَعَلَّمَ آدَمَ الأَسْمَاء كُلَّهَا"</div>
             <p>"Et Il apprit à Adam tous les noms" (Coran 2:31). Cette connaissance directe est celle qu'Allah accorde à Ses serviteurs privilégiés.</p>
         </div>
+        <div class="footer">
+            <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
+            <p style="margin-top: 10px;">© Fayda Digital - Sagesse & Spiritualité</p>
+        </div>
+    </div>
+</body>
+</html>`;
+
+const getMaarifaTariqaHTML = () => `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Ma'arifa dans la Tariqa Tijaniyya</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', 'Times New Roman', serif; line-height: 1.8; color: #2c3e50; background: linear-gradient(135deg, #f8f6f0 0%, #e8e5df 100%); padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border-radius: 10px; }
+        .header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 3px solid #0B3C5D; }
+        h1 { color: #0B3C5D; font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .article { margin-bottom: 50px; padding: 30px; background: #fafafa; border-left: 5px solid #0B3C5D; border-radius: 8px; }
+        .article h2 { color: #0B3C5D; font-size: 1.8em; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #C9A24D; }
+        .article p { margin-bottom: 15px; text-align: justify; font-size: 1.1em; }
+        .highlight { background: #e6f3ff; padding: 2px 6px; border-radius: 4px; font-weight: bold; color: #0B3C5D; }
+        ul { margin-left: 30px; margin-top: 15px; }
+        li { margin-bottom: 10px; }
+        .footer { text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e0e0e0; color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>La Ma'arifa dans la Tariqa Tijaniyya</h1>
+        </div>
         <div class="article">
             <h2>La Ma'arifa dans la Tariqa Tijaniyya</h2>
             <p>Dans la <span class="highlight">Tariqa Tijaniyya</span>, la Ma'arifa est particulièrement valorisée. Le Cheikh Ahmed Tijani enseignait que la vraie connaissance spirituelle vient de la proximité avec le Prophète Muhammad (paix et bénédictions sur lui).</p>
@@ -148,6 +450,62 @@ const getMaarifaHTML = () => `<!DOCTYPE html>
                 <li>L'obéissance au guide spirituel</li>
                 <li>La méditation et la contemplation</li>
             </ul>
+        </div>
+        <div class="footer">
+            <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
+            <p style="margin-top: 10px;">© Fayda Digital - Sagesse & Spiritualité</p>
+        </div>
+    </div>
+</body>
+</html>`;
+
+const getCheminGnoseHTML = () => `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Chemin vers la Gnose</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', 'Times New Roman', serif; line-height: 1.8; color: #2c3e50; background: linear-gradient(135deg, #f8f6f0 0%, #e8e5df 100%); padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border-radius: 10px; }
+        .header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 3px solid #0B3C5D; }
+        h1 { color: #0B3C5D; font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .article { margin-bottom: 50px; padding: 30px; background: #fafafa; border-left: 5px solid #0B3C5D; border-radius: 8px; }
+        .article h2 { color: #0B3C5D; font-size: 1.8em; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #C9A24D; }
+        .article h3 { color: #0F5132; font-size: 1.3em; margin-top: 20px; margin-bottom: 10px; }
+        .article p { margin-bottom: 15px; text-align: justify; font-size: 1.1em; }
+        .highlight { background: #e6f3ff; padding: 2px 6px; border-radius: 4px; font-weight: bold; color: #0B3C5D; }
+        .quote { background: linear-gradient(135deg, #0B3C5D 0%, #0F5132 100%); color: white; padding: 20px; border-radius: 8px; margin: 20px 0; font-style: italic; font-size: 1.15em; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .footer { text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e0e0e0; color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Le Chemin vers la Gnose</h1>
+        </div>
+        <div class="article">
+            <p>Le chemin vers la <span class="highlight">Ma'arifa</span> (la gnose) est un voyage spirituel profond qui nécessite persévérance, sincérité et guidance. Ce cheminement vers la connaissance divine requiert plusieurs étapes et qualités essentielles.</p>
+            
+            <h3>1. La Sincérité (Ikhlas)</h3>
+            <p>La première étape est la <span class="highlight">sincérité</span> dans l'intention. Toute recherche spirituelle doit être motivée uniquement par le désir de se rapprocher d'Allah, sans recherche de renommée ou de reconnaissance.</p>
+            
+            <h3>2. La Purification du Cœur (Tazkiya an-Nafs)</h3>
+            <p>Le cœur doit être purifié des mauvaises qualités comme l'orgueil, l'envie, la colère et l'attachement excessif aux biens matériels. Cette purification se fait à travers le Zikr, la repentance et l'obéissance.</p>
+            
+            <h3>3. L'Attachement au Guide Spirituel</h3>
+            <p>Un guide spirituel authentique est essentiel pour progresser sur ce chemin. Il transmet la baraka (bénédiction) et guide le disciple à travers les différentes stations spirituelles.</p>
+            
+            <h3>4. La Pratique Assidue du Zikr</h3>
+            <p>Le Zikr constant purifie le cœur et ouvre les portes de la connaissance spirituelle. C'est par la répétition des noms d'Allah que le cœur s'illumine.</p>
+            
+            <h3>5. L'Amour du Prophète</h3>
+            <p>L'amour et l'attachement au Prophète Muhammad (paix et bénédictions sur lui) sont fondamentaux. C'est par lui que la lumière de la connaissance divine se répand sur les cœurs.</p>
+            
+            <div class="quote">"Celui qui suit un chemin sans guide, son guide est Satan. Celui qui suit un chemin avec un guide, son guide est le Prophète."</div>
+            
+            <p>Le chemin vers la gnose est une grâce d'Allah qui se mérite par la sincérité, l'effort spirituel et l'amour du Prophète. C'est un don divin accordé à ceux qui purifient leur cœur et suivent la voie avec persévérance.</p>
         </div>
         <div class="footer">
             <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
@@ -675,6 +1033,48 @@ const allPdfFiles = [
     rating: 4.6,
     downloads: 5000,
   },
+  {
+    id: 112,
+    title: 'Quelques Lettres de Baye Niass',
+    titleAr: 'بعض رسائل باي نياس',
+    author: 'Cheikh Ibrahim Niass',
+    pages: 150,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/quelques-lettres-de-baye-niass.pdf'),
+    image: require('./assets/pdf/lettre1.jpeg'),
+    description: 'Collection de lettres de Cheikh Ibrahim Niass.',
+    category: 'Tariqa',
+    rating: 4.8,
+    downloads: 6000,
+  },
+  {
+    id: 113,
+    title: 'Rihlatul Murtaniyya',
+    titleAr: 'رحلة المرتانية',
+    author: 'Cheikh Ahmed Tijani',
+    pages: 200,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/rihilatul-murtaniyya.pdf'),
+    image: require('./assets/pdf/rikhla.png'),
+    description: 'Le voyage spirituel - Ouvrage important sur le cheminement spirituel.',
+    category: 'Tariqa',
+    rating: 4.9,
+    downloads: 7000,
+  },
+  {
+    id: 114,
+    title: 'Sairul Qalbi',
+    titleAr: 'سير القلب',
+    author: 'Cheikh Ahmed Tijani',
+    pages: 180,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/sairul-qalbi.pdf'),
+    image: require('./assets/pdf/sayrou.png'),
+    description: 'Le cheminement du cœur - Ouvrage spirituel de grande valeur.',
+    category: 'Tariqa',
+    rating: 4.8,
+    downloads: 6500,
+  },
 ];
 
 // PDFs du dossier français uniquement
@@ -720,6 +1120,20 @@ const frenchPdfFiles = [
     category: 'Tariqa',
     rating: 5.0,
     downloads: 9000,
+  },
+  {
+    id: 204,
+    title: 'Quelques Lettres de Baye Niass',
+    titleAr: 'بعض رسائل باي نياس',
+    author: 'Cheikh Ibrahim Niass',
+    pages: 150,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/francais/quelques-lettres-de-baye-niass.pdf'),
+    image: require('./assets/pdf/lettre1.jpeg'),
+    description: 'Collection de lettres de Cheikh Ibrahim Niass.',
+    category: 'Tariqa',
+    rating: 4.8,
+    downloads: 6000,
   },
 ];
 
@@ -911,6 +1325,34 @@ const arabicPdfFiles = [
     rating: 4.6,
     downloads: 5000,
   },
+  {
+    id: 410,
+    title: 'Rihlatul Murtaniyya',
+    titleAr: 'رحلة المرتانية',
+    author: 'Cheikh Ahmed Tijani',
+    pages: 200,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/arabe/rihilatul-murtaniyya.pdf'),
+    image: require('./assets/pdf/rikhla.png'),
+    description: 'Le voyage spirituel - Ouvrage important sur le cheminement spirituel.',
+    category: 'Tariqa',
+    rating: 4.9,
+    downloads: 7000,
+  },
+  {
+    id: 411,
+    title: 'Sairul Qalbi',
+    titleAr: 'سير القلب',
+    author: 'Cheikh Ahmed Tijani',
+    pages: 180,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/arabe/sairul-qalbi.pdf'),
+    image: require('./assets/pdf/sayrou.png'),
+    description: 'Le cheminement du cœur - Ouvrage spirituel de grande valeur.',
+    category: 'Tariqa',
+    rating: 4.8,
+    downloads: 6500,
+  },
 ];
 
 // Garder pdfFiles pour la compatibilité avec le code existant (page d'accueil)
@@ -944,6 +1386,7 @@ const getBookCategories = (language: Language | null) => {
       { id: 21, title: 'Le Zikr dans la Voie Tijaniyya', titleAr: 'الذكر في الطريقة التجانية', author: 'Fayda Digital', pages: 20, cover: '🕌', htmlFile: 'tariqa-articles.html', description: 'Comprenez l\'importance et la pratique du Zikr (invocation) dans la Tariqa Tijaniyya.' },
       { id: 22, title: 'La Salat al-Fatih', titleAr: 'صلاة الفاتح', author: 'Fayda Digital', pages: 18, cover: '📖', htmlFile: 'tariqa-articles.html', description: 'Apprenez-en plus sur la Salat al-Fatih, cette prière spéciale de la Tariqa Tijaniyya.' },
       { id: 23, title: 'L\'Attachement au Prophète', titleAr: 'التعلق بالنبي', author: 'Fayda Digital', pages: 22, cover: '☪️', htmlFile: 'tariqa-articles.html', description: 'Explorez la relation spirituelle avec le Prophète Muhammad (paix et bénédictions sur lui) dans la voie tidiane.' },
+      { id: 24, title: 'Doua Wazifa', titleAr: 'دعاء الوظيفة', author: 'Fayda Digital', pages: 15, cover: '🤲', htmlFile: 'tariqa-articles.html', description: 'Invocation de la Wazifa - Douas et prières de la Tariqa Tijaniyya.' },
     ]
   },
   {
@@ -1639,146 +2082,8 @@ function BooksScreen({ navigation }: any) {
 
 // Écran de musique
 function MusicScreen({ navigation }: any) {
-  const { language, darkMode, setCurrentPlayer, currentPlayer, addToHistory } = React.useContext(AppContext);
+  const { language, darkMode } = React.useContext(AppContext);
   const theme = darkMode ? darkTheme : lightTheme;
-  const [selectedTrack, setSelectedTrack] = React.useState<any>(null);
-  const [isPlaying, setIsPlaying] = React.useState(false);
-  const [position, setPosition] = React.useState(0);
-  const [duration, setDuration] = React.useState(0);
-  const [showCarMode, setShowCarMode] = React.useState(false);
-  const [showInfo, setShowInfo] = React.useState(false);
-  const [showMenu, setShowMenu] = React.useState(false);
-
-  // Utiliser expo-audio pour la lecture - Utiliser le fichier audio de la piste sélectionnée (musique ou podcast)
-  const getAudioSource = () => {
-    if ((currentPlayer?.type === 'music' || currentPlayer?.type === 'podcast') && currentPlayer.item) {
-      // Si c'est une sourate du Coran ou un podcast, utiliser son fichier
-      if (currentPlayer.item.file) {
-        return currentPlayer.item.file;
-      }
-      // Pour les podcasts, utiliser le fileName pour charger le fichier via getPodcastFile
-      if (currentPlayer.item.fileName && currentPlayer?.type === 'podcast') {
-        try {
-          return getPodcastFile(currentPlayer.item.fileName);
-        } catch (error) {
-          console.log('Erreur chargement fichier podcast:', error);
-          return require('./assets/audio/audio.mp3');
-        }
-      }
-      // Sinon, utiliser le fichier par défaut
-      return require('./assets/audio/audio.mp3');
-    }
-    return require('./assets/audio/audio.mp3');
-  };
-
-  const player = useAudioPlayer(getAudioSource());
-
-  React.useEffect(() => {
-    if (player && (currentPlayer?.type === 'music' || currentPlayer?.type === 'podcast')) {
-      // Réinitialiser la position quand on change de piste
-      setPosition(0);
-      setDuration(0);
-      
-      // Démarrer automatiquement la lecture pour les podcasts
-      if (currentPlayer?.type === 'podcast') {
-        const startPlayback = async () => {
-          try {
-            if (player && !player.playing) {
-              await player.play();
-              setIsPlaying(true);
-            }
-          } catch (error) {
-            console.log('Erreur démarrage automatique podcast:', error);
-          }
-        };
-        startPlayback();
-      }
-      
-      const updateStatus = () => {
-        try {
-          if (player) {
-            setIsPlaying(player.playing || false);
-            setPosition((player.currentTime || 0) * 1000);
-            const dur = (player.duration || 0) * 1000;
-            if (dur > 0) {
-              setDuration(dur);
-            }
-          }
-        } catch (error) {
-          console.log('Erreur mise à jour audio:', error);
-        }
-      };
-      const interval = setInterval(updateStatus, 500);
-      return () => clearInterval(interval);
-    } else {
-      // Réinitialiser quand on n'a plus de lecteur actif
-      setIsPlaying(false);
-      setPosition(0);
-      setDuration(0);
-    }
-  }, [player, currentPlayer]);
-
-  const togglePlay = async () => {
-    try {
-      if (player) {
-        if (player.playing) {
-          await player.pause();
-          setIsPlaying(false);
-        } else {
-          await player.play();
-          setIsPlaying(true);
-          // Si la durée n'est pas encore chargée, attendre un peu
-          if (duration === 0) {
-            setTimeout(() => {
-              if (player.duration) {
-                setDuration(player.duration * 1000);
-              }
-            }, 500);
-          }
-        }
-      }
-    } catch (error) {
-      console.log('Erreur toggle play:', error);
-      setIsPlaying(!isPlaying);
-      if (!isPlaying && duration === 0) {
-        setDuration(180000);
-      }
-    }
-  };
-
-  const handleShare = async () => {
-    if (currentPlayer?.item) {
-      try {
-        await Share.share({
-          message: `Écoutez "${currentPlayer.item.title}" sur Hassaniya Digital`,
-          title: currentPlayer.item.title,
-        });
-      } catch (error) {
-        console.error('Erreur partage:', error);
-      }
-    }
-  };
-
-  const formatTime = (ms: number) => {
-    const totalSeconds = Math.floor(ms / 1000);
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  };
-
-  const getMusicColor = (id: number): [string, string] => {
-    const colors: [string, string][] = [
-      ['#0F5132', '#0B3C5D'],
-      ['#0F5132', '#0B3C5D'],
-      ['#0B3C5D', '#0F5132'],
-      ['#C9A24D', '#0F5132'],
-      ['#0F5132', '#0B3C5D'],
-      ['#0B3C5D', '#C9A24D'],
-      ['#C9A24D', '#0B3C5D'],
-      ['#0F5132', '#0B3C5D'],
-    ];
-    return colors[(id - 1) % colors.length];
-  };
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -1792,7 +2097,7 @@ function MusicScreen({ navigation }: any) {
 
       <ScrollView 
         style={styles.podcastsScrollNew} 
-        contentContainerStyle={[styles.podcastsScrollContentNew, currentPlayer?.type === 'music' && { paddingBottom: 220 }]}
+        contentContainerStyle={styles.podcastsScrollContentNew}
         showsVerticalScrollIndicator={false}
       >
         {/* Section Zikr & Music Snippets - Cartes horizontales */}
@@ -1809,61 +2114,47 @@ function MusicScreen({ navigation }: any) {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.podcastsHorizontalScroll}
           >
-            {zikrFiles.slice(0, 3).map((track) => {
-              const isPlaying = currentPlayer?.type === 'zikr' && currentPlayer.item?.id === track.id;
-              
-              return (
-                <TouchableOpacity
-                  key={track.id}
-                  style={styles.podcastCardHorizontal}
-                  activeOpacity={0.9}
-                  onPress={() => {
-                    addToHistory(track, 'audio');
-                    setCurrentPlayer({ item: track, type: 'zikr' });
-                  }}
-                >
-                  {/* Image d'album avec texte */}
-                  <View style={styles.podcastAlbumContainer}>
-                    <Image 
-                      source={track.image || require('./assets/thierno.png')} 
-                      style={styles.podcastAlbumImage}
-                      resizeMode="cover"
-                    />
-                    <View style={styles.podcastAlbumOverlay}>
-                      <Text style={styles.podcastAlbumTextAr}>{track.titleAr}</Text>
-                      <Text style={styles.podcastAlbumTextLatin}>{track.title}</Text>
-                      <View style={styles.podcastAlbumLogo}>
-                        <Text style={styles.podcastAlbumLogoText}>فيضة FAYDA</Text>
-                      </View>
+            {zikrFiles.slice(0, 3).map((track) => (
+              <TouchableOpacity
+                key={track.id}
+                style={styles.podcastCardHorizontal}
+                activeOpacity={0.9}
+                onPress={() => {
+                  navigation.navigate('Zikr');
+                }}
+              >
+                {/* Image d'album avec texte */}
+                <View style={styles.podcastAlbumContainer}>
+                  <Image 
+                    source={track.image || require('./assets/thierno.png')} 
+                    style={styles.podcastAlbumImage}
+                    resizeMode="cover"
+                  />
+                  <View style={styles.podcastAlbumOverlay}>
+                    <Text style={styles.podcastAlbumTextAr}>{track.titleAr}</Text>
+                    <Text style={styles.podcastAlbumTextLatin}>{track.title}</Text>
+                    <View style={styles.podcastAlbumLogo}>
+                      <Text style={styles.podcastAlbumLogoText}>فيضة FAYDA</Text>
                     </View>
                   </View>
-                  
-                  {/* Titre et infos */}
-                  <Text style={[styles.podcastCardTitle, { color: theme.text }]} numberOfLines={1}>
-                    {track.title}
-                  </Text>
-                  
-                  {/* Infos avec icônes */}
-                  <View style={styles.podcastCardInfo}>
-                    <View style={styles.podcastCardInfoItem}>
-                      <Text style={styles.podcastCardInfoIcon}>🎧</Text>
-                      <Text style={[styles.podcastCardInfoText, { color: theme.textSecondary }]}>
-                        {track.duration}
-                      </Text>
-                    </View>
-                    <TouchableOpacity 
-                      style={styles.podcastCardInfoButton}
-                      onPress={(e) => {
-                        e.stopPropagation();
-                        setShowInfo(!showInfo);
-                      }}
-                    >
-                      <Text style={styles.podcastCardInfoIcon}>ℹ️</Text>
-                    </TouchableOpacity>
+                </View>
+                
+                {/* Titre et infos */}
+                <Text style={[styles.podcastCardTitle, { color: theme.text }]} numberOfLines={1}>
+                  {track.title}
+                </Text>
+                
+                {/* Infos avec icônes */}
+                <View style={styles.podcastCardInfo}>
+                  <View style={styles.podcastCardInfoItem}>
+                    <Text style={styles.podcastCardInfoIcon}>🎧</Text>
+                    <Text style={[styles.podcastCardInfoText, { color: theme.textSecondary }]}>
+                      {track.duration}
+                    </Text>
                   </View>
-                </TouchableOpacity>
-              );
-            })}
+                </View>
+              </TouchableOpacity>
+            ))}
           </ScrollView>
         </View>
 
@@ -1927,95 +2218,6 @@ function MusicScreen({ navigation }: any) {
           </TouchableOpacity>
         </View>
       </ScrollView>
-
-      {/* Lecteur audio intégré en bas - Moderne (pour musique et podcasts) */}
-      {(currentPlayer?.type === 'music' || currentPlayer?.type === 'podcast') && currentPlayer.item && (
-        <LinearGradient
-          colors={darkMode ? ['#0B3C5D', '#0F5132'] : ['#ffffff', '#F8F9F6']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.musicPlayerContainerModern}
-        >
-          <View style={styles.musicPlayerHeaderModern}>
-            <View style={styles.musicPlayerTrackInfoModern}>
-              <Text style={[styles.musicPlayerTrackTitleModern, { color: theme.text }]} numberOfLines={1}>
-                {currentPlayer.item.title}
-              </Text>
-              <Text style={[styles.musicPlayerTrackArtistModern, { color: theme.textSecondary }]} numberOfLines={1}>
-                {currentPlayer.item.artist || currentPlayer.item.host || t('player.artist')}
-              </Text>
-            </View>
-            <View style={styles.musicPlayerHeaderActionsModern}>
-              <TouchableOpacity 
-                onPress={() => setShowCarMode(!showCarMode)} 
-                style={[styles.musicPlayerHeaderButtonModern, showCarMode && styles.musicPlayerHeaderButtonActive]}
-              >
-                <Text style={styles.musicPlayerHeaderIconModern}>🚗</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleShare} style={styles.musicPlayerHeaderButtonModern}>
-                <Text style={styles.musicPlayerHeaderIconModern}>📤</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setShowInfo(!showInfo)} style={styles.musicPlayerHeaderButtonModern}>
-                <Text style={styles.musicPlayerHeaderIconModern}>ℹ️</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setShowMenu(!showMenu)} style={styles.musicPlayerHeaderButtonModern}>
-                <Text style={styles.musicPlayerHeaderIconModern}>☰</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <View style={styles.musicPlayerControlsModern}>
-            <TouchableOpacity style={styles.musicPlayerControlBtnModern} activeOpacity={0.7}>
-              <Text style={styles.musicPlayerControlIconModern}>⏮️</Text>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={styles.musicPlayerPlayBtnModern}
-              onPress={togglePlay}
-              activeOpacity={0.9}
-            >
-              <LinearGradient
-                colors={['#0F5132', '#0B3C5D']}
-                style={styles.musicPlayerPlayBtnGradient}
-              >
-                <Text style={styles.musicPlayerPlayIconModern}>{isPlaying ? '⏸️' : '▶️'}</Text>
-              </LinearGradient>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.musicPlayerControlBtnModern} activeOpacity={0.7}>
-              <Text style={styles.musicPlayerControlIconModern}>⏭️</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.musicPlayerProgressContainerModern}>
-            <Slider
-              style={styles.musicPlayerSliderModern}
-              value={position}
-              maximumValue={duration || 100}
-              minimumValue={0}
-              onValueChange={(value) => {
-                setPosition(value);
-                try {
-                  if (player) {
-                    player.currentTime = value / 1000;
-                  }
-                } catch (error) {
-                  console.log('Erreur seek:', error);
-                }
-              }}
-              minimumTrackTintColor="#0F5132"
-              maximumTrackTintColor="#e0e0e0"
-              thumbTintColor="#0F5132"
-            />
-            <View style={styles.musicPlayerTimeContainerModern}>
-              <Text style={[styles.musicPlayerTimeTextModern, { color: theme.textSecondary }]}>
-                {formatTime(position)}
-              </Text>
-              <Text style={[styles.musicPlayerTimeTextModern, { color: theme.textSecondary }]}>
-                {formatTime(duration)}
-              </Text>
-            </View>
-          </View>
-        </LinearGradient>
-      )}
     </View>
   );
 }
@@ -4041,12 +4243,33 @@ function PDFReaderScreen({ route, navigation }: any) {
         if (book?.htmlFile) {
           // Pour les fichiers HTML, utiliser le lecteur par défaut (WebView avec contenu HTML)
           setLoading(true);
-          // Déterminer le contenu HTML selon le fichier
-          const htmlContent = book.htmlFile === 'tariqa-articles.html'
-            ? getTariqaHTML()
-            : book.htmlFile === 'maarifa-articles.html'
-            ? getMaarifaHTML()
-            : '';
+          // Déterminer le contenu HTML selon le fichier et l'ID du livre
+          let htmlContent = '';
+          if (book.htmlFile === 'tariqa-articles.html') {
+            // Sélectionner le contenu selon l'ID du livre
+            if (book.id === 20) {
+              htmlContent = getIntroductionTariqaHTML();
+            } else if (book.id === 21) {
+              htmlContent = getZikrTariqaHTML();
+            } else if (book.id === 22) {
+              htmlContent = getSalatFatihHTML();
+            } else if (book.id === 23) {
+              htmlContent = getAttachementPropheteHTML();
+            } else if (book.id === 24) {
+              htmlContent = getDouaWazifaHTML();
+            }
+          } else if (book.htmlFile === 'maarifa-articles.html') {
+            // Sélectionner le contenu selon l'ID du livre
+            if (book.id === 30) {
+              htmlContent = getConnaissanceSpirituelleHTML();
+            } else if (book.id === 31) {
+              htmlContent = getDegresConnaissanceHTML();
+            } else if (book.id === 32) {
+              htmlContent = getMaarifaTariqaHTML();
+            } else if (book.id === 33) {
+              htmlContent = getCheminGnoseHTML();
+            }
+          }
           setHtmlContent(htmlContent);
           setLoading(false);
         } else if (book?.pdfFile) {

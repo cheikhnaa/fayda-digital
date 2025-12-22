@@ -1,4 +1,4 @@
-export type Language = 'fr' | 'en' | 'ar' | null;
+export type Language = 'fr' | 'en' | 'ar';
 
 export const translations: Record<Language, Record<string, string>> = {
   fr: {
@@ -76,21 +76,6 @@ export const translations: Record<Language, Record<string, string>> = {
     'modal.close': 'Fermer',
     'modal.readBook': 'Lire le livre',
     'modal.by': 'Par',
-    
-    // Assistant
-    'assistant.title': 'Assistant IA',
-    'assistant.subtitle': 'Posez vos questions',
-    'assistant.placeholder': 'Tapez votre question...',
-    'assistant.send': 'Envoyer',
-    'assistant.thinking': 'Réflexion en cours...',
-    'assistant.error': 'Erreur lors de la communication avec l\'assistant',
-    'assistant.suggestions': 'Suggestions de questions',
-    'assistant.suggestion1': 'Qu\'est-ce que la Tariqa Tijaniyya ?',
-    'assistant.suggestion2': 'Expliquez-moi le concept de Zikr',
-    'assistant.suggestion3': 'Quels livres recommandez-vous ?',
-    'assistant.suggestion4': 'Comment utiliser cette application ?',
-    'assistant.clear': 'Effacer',
-    'assistant.welcome': 'Bonjour ! Je suis votre assistant spirituel. Comment puis-je vous aider ?',
   },
   en: {
     // Navigation
@@ -167,21 +152,6 @@ export const translations: Record<Language, Record<string, string>> = {
     'modal.close': 'Close',
     'modal.readBook': 'Read book',
     'modal.by': 'By',
-    
-    // Assistant
-    'assistant.title': 'AI Assistant',
-    'assistant.subtitle': 'Ask your questions',
-    'assistant.placeholder': 'Type your question...',
-    'assistant.send': 'Send',
-    'assistant.thinking': 'Thinking...',
-    'assistant.error': 'Error communicating with assistant',
-    'assistant.suggestions': 'Question suggestions',
-    'assistant.suggestion1': 'What is the Tijaniyya Tariqa?',
-    'assistant.suggestion2': 'Explain the concept of Zikr',
-    'assistant.suggestion3': 'What books do you recommend?',
-    'assistant.suggestion4': 'How to use this app?',
-    'assistant.clear': 'Clear',
-    'assistant.welcome': 'Hello! I am your spiritual assistant. How can I help you?',
   },
   ar: {
     // Navigation
@@ -258,37 +228,16 @@ export const translations: Record<Language, Record<string, string>> = {
     'modal.close': 'إغلاق',
     'modal.readBook': 'قراءة الكتاب',
     'modal.by': 'بواسطة',
-    
-    // Assistant
-    'assistant.title': 'المساعد الذكي',
-    'assistant.subtitle': 'اطرح أسئلتك',
-    'assistant.placeholder': 'اكتب سؤالك...',
-    'assistant.send': 'إرسال',
-    'assistant.thinking': 'جاري التفكير...',
-    'assistant.error': 'خطأ في التواصل مع المساعد',
-    'assistant.suggestions': 'اقتراحات الأسئلة',
-    'assistant.suggestion1': 'ما هي الطريقة التجانية؟',
-    'assistant.suggestion2': 'اشرح لي مفهوم الذكر',
-    'assistant.suggestion3': 'ما الكتب التي تنصح بها؟',
-    'assistant.suggestion4': 'كيف أستخدم هذا التطبيق؟',
-    'assistant.clear': 'مسح',
-    'assistant.welcome': 'مرحباً! أنا مساعدك الروحي. كيف يمكنني مساعدتك؟',
   },
 };
 
-let currentLanguage: Language = null;
+let currentLanguage: Language = 'fr';
 
 export const setLanguage = (lang: Language) => {
-  if (lang) {
-    currentLanguage = lang;
-  }
+  currentLanguage = lang;
 };
 
 export const t = (key: string): string => {
-  if (!currentLanguage) {
-    // Si aucune langue n'est sélectionnée, utiliser le français par défaut pour les traductions
-    return translations['fr'][key] || key;
-  }
   return translations[currentLanguage][key] || key;
 };
 
