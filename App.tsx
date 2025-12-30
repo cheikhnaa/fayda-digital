@@ -10,7 +10,7 @@ import * as Sharing from 'expo-sharing';
 import { StatusBar } from 'expo-status-bar';
 import { VideoView, useVideoPlayer } from 'expo-video';
 import * as React from 'react';
-import { ActivityIndicator, Alert, Animated, Dimensions, Image, ImageBackground, Modal, ScrollView, Share, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Animated, Dimensions, Image, ImageBackground, KeyboardAvoidingView, Linking, Modal, Platform, ScrollView, Share, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { Message, sendMessageToAI } from './services/aiService';
 import { Language, setLanguage, t } from './translations';
@@ -1416,6 +1416,8 @@ const AppContext = React.createContext<{
   setCurrentRoute: (route: string | null) => void;
   recentItems: Array<{id: number, type: 'pdf' | 'audio', title: string, titleAr?: string, timestamp: number, item: any}>;
   addToHistory: (item: any, type: 'pdf' | 'audio') => void;
+  showDonationBanner: boolean;
+  setShowDonationBanner: (show: boolean) => void;
 }>({ 
   language: null, 
   setLang: () => {},
@@ -1428,7 +1430,9 @@ const AppContext = React.createContext<{
   currentRoute: null,
   setCurrentRoute: () => {},
   recentItems: [],
-  addToHistory: () => {}
+  addToHistory: () => {},
+  showDonationBanner: true,
+  setShowDonationBanner: () => {}
 });
 
 // Sélecteur de langue compact
@@ -1493,11 +1497,46 @@ function LanguageSelectorBar() {
 
 // Écran d'accueil
 function HomeScreen({ navigation }: any) {
-  const { language, darkMode, setCurrentPlayer, recentItems, addToHistory } = React.useContext(AppContext);
+  const { language, darkMode, setCurrentPlayer, recentItems, addToHistory, setShowDonationBanner } = React.useContext(AppContext);
   const theme = darkMode ? darkTheme : lightTheme;
+  const lastScrollY = React.useRef(0);
+  const scrollTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleScroll = (event: any) => {
+    const currentScrollY = event.nativeEvent.contentOffset.y;
+    
+    // Cacher la bande dès qu'on scrolle
+    setShowDonationBanner(false);
+    
+    // Annuler le timer précédent
+    if (scrollTimer.current) {
+      clearTimeout(scrollTimer.current);
+    }
+    
+    // Créer un nouveau timer pour réafficher la bande après 500ms d'inactivité
+    scrollTimer.current = setTimeout(() => {
+      setShowDonationBanner(true);
+    }, 500);
+    
+    lastScrollY.current = currentScrollY;
+  };
+
+  // Nettoyer le timer au démontage
+  React.useEffect(() => {
+    return () => {
+      if (scrollTimer.current) {
+        clearTimeout(scrollTimer.current);
+      }
+    };
+  }, []);
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
+    <ScrollView 
+      style={[styles.container, { backgroundColor: theme.background }]} 
+      showsVerticalScrollIndicator={false}
+      onScroll={handleScroll}
+      scrollEventThrottle={16}
+    >
       <StatusBar style={darkMode ? 'light' : 'dark'} />
       
       {/* Header moderne avec gradient */}
@@ -1823,11 +1862,22 @@ function HomeScreen({ navigation }: any) {
 
 // Écran des livres
 function BooksScreen({ navigation }: any) {
-  const { language, darkMode, setCurrentPlayer, addToHistory } = React.useContext(AppContext);
+  const { language, darkMode, setCurrentPlayer, addToHistory, setShowDonationBanner } = React.useContext(AppContext);
   const theme = darkMode ? darkTheme : lightTheme;
   const [selectedBook, setSelectedBook] = React.useState<any>(null);
   const [modalVisible, setModalVisible] = React.useState(false);
   const [expandedCategory, setExpandedCategory] = React.useState<string | null>(null);
+  const lastScrollY = React.useRef(0);
+  const scrollTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Nettoyer le timer au démontage
+  React.useEffect(() => {
+    return () => {
+      if (scrollTimer.current) {
+        clearTimeout(scrollTimer.current);
+      }
+    };
+  }, []);
 
   const handleBookPress = (book: any) => {
     // Si c'est un PDF, l'ouvrir directement
@@ -1884,7 +1934,30 @@ function BooksScreen({ navigation }: any) {
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.booksScrollModern} showsVerticalScrollIndicator={false} contentContainerStyle={styles.booksScrollContentNew}>
+      <ScrollView 
+        style={styles.booksScrollModern} 
+        showsVerticalScrollIndicator={false} 
+        contentContainerStyle={styles.booksScrollContentNew}
+        onScroll={(event) => {
+          const currentScrollY = event.nativeEvent.contentOffset.y;
+          
+          // Cacher la bande dès qu'on scrolle
+          setShowDonationBanner(false);
+          
+          // Annuler le timer précédent
+          if (scrollTimer.current) {
+            clearTimeout(scrollTimer.current);
+          }
+          
+          // Créer un nouveau timer pour réafficher la bande après 500ms d'inactivité
+          scrollTimer.current = setTimeout(() => {
+            setShowDonationBanner(true);
+          }, 500);
+          
+          lastScrollY.current = currentScrollY;
+        }}
+        scrollEventThrottle={16}
+      >
         {bookCategories.map(category => (
           <View key={category.id} style={styles.categorySectionModern}>
             <View style={styles.categoryHeaderModern}>
@@ -2082,8 +2155,19 @@ function BooksScreen({ navigation }: any) {
 
 // Écran de musique
 function MusicScreen({ navigation }: any) {
-  const { language, darkMode } = React.useContext(AppContext);
+  const { language, darkMode, setShowDonationBanner } = React.useContext(AppContext);
   const theme = darkMode ? darkTheme : lightTheme;
+  const lastScrollY = React.useRef(0);
+  const scrollTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Nettoyer le timer au démontage
+  React.useEffect(() => {
+    return () => {
+      if (scrollTimer.current) {
+        clearTimeout(scrollTimer.current);
+      }
+    };
+  }, []);
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -2098,6 +2182,25 @@ function MusicScreen({ navigation }: any) {
       <ScrollView 
         style={styles.podcastsScrollNew} 
         contentContainerStyle={styles.podcastsScrollContentNew}
+        onScroll={(event) => {
+          const currentScrollY = event.nativeEvent.contentOffset.y;
+          
+          // Cacher la bande dès qu'on scrolle
+          setShowDonationBanner(false);
+          
+          // Annuler le timer précédent
+          if (scrollTimer.current) {
+            clearTimeout(scrollTimer.current);
+          }
+          
+          // Créer un nouveau timer pour réafficher la bande après 500ms d'inactivité
+          scrollTimer.current = setTimeout(() => {
+            setShowDonationBanner(true);
+          }, 500);
+          
+          lastScrollY.current = currentScrollY;
+        }}
+        scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
       >
         {/* Section Zikr & Music Snippets - Cartes horizontales */}
@@ -3321,7 +3424,7 @@ function CoranScreen({ navigation }: any) {
 
 // Écran de podcasts - Design amélioré
 function PodcastsScreen({ navigation, route }: any) {
-  const { language, darkMode, setCurrentPlayer, currentPlayer, addToHistory } = React.useContext(AppContext);
+  const { language, darkMode, setCurrentPlayer, currentPlayer, addToHistory, setShowDonationBanner } = React.useContext(AppContext);
   const theme = darkMode ? darkTheme : lightTheme;
   const [subscribedPodcasts, setSubscribedPodcasts] = React.useState<number[]>([]);
   const [isPlaying, setIsPlaying] = React.useState(false);
@@ -3331,6 +3434,17 @@ function PodcastsScreen({ navigation, route }: any) {
   const [modalVisible, setModalVisible] = React.useState(route.params?.selectedPodcast ? true : false);
   const [showSearch, setShowSearch] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState('');
+  const lastScrollY = React.useRef(0);
+  const scrollTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Nettoyer le timer au démontage
+  React.useEffect(() => {
+    return () => {
+      if (scrollTimer.current) {
+        clearTimeout(scrollTimer.current);
+      }
+    };
+  }, []);
 
   // Ouvrir automatiquement le modal si un podcast est passé en paramètre
   React.useEffect(() => {
@@ -3433,6 +3547,25 @@ function PodcastsScreen({ navigation, route }: any) {
         style={styles.podcastsScrollNew} 
         contentContainerStyle={[styles.podcastsScrollContentNew, currentPlayer?.type === 'podcast' && { paddingBottom: 220 }]}
         showsVerticalScrollIndicator={false}
+        onScroll={(event) => {
+          const currentScrollY = event.nativeEvent.contentOffset.y;
+          
+          // Cacher la bande dès qu'on scrolle
+          setShowDonationBanner(false);
+          
+          // Annuler le timer précédent
+          if (scrollTimer.current) {
+            clearTimeout(scrollTimer.current);
+          }
+          
+          // Créer un nouveau timer pour réafficher la bande après 500ms d'inactivité
+          scrollTimer.current = setTimeout(() => {
+            setShowDonationBanner(true);
+          }, 500);
+          
+          lastScrollY.current = currentScrollY;
+        }}
+        scrollEventThrottle={16}
       >
         {podcasts.map((podcast) => (
           <View key={podcast.id} style={styles.podcastCardNew}>
@@ -4841,6 +4974,587 @@ function MiniPlayerModal({ navigation }: any) {
   return null;
 }
 
+// Bande de don au-dessus du menu
+function DonationBanner({ onPress }: { onPress: () => void }) {
+  const { darkMode, showDonationBanner, currentRoute } = React.useContext(AppContext);
+  const theme = darkMode ? darkTheme : lightTheme;
+  const translateY = React.useRef(new Animated.Value(0)).current;
+  const opacity = React.useRef(new Animated.Value(1)).current;
+
+  // Ne pas afficher la bande sur la page Assistant
+  const shouldShow = showDonationBanner && currentRoute !== 'Assistant';
+
+  React.useEffect(() => {
+    // Quand showDonationBanner est true et qu'on n'est pas sur Assistant, la bande est visible
+    // Sinon, la bande disparaît complètement
+    const targetTranslateY = shouldShow ? 0 : 100; // Sortir complètement de l'écran
+    const targetOpacity = shouldShow ? 1 : 0; // Rendre invisible
+    
+    Animated.parallel([
+      Animated.timing(translateY, {
+        toValue: targetTranslateY,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacity, {
+        toValue: targetOpacity,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [shouldShow]);
+
+  // Ne pas rendre la bande si on est sur la page Assistant
+  if (currentRoute === 'Assistant') {
+    return null;
+  }
+
+  return (
+    <Animated.View style={{
+      position: 'absolute',
+      bottom: 80, // Position au-dessus du menu (Tab.Navigator) - relevé de 20px
+      left: 0,
+      right: 0,
+      height: 50, // Hauteur fixe pour garantir la visibilité
+      backgroundColor: '#0F5132',
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      borderTopWidth: 1,
+      borderTopColor: 'rgba(255,255,255,0.1)',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: -2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 6,
+      elevation: 10, // Augmenté pour Android
+      zIndex: 1001, // Au-dessus de tout
+      opacity, // Ajouter opacity à l'animation
+      transform: [{ translateY }],
+    }}>
+      <Text style={{
+        color: '#ffffff',
+        fontSize: 13,
+        flex: 1,
+        marginRight: 10,
+        fontWeight: '500',
+      }}>
+        🤲 {t('donation.title')}
+      </Text>
+      <TouchableOpacity
+        onPress={onPress}
+        style={{
+          backgroundColor: '#ffffff',
+          paddingVertical: 12,
+          paddingHorizontal: 16,
+          borderRadius: 18,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: 0.2,
+          shadowRadius: 2,
+          elevation: 2,
+          minHeight: 40,
+        }}
+        activeOpacity={0.8}
+      >
+        <Text style={{
+          color: '#0F5132',
+          fontSize: 13,
+          fontWeight: 'bold',
+          textAlign: 'center',
+        }}>
+          {t('donation.button')}
+        </Text>
+      </TouchableOpacity>
+    </Animated.View>
+  );
+}
+
+// Modal de don avec Wave et Orange Money
+function DonationModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
+  const { darkMode, language } = React.useContext(AppContext);
+  const theme = darkMode ? darkTheme : lightTheme;
+  const [selectedPayment, setSelectedPayment] = React.useState<'wave' | 'orange' | null>(null);
+  const [selectedAmount, setSelectedAmount] = React.useState<string>('');
+
+  // Montants prédéfinis en FCFA
+  const amounts = ['1000', '2000', '5000', '10000', '20000', '50000'];
+
+  // Fonction pour ouvrir l'application avec le montant sélectionné
+  const handleOpenPaymentApp = (method: 'wave' | 'orange', amount: string) => {
+    if (!amount || parseFloat(amount) <= 0) {
+      Alert.alert('Erreur', 'Veuillez sélectionner un montant');
+      return;
+    }
+
+    if (method === 'wave') {
+      // Pour Wave, utiliser le code USSD : #2171*1*773649050*montant#
+      const ussdCode = `#2171*1*773649050*${amount}#`;
+      const telUrl = `tel:${ussdCode}`;
+      
+      Linking.openURL(telUrl)
+        .then(() => {
+          // Fermer le modal directement sans afficher de popup
+          setSelectedPayment(null);
+          setSelectedAmount('');
+          onClose();
+        })
+        .catch(err => {
+          Alert.alert('Erreur', 'Impossible d\'effectuer l\'appel');
+        });
+    } else {
+      // Pour Orange Money, ouvrir l'application
+      const url = 'orange://';
+      
+      Linking.canOpenURL(url)
+        .then(supported => {
+          if (supported) {
+            Linking.openURL(url);
+            Alert.alert(
+              t('donation.thankYou'),
+              `Ouverture d'Orange Money avec un montant de ${parseInt(amount).toLocaleString()} FCFA...`
+            );
+            // Fermer le modal
+            setTimeout(() => {
+              setSelectedPayment(null);
+              setSelectedAmount('');
+              onClose();
+            }, 1000);
+          } else {
+            // Si le schéma ne fonctionne pas, essayer d'ouvrir via le store
+            const storeUrl = Platform.OS === 'ios'
+              ? 'https://apps.apple.com/app/orange-money/id1234567890'
+              : 'market://details?id=com.orange.money';
+            
+            Alert.alert(
+              'Application non installée',
+              'Voulez-vous installer Orange Money ?',
+              [
+                { text: 'Annuler', style: 'cancel' },
+                {
+                  text: 'Installer',
+                  onPress: () => Linking.openURL(storeUrl).catch(() => {
+                    Alert.alert('Erreur', 'Impossible d\'ouvrir le store');
+                  })
+                }
+              ]
+            );
+          }
+        })
+        .catch(err => {
+          Alert.alert('Erreur', 'Impossible d\'ouvrir l\'application');
+        });
+    }
+  };
+
+  React.useEffect(() => {
+    if (!visible) {
+      setSelectedPayment(null);
+      setSelectedAmount('');
+    }
+  }, [visible]);
+
+  return (
+    <Modal
+      visible={visible}
+      transparent={true}
+      animationType="slide"
+      onRequestClose={onClose}
+    >
+      <View style={{
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.75)',
+        justifyContent: 'flex-end',
+      }}>
+        <TouchableOpacity 
+          style={{ flex: 1 }} 
+          activeOpacity={1} 
+          onPress={onClose}
+        />
+        <View style={{
+          backgroundColor: theme.surface,
+          borderTopLeftRadius: 24,
+          borderTopRightRadius: 24,
+          paddingTop: 24,
+          paddingBottom: 40,
+          paddingHorizontal: 24,
+          maxHeight: '85%',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.25,
+          shadowRadius: 10,
+          elevation: 10,
+        }}>
+          {/* Handle bar */}
+          <View style={{
+            width: 40,
+            height: 4,
+            backgroundColor: theme.textSecondary + '40',
+            borderRadius: 2,
+            alignSelf: 'center',
+            marginBottom: 20,
+          }} />
+
+          {/* Header */}
+          <View style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: 8,
+          }}>
+            <View style={{ flex: 1 }}>
+              <Text style={{
+                fontSize: 24,
+                fontWeight: 'bold',
+                color: theme.text,
+                marginBottom: 4,
+              }}>
+                🤲 {t('donation.title')}
+              </Text>
+              <Text style={{
+                fontSize: 14,
+                color: theme.textSecondary,
+              }}>
+                {t('donation.message')}
+              </Text>
+            </View>
+            <TouchableOpacity
+              onPress={onClose}
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: 18,
+                backgroundColor: theme.background,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              activeOpacity={0.7}
+            >
+              <Text style={{
+                fontSize: 20,
+                color: theme.text,
+                fontWeight: '300',
+              }}>✕</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Séparateur */}
+          <View style={{
+            height: 1,
+            backgroundColor: theme.textSecondary + '20',
+            marginVertical: 24,
+          }} />
+
+          {!selectedPayment ? (
+            <>
+              {/* Sous-titre */}
+              <Text style={{
+                fontSize: 16,
+                fontWeight: '600',
+                color: theme.text,
+                marginBottom: 20,
+                textAlign: 'center',
+              }}>
+                {t('donation.subtitle')}
+              </Text>
+
+              {/* Bouton Wave */}
+              <TouchableOpacity
+                onPress={() => setSelectedPayment('wave')}
+                style={{
+                  backgroundColor: '#1E88E5',
+                  borderRadius: 16,
+                  padding: 20,
+                  marginBottom: 16,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  shadowColor: '#1E88E5',
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 8,
+                  elevation: 5,
+                }}
+                activeOpacity={0.9}
+              >
+                <View style={{
+                  width: 60,
+                  height: 60,
+                  borderRadius: 12,
+                  backgroundColor: '#ffffff',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginRight: 16,
+                }}>
+                  <Text style={{ 
+                    fontSize: 32, 
+                    fontWeight: 'bold',
+                    color: '#1E88E5',
+                    letterSpacing: -1,
+                  }}>W</Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                    color: '#ffffff',
+                    marginBottom: 4,
+                  }}>
+                    Wave
+                  </Text>
+                  <Text style={{
+                    fontSize: 13,
+                    color: '#ffffff',
+                    opacity: 0.9,
+                  }}>
+                    {t('donation.wave')}
+                  </Text>
+                </View>
+                <Text style={{
+                  fontSize: 24,
+                  color: '#ffffff',
+                  opacity: 0.8,
+                }}>›</Text>
+              </TouchableOpacity>
+
+              {/* Bouton Orange Money */}
+              <TouchableOpacity
+                onPress={() => setSelectedPayment('orange')}
+                style={{
+                  backgroundColor: '#FF6600',
+                  borderRadius: 16,
+                  padding: 20,
+                  marginBottom: 24,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  shadowColor: '#FF6600',
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 8,
+                  elevation: 5,
+                }}
+                activeOpacity={0.9}
+              >
+                <View style={{
+                  width: 60,
+                  height: 60,
+                  borderRadius: 12,
+                  backgroundColor: '#ffffff',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginRight: 16,
+                }}>
+                  <Text style={{ 
+                    fontSize: 24, 
+                    fontWeight: 'bold',
+                    color: '#FF6600',
+                  }}>OM</Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                    color: '#ffffff',
+                    marginBottom: 4,
+                  }}>
+                    Orange Money
+                  </Text>
+                  <Text style={{
+                    fontSize: 13,
+                    color: '#ffffff',
+                    opacity: 0.9,
+                  }}>
+                    {t('donation.orange')}
+                  </Text>
+                </View>
+                <Text style={{
+                  fontSize: 24,
+                  color: '#ffffff',
+                  opacity: 0.8,
+                }}>›</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {/* Header avec logo */}
+              <View style={{ alignItems: 'center', marginBottom: 24 }}>
+                <View style={{
+                  width: 80,
+                  height: 80,
+                  borderRadius: 16,
+                  backgroundColor: selectedPayment === 'wave' ? '#1E88E5' : '#FF6600',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: 16,
+                }}>
+                  <Text style={{ 
+                    fontSize: 40, 
+                    fontWeight: 'bold',
+                    color: '#ffffff',
+                    letterSpacing: selectedPayment === 'wave' ? -2 : 0,
+                  }}>
+                    {selectedPayment === 'wave' ? 'W' : 'OM'}
+                  </Text>
+                </View>
+                <Text style={{
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  color: theme.text,
+                  marginBottom: 4,
+                }}>
+                  {selectedPayment === 'wave' ? 'Wave' : 'Orange Money'}
+                </Text>
+                <Text style={{
+                  fontSize: 14,
+                  color: theme.textSecondary,
+                }}>
+                  Sélectionnez un montant
+                </Text>
+              </View>
+
+              {/* Sélecteur de montant */}
+              <View style={{ marginBottom: 24 }}>
+                <Text style={{
+                  fontSize: 16,
+                  fontWeight: '600',
+                  color: theme.text,
+                  marginBottom: 16,
+                  textAlign: 'center',
+                }}>
+                  {t('donation.amount')} (FCFA)
+                </Text>
+                
+                {/* Grille de montants */}
+                <View style={{
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  justifyContent: 'space-between',
+                  gap: 12,
+                }}>
+                  {amounts.map((amt) => (
+                    <TouchableOpacity
+                      key={amt}
+                      onPress={() => setSelectedAmount(amt)}
+                      style={{
+                        width: '30%',
+                        backgroundColor: selectedAmount === amt 
+                          ? (selectedPayment === 'wave' ? '#1E88E5' : '#FF6600')
+                          : theme.background,
+                        borderRadius: 12,
+                        padding: 16,
+                        alignItems: 'center',
+                        borderWidth: 2,
+                        borderColor: selectedAmount === amt 
+                          ? (selectedPayment === 'wave' ? '#1E88E5' : '#FF6600')
+                          : theme.textSecondary + '20',
+                      }}
+                      activeOpacity={0.7}
+                    >
+                      <Text style={{
+                        fontSize: 16,
+                        fontWeight: 'bold',
+                        color: selectedAmount === amt ? '#ffffff' : theme.text,
+                      }}>
+                        {parseInt(amt).toLocaleString()} FCFA
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+
+                {/* Champ montant personnalisé */}
+                <View style={{ marginTop: 16 }}>
+                  <TextInput
+                    style={{
+                      backgroundColor: theme.background,
+                      borderRadius: 12,
+                      padding: 16,
+                      fontSize: 16,
+                      color: theme.text,
+                      borderWidth: 1,
+                      borderColor: theme.textSecondary + '30',
+                      fontWeight: '600',
+                      textAlign: 'center',
+                    }}
+                    placeholder="Montant personnalisé"
+                    placeholderTextColor={theme.textSecondary + '70'}
+                    value={selectedAmount && !amounts.includes(selectedAmount) ? selectedAmount : ''}
+                    onChangeText={(text) => {
+                      const numericText = text.replace(/[^0-9]/g, '');
+                      setSelectedAmount(numericText);
+                    }}
+                    keyboardType="numeric"
+                  />
+                </View>
+              </View>
+
+              {/* Bouton retour */}
+              <TouchableOpacity
+                onPress={() => {
+                  setSelectedPayment(null);
+                  setSelectedAmount('');
+                }}
+                style={{
+                  backgroundColor: theme.background,
+                  borderRadius: 12,
+                  padding: 16,
+                  alignItems: 'center',
+                  marginBottom: 12,
+                  borderWidth: 1,
+                  borderColor: theme.textSecondary + '20',
+                }}
+                activeOpacity={0.7}
+              >
+                <Text style={{
+                  fontSize: 16,
+                  color: theme.text,
+                  fontWeight: '500',
+                }}>
+                  ← Retour
+                </Text>
+              </TouchableOpacity>
+
+              {/* Bouton valider */}
+              <TouchableOpacity
+                onPress={() => {
+                  if (selectedAmount && parseFloat(selectedAmount) > 0) {
+                    handleOpenPaymentApp(selectedPayment!, selectedAmount);
+                  } else {
+                    Alert.alert('Erreur', 'Veuillez sélectionner un montant');
+                  }
+                }}
+                disabled={!selectedAmount || parseFloat(selectedAmount) <= 0}
+                style={{
+                  backgroundColor: selectedPayment === 'wave' ? '#1E88E5' : '#FF6600',
+                  borderRadius: 12,
+                  padding: 18,
+                  alignItems: 'center',
+                  shadowColor: selectedPayment === 'wave' ? '#1E88E5' : '#FF6600',
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 8,
+                  elevation: 5,
+                  opacity: (!selectedAmount || parseFloat(selectedAmount) <= 0) ? 0.5 : 1,
+                }}
+                activeOpacity={0.9}
+              >
+                <Text style={{
+                  fontSize: 18,
+                  fontWeight: 'bold',
+                  color: '#ffffff',
+                }}>
+                  Valider et ouvrir {selectedPayment === 'wave' ? 'Wave' : 'Orange Money'}
+                </Text>
+              </TouchableOpacity>
+            </ScrollView>
+          )}
+        </View>
+      </View>
+    </Modal>
+  );
+}
+
 // Lecteur vidéo
 function VideoPlayerScreen({ route, navigation }: any) {
   const { lesson } = route.params || {};
@@ -4935,7 +5649,7 @@ function VideoPlayerScreen({ route, navigation }: any) {
 
 // Écran Assistant IA
 function AIScreen({ navigation }: any) {
-  const { language, darkMode } = React.useContext(AppContext);
+  const { language, darkMode, setShowDonationBanner } = React.useContext(AppContext);
   const theme = darkMode ? darkTheme : lightTheme;
   const [messages, setMessages] = React.useState<Array<{ role: 'user' | 'assistant'; content: string }>>([
     { role: 'assistant', content: t('assistant.welcome') }
@@ -4943,6 +5657,26 @@ function AIScreen({ navigation }: any) {
   const [inputText, setInputText] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
   const scrollViewRef = React.useRef<ScrollView>(null);
+  const lastScrollY = React.useRef(0);
+  const scrollTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Cacher la bande de don quand on arrive sur cette page
+  React.useEffect(() => {
+    setShowDonationBanner(false);
+    // Remettre la bande à true quand on quitte la page
+    return () => {
+      setShowDonationBanner(true);
+    };
+  }, []);
+
+  // Nettoyer le timer au démontage
+  React.useEffect(() => {
+    return () => {
+      if (scrollTimer.current) {
+        clearTimeout(scrollTimer.current);
+      }
+    };
+  }, []);
 
   const suggestions = [
     t('assistant.suggestion1'),
@@ -4996,40 +5730,47 @@ function AIScreen({ navigation }: any) {
   }, [messages]);
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <StatusBar style={darkMode ? 'light' : 'dark'} />
-      
-      {/* Header */}
-      <LinearGradient
-        colors={darkMode ? ['#0B3C5D', '#0F5132'] : ['#F8F9F6', '#ffffff']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.headerModern}
-      >
-        <View style={styles.headerContent}>
-          <View style={styles.headerLeft}>
-            <Text style={[styles.appTitleModern, { color: theme.text }]}>
-              {t('assistant.title')}
-            </Text>
-            <Text style={[styles.appSubtitle, { color: theme.textSecondary }]}>
-              {t('assistant.subtitle')}
-            </Text>
+    <KeyboardAvoidingView 
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+    >
+      <View style={[styles.container, { backgroundColor: theme.background }]}>
+        <StatusBar style={darkMode ? 'light' : 'dark'} />
+        
+        {/* Header */}
+        <LinearGradient
+          colors={darkMode ? ['#0B3C5D', '#0F5132'] : ['#F8F9F6', '#ffffff']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.headerModern}
+        >
+          <View style={styles.headerContent}>
+            <View style={styles.headerLeft}>
+              <Text style={[styles.appTitleModern, { color: theme.text }]}>
+                {t('assistant.title')}
+              </Text>
+              <Text style={[styles.appSubtitle, { color: theme.textSecondary }]}>
+                {t('assistant.subtitle')}
+              </Text>
+            </View>
+            <TouchableOpacity onPress={clearConversation} style={styles.clearButton}>
+              <Text style={[styles.clearButtonText, { color: theme.primary }]}>
+                {t('assistant.clear')}
+              </Text>
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity onPress={clearConversation} style={styles.clearButton}>
-            <Text style={[styles.clearButtonText, { color: theme.primary }]}>
-              {t('assistant.clear')}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </LinearGradient>
+        </LinearGradient>
 
-      {/* Messages */}
-      <ScrollView
-        ref={scrollViewRef}
-        style={styles.chatContainer}
-        contentContainerStyle={styles.chatContent}
-        showsVerticalScrollIndicator={false}
-      >
+        {/* Messages */}
+        <ScrollView
+          ref={scrollViewRef}
+          style={styles.chatContainer}
+          contentContainerStyle={styles.chatContent}
+          showsVerticalScrollIndicator={false}
+          scrollEventThrottle={16}
+          keyboardShouldPersistTaps="handled"
+        >
         {messages.map((message, index) => (
           <View
             key={index}
@@ -5106,9 +5847,17 @@ function AIScreen({ navigation }: any) {
             placeholder={t('assistant.placeholder')}
             placeholderTextColor={theme.textSecondary}
             value={inputText}
-            onChangeText={setInputText}
+            onChangeText={(text) => {
+              setInputText(text);
+              // Scroller vers le bas quand on tape
+              setTimeout(() => {
+                scrollViewRef.current?.scrollToEnd({ animated: true });
+              }, 100);
+            }}
             multiline
             onSubmitEditing={() => sendMessage()}
+            returnKeyType="send"
+            blurOnSubmit={false}
           />
           <TouchableOpacity
             style={[
@@ -5124,6 +5873,7 @@ function AIScreen({ navigation }: any) {
         </View>
       </View>
     </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -5247,7 +5997,7 @@ function OnboardingScreen({ navigation }: any) {
             <Text style={styles.onboardingArrowText}>←</Text>
           </TouchableOpacity>
         )}
-        {currentSlide < slides.length - 1 && (
+        {currentSlide > 0 && currentSlide < slides.length - 1 && (
           <TouchableOpacity 
             style={styles.onboardingArrowRight} 
             onPress={() => {
@@ -5271,8 +6021,21 @@ function OnboardingScreen({ navigation }: any) {
 
 // Navigation principale
 function MainTabs() {
-  const { language, darkMode, currentRoute, setCurrentRoute } = React.useContext(AppContext);
+  const { language, darkMode, currentRoute, setCurrentRoute, showDonationBanner } = React.useContext(AppContext);
   const navigation = useNavigation();
+  const [donationModalVisible, setDonationModalVisible] = React.useState(false);
+  const tabBarTranslateY = React.useRef(new Animated.Value(0)).current;
+
+  React.useEffect(() => {
+    // Quand showDonationBanner est false (on scrolle), le menu descend un peu avec la bande en bas
+    // Quand showDonationBanner est true (on ne scrolle pas), le menu est en position normale
+    const targetValue = showDonationBanner ? 0 : 10; // Descendre de 10px quand on scrolle (juste un petit peu)
+    Animated.timing(tabBarTranslateY, {
+      toValue: targetValue, // Descendre légèrement de 10px
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  }, [showDonationBanner]);
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('state', (e) => {
@@ -5286,7 +6049,14 @@ function MainTabs() {
   }, [navigation]);
 
   return (
-    <>
+    <View style={{ flex: 1, position: 'relative' }}>
+      <Animated.View
+        style={{
+          flex: 1,
+          transform: [{ translateY: tabBarTranslateY }],
+          zIndex: 999,
+        }}
+      >
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
@@ -5339,8 +6109,14 @@ function MainTabs() {
           }}
         />
       </Tab.Navigator>
+      </Animated.View>
+      <DonationBanner onPress={() => setDonationModalVisible(true)} />
       <MiniPlayerModal navigation={navigation} />
-    </>
+      <DonationModal 
+        visible={donationModalVisible} 
+        onClose={() => setDonationModalVisible(false)} 
+      />
+    </View>
   );
 }
 
@@ -5398,6 +6174,7 @@ export default function App() {
   const [currentRoute, setCurrentRoute] = React.useState<string | null>(null);
   const [recentItems, setRecentItems] = React.useState<Array<{id: number, type: 'pdf' | 'audio', title: string, titleAr?: string, timestamp: number, item: any}>>([]);
   const [isLoading, setIsLoading] = React.useState(true);
+  const [showDonationBanner, setShowDonationBanner] = React.useState(true);
 
   const addToHistory = React.useCallback((item: any, type: 'pdf' | 'audio') => {
     setRecentItems(prev => {
@@ -5445,6 +6222,8 @@ export default function App() {
       setCurrentRoute,
       recentItems,
       addToHistory,
+      showDonationBanner,
+      setShowDonationBanner,
     }}>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Onboarding">

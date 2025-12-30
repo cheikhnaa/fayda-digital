@@ -76,6 +76,33 @@ export const translations: Record<Language, Record<string, string>> = {
     'modal.close': 'Fermer',
     'modal.readBook': 'Lire le livre',
     'modal.by': 'Par',
+    
+    // Donation
+    'donation.title': 'Soutenir Fayda Digital',
+    'donation.message': 'Votre soutien nous aide à continuer à partager la connaissance spirituelle.',
+    'donation.button': 'Faire un don',
+    'donation.subtitle': 'Choisissez votre moyen de paiement',
+    'donation.wave': 'Payer avec Wave',
+    'donation.orange': 'Payer avec Orange Money',
+    'donation.phoneNumber': 'Numéro de téléphone',
+    'donation.amount': 'Montant',
+    'donation.close': 'Fermer',
+    'donation.thankYou': 'Merci pour votre générosité !',
+    'donation.or': 'ou',
+    
+    // Assistant
+    'assistant.title': 'Fayda IA',
+    'assistant.subtitle': 'Assistant intelligent',
+    'assistant.welcome': 'Bonjour ! Je suis Fayda IA, votre assistant intelligent. Comment puis-je vous aider aujourd\'hui ?',
+    'assistant.clear': 'Effacer',
+    'assistant.error': 'Désolé, une erreur s\'est produite. Veuillez réessayer.',
+    'assistant.thinking': 'Réflexion...',
+    'assistant.suggestions': 'Suggestions',
+    'assistant.placeholder': 'Tapez votre message...',
+    'assistant.suggestion1': 'Qu\'est-ce que la Tariqa Tijaniyya ?',
+    'assistant.suggestion2': 'Expliquez-moi la Wazifa',
+    'assistant.suggestion3': 'Qu\'est-ce que la Fayda Tidianiyya ?',
+    'assistant.suggestion4': 'Comment pratiquer le Zikr ?',
   },
   en: {
     // Navigation
@@ -152,6 +179,33 @@ export const translations: Record<Language, Record<string, string>> = {
     'modal.close': 'Close',
     'modal.readBook': 'Read book',
     'modal.by': 'By',
+    
+    // Donation
+    'donation.title': 'Support Fayda Digital',
+    'donation.message': 'Your support helps us continue sharing spiritual knowledge.',
+    'donation.button': 'Make a donation',
+    'donation.subtitle': 'Choose your payment method',
+    'donation.wave': 'Pay with Wave',
+    'donation.orange': 'Pay with Orange Money',
+    'donation.phoneNumber': 'Phone number',
+    'donation.amount': 'Amount',
+    'donation.close': 'Close',
+    'donation.thankYou': 'Thank you for your generosity!',
+    'donation.or': 'or',
+    
+    // Assistant
+    'assistant.title': 'Fayda IA',
+    'assistant.subtitle': 'Intelligent Assistant',
+    'assistant.welcome': 'Hello! I am Fayda IA, your intelligent assistant. How can I help you today?',
+    'assistant.clear': 'Clear',
+    'assistant.error': 'Sorry, an error occurred. Please try again.',
+    'assistant.thinking': 'Thinking...',
+    'assistant.suggestions': 'Suggestions',
+    'assistant.placeholder': 'Type your message...',
+    'assistant.suggestion1': 'What is the Tariqa Tijaniyya?',
+    'assistant.suggestion2': 'Explain the Wazifa to me',
+    'assistant.suggestion3': 'What is the Fayda Tidianiyya?',
+    'assistant.suggestion4': 'How to practice Zikr?',
   },
   ar: {
     // Navigation
@@ -228,6 +282,33 @@ export const translations: Record<Language, Record<string, string>> = {
     'modal.close': 'إغلاق',
     'modal.readBook': 'قراءة الكتاب',
     'modal.by': 'بواسطة',
+    
+    // Donation
+    'donation.title': 'دعم فيدا الرقمية',
+    'donation.message': 'دعمك يساعدنا على مواصلة مشاركة المعرفة الروحية.',
+    'donation.button': 'التبرع',
+    'donation.subtitle': 'اختر طريقة الدفع',
+    'donation.wave': 'الدفع عبر Wave',
+    'donation.orange': 'الدفع عبر Orange Money',
+    'donation.phoneNumber': 'رقم الهاتف',
+    'donation.amount': 'المبلغ',
+    'donation.close': 'إغلاق',
+    'donation.thankYou': 'شكراً لكرمك!',
+    'donation.or': 'أو',
+    
+    // Assistant
+    'assistant.title': 'فيدا الذكاء الاصطناعي',
+    'assistant.subtitle': 'مساعد ذكي',
+    'assistant.welcome': 'مرحباً! أنا فيدا الذكاء الاصطناعي، مساعدك الذكي. كيف يمكنني مساعدتك اليوم؟',
+    'assistant.clear': 'مسح',
+    'assistant.error': 'عذراً، حدث خطأ. يرجى المحاولة مرة أخرى.',
+    'assistant.thinking': 'تفكير...',
+    'assistant.suggestions': 'اقتراحات',
+    'assistant.placeholder': 'اكتب رسالتك...',
+    'assistant.suggestion1': 'ما هي الطريقة التيجانية؟',
+    'assistant.suggestion2': 'اشرح لي الوظيفة',
+    'assistant.suggestion3': 'ما هي الفيضة التيجانية؟',
+    'assistant.suggestion4': 'كيف أمارس الذكر؟',
   },
 };
 
