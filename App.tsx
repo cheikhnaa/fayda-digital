@@ -1,8 +1,9 @@
 import Slider from '@react-native-community/slider';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { NavigationContainer, useNavigation, useFocusEffect } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Asset } from 'expo-asset';
+import * as FileSystem from 'expo-file-system';
 import { useAudioPlayer } from 'expo-audio';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Print from 'expo-print';
@@ -14,6 +15,7 @@ import { ActivityIndicator, Alert, Animated, Dimensions, Image, ImageBackground,
 import { WebView } from 'react-native-webview';
 import { Message, sendMessageToAI } from './services/aiService';
 import { Language, setLanguage, t } from './translations';
+import { pdfPages } from './pdfPages';
 
 const Stack = createNativeStackNavigator();
 const { width } = Dimensions.get('window');
@@ -862,6 +864,19 @@ const ebooks = [
   },
 ];
 
+// Fonction utilitaire pour obtenir le nombre de pages réel depuis le mapping
+const getPdfPages = (id: number, defaultPages: number): number => {
+  return pdfPages[id] ?? defaultPages;
+};
+
+// Fonction pour appliquer les nombres de pages réels à un tableau de livres
+const applyPdfPages = <T extends { id: number; pages: number }>(books: T[]): T[] => {
+  return books.map(book => ({
+    ...book,
+    pages: getPdfPages(book.id, book.pages)
+  }));
+};
+
 // Fichiers PDF depuis le dossier assets/pdf
 // Tous les PDFs (racine + tous les sous-dossiers)
 const allPdfFiles = [
@@ -887,7 +902,7 @@ const allPdfFiles = [
     pages: 200,
     cover: '📖',
     pdfFile: require('./assets/pdf/diawahir_al_mahani.pdf'),
-    image: require('./assets/pdf/cheikh.jpeg'),
+    image: require('./assets/pdf/cover/cheikh.jpeg'),
     description: 'Les perles précieuses - Un ouvrage fondamental de la Tariqa Tijaniyya contenant les enseignements spirituels et les secrets de la voie.',
     category: 'Tariqa',
     rating: 5.0,
@@ -901,7 +916,7 @@ const allPdfFiles = [
     pages: 150,
     cover: '📖',
     pdfFile: require('./assets/pdf/Nour_al_Kamal_fi_Mashhad_ar_Rijal.pdf'),
-    image: require('./assets/pdf/cover2.jpeg'),
+    image: require('./assets/pdf/cover/cover2.jpeg'),
     description: 'La lumière de la perfection dans la présence des hommes - Ouvrage spirituel de grande importance.',
     category: 'Ma\'arifa',
     rating: 4.9,
@@ -915,7 +930,7 @@ const allPdfFiles = [
     pages: 180,
     cover: '📖',
     pdfFile: require('./assets/pdf/miftaakhoul-woussoul.pdf'),
-    image: require('./assets/pdf/cover1.png'),
+    image: require('./assets/pdf/cover/cover1.png'),
     description: 'La clé de l\'accès - Un ouvrage spirituel fondamental sur les moyens d\'accéder à la proximité divine et aux stations spirituelles élevées.',
     category: 'Tariqa',
     rating: 5.0,
@@ -929,7 +944,7 @@ const allPdfFiles = [
     pages: 604,
     cover: '📖',
     pdfFile: require('./assets/pdf/Arabic-Quran.pdf'),
-    image: require('./assets/pdf/coran.jpg'),
+    image: require('./assets/pdf/cover/coran.jpg'),
     description: 'Le Saint Coran en arabe - La parole révélée d\'Allah au Prophète Muhammad (paix et bénédictions sur lui).',
     category: 'Coran',
     rating: 5.0,
@@ -943,7 +958,7 @@ const allPdfFiles = [
     pages: 250,
     cover: '📖',
     pdfFile: require('./assets/pdf/baye-niasse-un-pere-du-panafricanisme-et-figure-niane-babacar-2020.pdf'),
-    image: require('./assets/pdf/afrique.png'),
+    image: require('./assets/pdf/cover/afrique.png'),
     description: 'Biographie de Cheikh Ibrahim Niass, figure emblématique du panafricanisme et maître spirituel de la Tariqa Tijaniyya.',
     category: 'Biographie',
     rating: 5.0,
@@ -957,25 +972,11 @@ const allPdfFiles = [
     pages: 180,
     cover: '📖',
     pdfFile: require('./assets/pdf/Afakhou Shiria -- Cheikh Ibrahim Niass.pdf'),
-    image: require('./assets/pdf/afakhou.png'),
+    image: require('./assets/pdf/cover/afakhou.png'),
     description: 'Ouvrage important de Cheikh Ibrahim Niass.',
     category: 'Tariqa',
     rating: 4.8,
     downloads: 7000,
-  },
-  {
-    id: 107,
-    title: 'Kashf al-Albas',
-    titleAr: 'كشف الألباس',
-    author: 'Cheikh Ahmed Tijani',
-    pages: 160,
-    cover: '📖',
-    pdfFile: require('./assets/pdf/kashf-al-albas.pdf'),
-    image: require('./assets/pdf/kachif.png'),
-    description: 'Ouvrage spirituel de grande valeur.',
-    category: 'Tariqa',
-    rating: 4.9,
-    downloads: 6500,
   },
   {
     id: 108,
@@ -985,7 +986,7 @@ const allPdfFiles = [
     pages: 200,
     cover: '📖',
     pdfFile: require('./assets/pdf/ilide.info-rouhul-adab-pr_952fa5e35b9e6fece2a51010881a7978.pdf'),
-    image: require('./assets/pdf/rouhou.png'),
+    image: require('./assets/pdf/cover/rouhou.png'),
     description: 'L\'esprit de la politesse et des bonnes manières.',
     category: 'Tariqa',
     rating: 5.0,
@@ -999,7 +1000,7 @@ const allPdfFiles = [
     pages: 400,
     cover: '📖',
     pdfFile: require('./assets/pdf/The divine flood - Ibrāhīm Niasse and the roots of a -- Rüdiger Seesemann.pdf'),
-    image: require('./assets/pdf/divineflood.png'),
+    image: require('./assets/pdf/cover/divineflood.png'),
     description: 'Étude académique sur Cheikh Ibrahim Niass.',
     category: 'Biographie',
     rating: 4.7,
@@ -1013,7 +1014,7 @@ const allPdfFiles = [
     pages: 150,
     cover: '📖',
     pdfFile: require('./assets/pdf/the-hajj-experiences-of-shaykh-ibrahim-niasse-by-imam-fakhri-owaisi.pdf'),
-    image: require('./assets/pdf/hajj.png'),
+    image: require('./assets/pdf/cover/hajj.png'),
     description: 'Récit des expériences du Hajj de Cheikh Ibrahim Niass.',
     category: 'Biographie',
     rating: 4.8,
@@ -1027,26 +1028,27 @@ const allPdfFiles = [
     pages: 100,
     cover: '📖',
     pdfFile: require('./assets/pdf/ed-congratulations-to-ibrahim-whenever-his-month-appears.pdf'),
-    image: require('./assets/pdf/congr.png'),
+    image: require('./assets/pdf/cover/congr.png'),
     description: 'Ouvrage sur Cheikh Ibrahim Niass.',
     category: 'Biographie',
     rating: 4.6,
     downloads: 5000,
   },
-  {
-    id: 112,
-    title: 'Quelques Lettres de Baye Niass',
-    titleAr: 'بعض رسائل باي نياس',
-    author: 'Cheikh Ibrahim Niass',
-    pages: 150,
-    cover: '📖',
-    pdfFile: require('./assets/pdf/quelques-lettres-de-baye-niass.pdf'),
-    image: require('./assets/pdf/lettre1.jpeg'),
-    description: 'Collection de lettres de Cheikh Ibrahim Niass.',
-    category: 'Tariqa',
-    rating: 4.8,
-    downloads: 6000,
-  },
+  // Temporairement commenté - fichier manquant
+  // {
+  //   id: 112,
+  //   title: 'Quelques Lettres de Baye Niass',
+  //   titleAr: 'بعض رسائل باي نياس',
+  //   author: 'Cheikh Ibrahim Niass',
+  //   pages: 150,
+  //   cover: '📖',
+  //   pdfFile: require('./assets/pdf/quelques-lettres-de-baye-niass.pdf'),
+  //   image: require('./assets/pdf/lettre1.jpeg'),
+  //   description: 'Collection de lettres de Cheikh Ibrahim Niass.',
+  //   category: 'Tariqa',
+  //   rating: 4.8,
+  //   downloads: 6000,
+  // },
   {
     id: 113,
     title: 'Rihlatul Murtaniyya',
@@ -1055,7 +1057,7 @@ const allPdfFiles = [
     pages: 200,
     cover: '📖',
     pdfFile: require('./assets/pdf/rihilatul-murtaniyya.pdf'),
-    image: require('./assets/pdf/rikhla.png'),
+    image: require('./assets/pdf/cover/rikhla.png'),
     description: 'Le voyage spirituel - Ouvrage important sur le cheminement spirituel.',
     category: 'Tariqa',
     rating: 4.9,
@@ -1069,8 +1071,36 @@ const allPdfFiles = [
     pages: 180,
     cover: '📖',
     pdfFile: require('./assets/pdf/sairul-qalbi.pdf'),
-    image: require('./assets/pdf/sayrou.png'),
+    image: require('./assets/pdf/cover/sayrou.png'),
     description: 'Le cheminement du cœur - Ouvrage spirituel de grande valeur.',
+    category: 'Tariqa',
+    rating: 4.8,
+    downloads: 6500,
+  },
+  {
+    id: 115,
+    title: 'Kashf al-Bas',
+    titleAr: 'كشف البأس',
+    author: 'Cheikh Ibrahim Niass',
+    pages: 200,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/Kashf-al-Bas.pdf'),
+    image: require('./assets/pdf/cover/kashif.png'),
+    description: 'Ouvrage spirituel important de Cheikh Ibrahim Niass.',
+    category: 'Tariqa',
+    rating: 4.9,
+    downloads: 7000,
+  },
+  {
+    id: 116,
+    title: 'Lettres Précieuses',
+    titleAr: 'رسائل ثمينة',
+    author: 'Cheikh Ibrahim Niass',
+    pages: 180,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/LETTRES_PRECIEUSES_DEFINITIF.pdf'),
+    image: require('./assets/pdf/lettre1.jpeg'),
+    description: 'Collection de lettres précieuses de Cheikh Ibrahim Niass.',
     category: 'Tariqa',
     rating: 4.8,
     downloads: 6500,
@@ -1087,7 +1117,7 @@ const frenchPdfFiles = [
     pages: 250,
     cover: '📖',
     pdfFile: require('./assets/pdf/francais/baye-niasse-un-pere-du-panafricanisme-et-figure-niane-babacar-2020.pdf'),
-    image: require('./assets/pdf/afrique.png'),
+    image: require('./assets/pdf/cover/afrique.png'),
     description: 'Biographie de Cheikh Ibrahim Niass.',
     category: 'Biographie',
     rating: 5.0,
@@ -1101,7 +1131,7 @@ const frenchPdfFiles = [
     pages: 200,
     cover: '📖',
     pdfFile: require('./assets/pdf/francais/diawahir_al_mahani.pdf'),
-    image: require('./assets/pdf/cheikh.jpeg'),
+    image: require('./assets/pdf/cover/cheikh.jpeg'),
     description: 'Les perles précieuses - Un ouvrage fondamental de la Tariqa Tijaniyya.',
     category: 'Tariqa',
     rating: 5.0,
@@ -1115,25 +1145,54 @@ const frenchPdfFiles = [
     pages: 200,
     cover: '📖',
     pdfFile: require('./assets/pdf/francais/ilide.info-rouhul-adab-pr_952fa5e35b9e6fece2a51010881a7978.pdf'),
-    image: require('./assets/pdf/rouhou.png'),
+    image: require('./assets/pdf/cover/rouhou.png'),
     description: 'L\'esprit de la politesse et des bonnes manières.',
     category: 'Tariqa',
     rating: 5.0,
     downloads: 9000,
   },
+  // Temporairement commenté - fichier manquant
+  // {
+  //   id: 204,
+  //   title: 'Quelques Lettres de Baye Niass',
+  //   titleAr: 'بعض رسائل باي نياس',
+  //   author: 'Cheikh Ibrahim Niass',
+  //   pages: 150,
+  //   cover: '📖',
+  //   pdfFile: require('./assets/pdf/francais/quelques-lettres-de-baye-niass.pdf'),
+  //   image: require('./assets/pdf/lettre1.jpeg'),
+  //   description: 'Collection de lettres de Cheikh Ibrahim Niass.',
+  //   category: 'Tariqa',
+  //   rating: 4.8,
+  //   downloads: 6000,
+  // },
   {
-    id: 204,
-    title: 'Quelques Lettres de Baye Niass',
-    titleAr: 'بعض رسائل باي نياس',
+    id: 205,
+    title: 'Kashf al-Bas',
+    titleAr: 'كشف البأس',
     author: 'Cheikh Ibrahim Niass',
-    pages: 150,
+    pages: 200,
     cover: '📖',
-    pdfFile: require('./assets/pdf/francais/quelques-lettres-de-baye-niass.pdf'),
+    pdfFile: require('./assets/pdf/francais/Kashf-al-Bas.pdf'),
+    image: require('./assets/pdf/cover/kashif.png'),
+    description: 'Ouvrage spirituel important de Cheikh Ibrahim Niass.',
+    category: 'Tariqa',
+    rating: 4.9,
+    downloads: 7000,
+  },
+  {
+    id: 206,
+    title: 'Lettres Précieuses',
+    titleAr: 'رسائل ثمينة',
+    author: 'Cheikh Ibrahim Niass',
+    pages: 180,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/francais/LETTRES_PRECIEUSES_DEFINITIF.pdf'),
     image: require('./assets/pdf/lettre1.jpeg'),
-    description: 'Collection de lettres de Cheikh Ibrahim Niass.',
+    description: 'Collection de lettres précieuses de Cheikh Ibrahim Niass.',
     category: 'Tariqa',
     rating: 4.8,
-    downloads: 6000,
+    downloads: 6500,
   },
 ];
 
@@ -1147,7 +1206,7 @@ const englishPdfFiles = [
     pages: 100,
     cover: '📖',
     pdfFile: require('./assets/pdf/anglais/ed-congratulations-to-ibrahim-whenever-his-month-appears.pdf'),
-    image: require('./assets/pdf/congr.png'),
+    image: require('./assets/pdf/cover/congr.png'),
     description: 'Ouvrage sur Cheikh Ibrahim Niass.',
     category: 'Biographie',
     rating: 4.6,
@@ -1161,7 +1220,7 @@ const englishPdfFiles = [
     pages: 150,
     cover: '📖',
     pdfFile: require('./assets/pdf/anglais/the-hajj-experiences-of-shaykh-ibrahim-niasse-by-imam-fakhri-owaisi.pdf'),
-    image: require('./assets/pdf/hajj.png'),
+    image: require('./assets/pdf/cover/hajj.png'),
     description: 'Récit des expériences du Hajj de Cheikh Ibrahim Niass.',
     category: 'Biographie',
     rating: 4.8,
@@ -1175,7 +1234,7 @@ const englishPdfFiles = [
     pages: 400,
     cover: '📖',
     pdfFile: require('./assets/pdf/anglais/The divine flood - Ibrāhīm Niasse and the roots of a -- Rüdiger Seesemann -- ( WeLib.org ).pdf'),
-    image: require('./assets/pdf/divineflood.png'),
+    image: require('./assets/pdf/cover/divineflood.png'),
     description: 'Étude académique sur Cheikh Ibrahim Niass.',
     category: 'Biographie',
     rating: 4.7,
@@ -1207,7 +1266,7 @@ const arabicPdfFiles = [
     pages: 200,
     cover: '📖',
     pdfFile: require('./assets/pdf/arabe/diawahir_al_mahani.pdf'),
-    image: require('./assets/pdf/cheikh.jpeg'),
+    image: require('./assets/pdf/cover/cheikh.jpeg'),
     description: 'Les perles précieuses - Un ouvrage fondamental de la Tariqa Tijaniyya.',
     category: 'Tariqa',
     rating: 5.0,
@@ -1221,7 +1280,7 @@ const arabicPdfFiles = [
     pages: 150,
     cover: '📖',
     pdfFile: require('./assets/pdf/arabe/Nour_al_Kamal_fi_Mashhad_ar_Rijal.pdf'),
-    image: require('./assets/pdf/cover2.jpeg'),
+    image: require('./assets/pdf/cover/cover2.jpeg'),
     description: 'La lumière de la perfection dans la présence des hommes.',
     category: 'Ma\'arifa',
     rating: 4.9,
@@ -1235,25 +1294,11 @@ const arabicPdfFiles = [
     pages: 180,
     cover: '📖',
     pdfFile: require('./assets/pdf/arabe/miftaakhoul-woussoul.pdf'),
-    image: require('./assets/pdf/cover1.png'),
+    image: require('./assets/pdf/cover/cover1.png'),
     description: 'La clé de l\'accès - Un ouvrage spirituel fondamental.',
     category: 'Tariqa',
     rating: 5.0,
     downloads: 7500,
-  },
-  {
-    id: 404,
-    title: 'Kashf al-Albas',
-    titleAr: 'كشف الألباس',
-    author: 'Cheikh Ahmed Tijani',
-    pages: 160,
-    cover: '📖',
-    pdfFile: require('./assets/pdf/arabe/kashf-al-albas.pdf'),
-    image: require('./assets/pdf/kachif.png'),
-    description: 'Ouvrage spirituel de grande valeur.',
-    category: 'Tariqa',
-    rating: 4.9,
-    downloads: 6500,
   },
   {
     id: 405,
@@ -1263,7 +1308,7 @@ const arabicPdfFiles = [
     pages: 180,
     cover: '📖',
     pdfFile: require('./assets/pdf/arabe/boughiyat.pdf'),
-    image: require('./assets/pdf/boughiyat.png'),
+    image: require('./assets/pdf/cover/boughiyat.png'),
     description: 'Ouvrage spirituel important.',
     category: 'Tariqa',
     rating: 4.8,
@@ -1277,7 +1322,7 @@ const arabicPdfFiles = [
     pages: 170,
     cover: '📖',
     pdfFile: require('./assets/pdf/arabe/kachf-al-hijab.pdf'),
-    image: require('./assets/pdf/khidiab.png'),
+    image: require('./assets/pdf/cover/khidiab.png'),
     description: 'Ouvrage spirituel de grande valeur.',
     category: 'Tariqa',
     rating: 4.9,
@@ -1291,7 +1336,7 @@ const arabicPdfFiles = [
     pages: 180,
     cover: '📖',
     pdfFile: require('./assets/pdf/arabe/Afakhou Shiria -- Cheikh Ibrahim Niass -- ( WeLib.org ).pdf'),
-    image: require('./assets/pdf/afakhou.png'),
+    image: require('./assets/pdf/cover/afakhou.png'),
     description: 'Ouvrage important de Cheikh Ibrahim Niass.',
     category: 'Tariqa',
     rating: 4.8,
@@ -1305,7 +1350,7 @@ const arabicPdfFiles = [
     pages: 150,
     cover: '📖',
     pdfFile: require('./assets/pdf/arabe/the-hajj-experiences-of-shaykh-ibrahim-niasse-by-imam-fakhri-owaisi.pdf'),
-    image: require('./assets/pdf/hajj.png'),
+    image: require('./assets/pdf/cover/hajj.png'),
     description: 'Récit des expériences du Hajj de Cheikh Ibrahim Niass.',
     category: 'Biographie',
     rating: 4.8,
@@ -1319,7 +1364,7 @@ const arabicPdfFiles = [
     pages: 100,
     cover: '📖',
     pdfFile: require('./assets/pdf/arabe/ed-congratulations-to-ibrahim-whenever-his-month-appears.pdf'),
-    image: require('./assets/pdf/congr.png'),
+    image: require('./assets/pdf/cover/congr.png'),
     description: 'Ouvrage sur Cheikh Ibrahim Niass.',
     category: 'Biographie',
     rating: 4.6,
@@ -1333,7 +1378,7 @@ const arabicPdfFiles = [
     pages: 200,
     cover: '📖',
     pdfFile: require('./assets/pdf/arabe/rihilatul-murtaniyya.pdf'),
-    image: require('./assets/pdf/rikhla.png'),
+    image: require('./assets/pdf/cover/rikhla.png'),
     description: 'Le voyage spirituel - Ouvrage important sur le cheminement spirituel.',
     category: 'Tariqa',
     rating: 4.9,
@@ -1347,7 +1392,7 @@ const arabicPdfFiles = [
     pages: 180,
     cover: '📖',
     pdfFile: require('./assets/pdf/arabe/sairul-qalbi.pdf'),
-    image: require('./assets/pdf/sayrou.png'),
+    image: require('./assets/pdf/cover/sayrou.png'),
     description: 'Le cheminement du cœur - Ouvrage spirituel de grande valeur.',
     category: 'Tariqa',
     rating: 4.8,
@@ -1355,20 +1400,26 @@ const arabicPdfFiles = [
   },
 ];
 
+// Appliquer les nombres de pages réels depuis le mapping
+const allPdfFilesWithPages = allPdfFiles.map(book => ({ ...book, pages: getPdfPages(book.id, book.pages) }));
+const frenchPdfFilesWithPages = frenchPdfFiles.map(book => ({ ...book, pages: getPdfPages(book.id, book.pages) }));
+const englishPdfFilesWithPages = englishPdfFiles.map(book => ({ ...book, pages: getPdfPages(book.id, book.pages) }));
+const arabicPdfFilesWithPages = arabicPdfFiles.map(book => ({ ...book, pages: getPdfPages(book.id, book.pages) }));
+
 // Garder pdfFiles pour la compatibilité avec le code existant (page d'accueil)
-const pdfFiles = allPdfFiles;
+const pdfFiles = allPdfFilesWithPages;
 
 // Fonction pour obtenir les catégories de livres filtrées selon la langue
 const getBookCategories = (language: Language | null) => {
   // Déterminer quels PDFs afficher selon la langue
-  let pdfsToShow = allPdfFiles; // Par défaut (null), tous les PDFs
+  let pdfsToShow = allPdfFilesWithPages; // Par défaut (null), tous les PDFs
   
   if (language === 'fr') {
-    pdfsToShow = frenchPdfFiles; // Seulement les PDFs français
+    pdfsToShow = frenchPdfFilesWithPages; // Seulement les PDFs français
   } else if (language === 'en') {
-    pdfsToShow = englishPdfFiles; // Seulement les PDFs anglais
+    pdfsToShow = englishPdfFilesWithPages; // Seulement les PDFs anglais
   } else if (language === 'ar') {
-    pdfsToShow = arabicPdfFiles; // Seulement les PDFs arabes
+    pdfsToShow = arabicPdfFilesWithPages; // Seulement les PDFs arabes
   }
   // Si language === null, on garde allPdfFiles
 
@@ -1382,19 +1433,19 @@ const getBookCategories = (language: Language | null) => {
     id: 'tariqa',
     title: 'Tariqa (Français)',
     books: [
-      { id: 20, title: 'Introduction à la Tariqa Tijaniyya', titleAr: 'الطريقة التجانية', author: 'Fayda Digital', pages: 25, cover: '📿', htmlFile: 'tariqa-articles.html', description: 'Découvrez les fondements, les pratiques et les bienfaits de la Tariqa Tijaniyya, voie spirituelle de lumière et de guidance.' },
-      { id: 21, title: 'Le Zikr dans la Voie Tijaniyya', titleAr: 'الذكر في الطريقة التجانية', author: 'Fayda Digital', pages: 20, cover: '🕌', htmlFile: 'tariqa-articles.html', description: 'Comprenez l\'importance et la pratique du Zikr (invocation) dans la Tariqa Tijaniyya.' },
-      { id: 22, title: 'La Salat al-Fatih', titleAr: 'صلاة الفاتح', author: 'Fayda Digital', pages: 18, cover: '📖', htmlFile: 'tariqa-articles.html', description: 'Apprenez-en plus sur la Salat al-Fatih, cette prière spéciale de la Tariqa Tijaniyya.' },
-      { id: 23, title: 'L\'Attachement au Prophète', titleAr: 'التعلق بالنبي', author: 'Fayda Digital', pages: 22, cover: '☪️', htmlFile: 'tariqa-articles.html', description: 'Explorez la relation spirituelle avec le Prophète Muhammad (paix et bénédictions sur lui) dans la voie tidiane.' },
-      { id: 24, title: 'Doua Wazifa', titleAr: 'دعاء الوظيفة', author: 'Fayda Digital', pages: 15, cover: '🤲', htmlFile: 'tariqa-articles.html', description: 'Invocation de la Wazifa - Douas et prières de la Tariqa Tijaniyya.' },
+      { id: 20, title: 'Introduction à la Tariqa Tijaniyya', titleAr: 'الطريقة التجانية', author: 'Fayda Digital', pages: 25, cover: '📿', htmlFile: 'tariqa-articles.html', image: require('./assets/pdf/cover/articles/art1.png'), description: 'Découvrez les fondements, les pratiques et les bienfaits de la Tariqa Tijaniyya, voie spirituelle de lumière et de guidance.' },
+      { id: 21, title: 'Le Zikr dans la Voie Tijaniyya', titleAr: 'الذكر في الطريقة التجانية', author: 'Fayda Digital', pages: 20, cover: '🕌', htmlFile: 'tariqa-articles.html', image: require('./assets/pdf/cover/articles/art2.png'), description: 'Comprenez l\'importance et la pratique du Zikr (invocation) dans la Tariqa Tijaniyya.' },
+      { id: 22, title: 'La Salat al-Fatih', titleAr: 'صلاة الفاتح', author: 'Fayda Digital', pages: 18, cover: '📖', htmlFile: 'tariqa-articles.html', image: require('./assets/pdf/cover/articles/art3.png'), description: 'Apprenez-en plus sur la Salat al-Fatih, cette prière spéciale de la Tariqa Tijaniyya.' },
+      { id: 23, title: 'L\'Attachement au Prophète', titleAr: 'التعلق بالنبي', author: 'Fayda Digital', pages: 22, cover: '☪️', htmlFile: 'tariqa-articles.html', image: require('./assets/pdf/cover/articles/art4.png'), description: 'Explorez la relation spirituelle avec le Prophète Muhammad (paix et bénédictions sur lui) dans la voie tidiane.' },
+      { id: 24, title: 'Doua Wazifa', titleAr: 'دعاء الوظيفة', author: 'Fayda Digital', pages: 15, cover: '🤲', htmlFile: 'tariqa-articles.html', image: require('./assets/pdf/cover/articles/art5.png'), description: 'Invocation de la Wazifa - Douas et prières de la Tariqa Tijaniyya.' },
     ]
   },
   {
     id: 'maarifa',
     title: 'Ma\'arifa (Français)',
     books: [
-      { id: 30, title: 'La Connaissance Spirituelle', titleAr: 'المعرفة الروحية', author: 'Fayda Digital', pages: 28, cover: '🌟', htmlFile: 'maarifa-articles.html', description: 'Découvrez ce qu\'est la Ma\'arifa, la gnose divine dans la tradition soufie.' },
-      { id: 31, title: 'Les Degrés de la Connaissance', titleAr: 'درجات المعرفة', author: 'Fayda Digital', pages: 24, cover: '💫', htmlFile: 'maarifa-articles.html', description: 'Comprenez les différents niveaux de connaissance spirituelle : science, compréhension et gnose.' },
+      { id: 30, title: 'La Connaissance Spirituelle', titleAr: 'المعرفة الروحية', author: 'Fayda Digital', pages: 28, cover: '🌟', htmlFile: 'maarifa-articles.html', image: require('./assets/pdf/cover/articles/art6.png'), description: 'Découvrez ce qu\'est la Ma\'arifa, la gnose divine dans la tradition soufie.' },
+      { id: 31, title: 'Les Degrés de la Connaissance', titleAr: 'درجات المعرفة', author: 'Fayda Digital', pages: 24, cover: '💫', htmlFile: 'maarifa-articles.html', image: require('./assets/pdf/cover/articles/art7.png'), description: 'Comprenez les différents niveaux de connaissance spirituelle : science, compréhension et gnose.' },
       { id: 32, title: 'La Ma\'arifa dans la Tariqa Tijaniyya', titleAr: 'المعرفة في الطريقة التجانية', author: 'Fayda Digital', pages: 26, cover: '🌙', htmlFile: 'maarifa-articles.html', description: 'Explorez comment la Ma\'arifa est cultivée dans la voie tidiane.' },
       { id: 33, title: 'Le Chemin vers la Gnose', titleAr: 'طريق المعرفة', author: 'Fayda Digital', pages: 30, cover: '🔮', htmlFile: 'maarifa-articles.html', description: 'Apprenez les étapes et les qualités nécessaires pour atteindre la connaissance spirituelle.' },
     ]
@@ -1499,6 +1550,10 @@ function LanguageSelectorBar() {
 function HomeScreen({ navigation }: any) {
   const { language, darkMode, setCurrentPlayer, recentItems, addToHistory, setShowDonationBanner } = React.useContext(AppContext);
   const theme = darkMode ? darkTheme : lightTheme;
+  const [selectedBook, setSelectedBook] = React.useState<any>(null);
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [isBookmarked, setIsBookmarked] = React.useState(false);
+  const [activeTab, setActiveTab] = React.useState<'overview' | 'chapters'>('overview');
   const lastScrollY = React.useRef(0);
   const scrollTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -1529,6 +1584,54 @@ function HomeScreen({ navigation }: any) {
       }
     };
   }, []);
+
+  const handleOpenBook = () => {
+    if (selectedBook) {
+      addToHistory(selectedBook, 'pdf');
+      setCurrentPlayer({ item: selectedBook, type: 'book' });
+      navigation.navigate('PDFReader', { book: selectedBook });
+      setModalVisible(false);
+    }
+  };
+
+  const handleBookmark = () => {
+    setIsBookmarked(!isBookmarked);
+    Alert.alert(
+      isBookmarked ? 'Retiré des favoris' : 'Ajouté aux favoris',
+      isBookmarked ? 'Le livre a été retiré de vos favoris.' : 'Le livre a été ajouté à vos favoris.'
+    );
+  };
+
+  const handleMenuPress = () => {
+    Alert.alert(
+      selectedBook?.title || 'Options',
+      'Que souhaitez-vous faire ?',
+      [
+        {
+          text: 'Partager',
+          onPress: () => {
+            Share.share({
+              message: `${selectedBook?.title} - ${selectedBook?.author || ''}`,
+              title: selectedBook?.title || 'Livre',
+            });
+          },
+        },
+        {
+          text: 'Ajouter à l\'historique',
+          onPress: () => {
+            if (selectedBook) {
+              addToHistory(selectedBook, 'pdf');
+              Alert.alert('Succès', 'Livre ajouté à l\'historique');
+            }
+          },
+        },
+        {
+          text: 'Annuler',
+          style: 'cancel',
+        },
+      ]
+    );
+  };
 
   return (
     <ScrollView 
@@ -1612,7 +1715,15 @@ function HomeScreen({ navigation }: any) {
                   activeOpacity={0.9}
                   onPress={() => {
                     if (item.type === 'pdf') {
-                      navigation.navigate('PDFReader', { book: item.item });
+                      // Utiliser le modal pour les PDFs
+                      const fullBook = allPdfFilesWithPages.find(b => b.id === item.item.id) ||
+                                       frenchPdfFilesWithPages.find(b => b.id === item.item.id) ||
+                                       englishPdfFilesWithPages.find(b => b.id === item.item.id) ||
+                                       arabicPdfFilesWithPages.find(b => b.id === item.item.id) ||
+                                       item.item;
+                      setSelectedBook(fullBook);
+                      setActiveTab('overview');
+                      setModalVisible(true);
                     } else {
                       setCurrentPlayer({ item: item.item, type: item.item.type || 'music' });
                     }
@@ -1674,14 +1785,21 @@ function HomeScreen({ navigation }: any) {
               style={[styles.bookCardHome, { backgroundColor: theme.surface }]}
               activeOpacity={0.8}
               onPress={() => {
-                addToHistory(book, 'pdf');
-                navigation.navigate('PDFReader', { book });
+                // Utiliser le modal pour les PDFs
+                const fullBook = allPdfFilesWithPages.find(b => b.id === book.id) ||
+                                 frenchPdfFilesWithPages.find(b => b.id === book.id) ||
+                                 englishPdfFilesWithPages.find(b => b.id === book.id) ||
+                                 arabicPdfFilesWithPages.find(b => b.id === book.id) ||
+                                 book;
+                setSelectedBook(fullBook);
+                setActiveTab('overview');
+                setModalVisible(true);
               }}
             >
               {book.image ? (
                 <ImageBackground
                   source={book.image}
-                  style={styles.bookCoverHome}
+                  style={book.htmlFile ? styles.bookCoverArticle : styles.bookCoverHome}
                   imageStyle={styles.bookCoverImageStyle}
                 >
                   <View style={styles.bookCoverOverlay} />
@@ -1691,7 +1809,7 @@ function HomeScreen({ navigation }: any) {
                   colors={['#0F5132', '#0B3C5D', '#0F5132']}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
-                  style={styles.bookCoverHome}
+                  style={book.htmlFile ? styles.bookCoverArticle : styles.bookCoverHome}
                 >
                   <Text style={styles.bookCoverEmojiHome}>{book.cover || '📖'}</Text>
                 </LinearGradient>
@@ -1707,6 +1825,43 @@ function HomeScreen({ navigation }: any) {
         </ScrollView>
       </View>
 
+      {/* Rubrique Gamou */}
+      <View style={styles.sectionModern}>
+        <View style={styles.sectionHeaderModern}>
+          <View style={styles.sectionTitleContainerModern}>
+            <View style={styles.sectionIconContainer}>
+              <Text style={styles.sectionIconModern}>🎉</Text>
+            </View>
+            <View>
+              <Text style={[styles.sectionTitleModern, { color: theme.text }]}>Gamou</Text>
+              <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>Célébrations spirituelles</Text>
+            </View>
+          </View>
+          <TouchableOpacity style={styles.seeAllButton} onPress={() => navigation.navigate('Gamou')}>
+            <Text style={styles.seeAllModern}>Voir tout</Text>
+            <Text style={styles.seeAllArrow}>→</Text>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity 
+          style={[styles.podcastZikrCard, { marginLeft: 0, marginRight: 10, width: '100%', alignSelf: 'stretch' }]}
+          activeOpacity={0.9}
+          onPress={() => {
+            navigation.navigate('Gamou');
+          }}
+        >
+          <ImageBackground
+            source={require('./assets/pdf/cover/gamou.png')}
+            style={styles.podcastZikrGradient}
+            resizeMode="cover"
+            imageStyle={{ 
+              width: '100%',
+              height: '100%',
+            }}
+          >
+            {/* L'image contient déjà les textes "GAMOU" et les textes arabes */}
+          </ImageBackground>
+        </TouchableOpacity>
+      </View>
 
       {/* Coran */}
       <View style={styles.sectionModern}>
@@ -1856,6 +2011,207 @@ function HomeScreen({ navigation }: any) {
           ))}
         </ScrollView>
       </View>
+
+      {/* Modal de détail du livre - Design comme l'image */}
+      <Modal
+        visible={modalVisible}
+        transparent={false}
+        animationType="slide"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={[styles.bookModalContainer, { backgroundColor: theme.surface || '#F5F5F5' }]}>
+          {selectedBook && (
+            <>
+              {/* StatusBar et Header avec X et Bookmark */}
+              <StatusBar barStyle={darkMode ? 'light-content' : 'dark-content'} />
+              <View style={styles.bookModalHeader}>
+                <TouchableOpacity 
+                  style={styles.bookModalCloseBtn}
+                  onPress={() => setModalVisible(false)}
+                >
+                  <Text style={[styles.bookModalCloseIcon, { color: theme.text }]}>✕</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={styles.bookModalBookmarkBtn}
+                  onPress={handleBookmark}
+                  activeOpacity={0.7}
+                >
+                  <Text style={[
+                    styles.bookModalBookmarkIcon, 
+                    { color: isBookmarked ? '#0F5132' : theme.text }
+                  ]}>
+                    {isBookmarked ? '🔖' : '🔖'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              <ScrollView
+                style={styles.bookModalScroll}
+                contentContainerStyle={styles.bookModalContent}
+                showsVerticalScrollIndicator={false}
+              >
+                {/* Image de couverture avec texte superposé */}
+                <View style={styles.bookModalImageContainer}>
+                  <ImageBackground
+                    source={selectedBook.image || require('./assets/pdf/cover3.png')}
+                    style={styles.bookModalImage}
+                    imageStyle={styles.bookModalImageStyle}
+                  >
+                    <View style={styles.bookModalImageOverlay}>
+                      <Text style={styles.bookModalImageTitle}>
+                        {selectedBook.titleAr || selectedBook.title}
+                      </Text>
+                      {selectedBook.titleAr && (
+                        <Text style={styles.bookModalImageSubtitle}>
+                          {selectedBook.title}
+                        </Text>
+                      )}
+                      <Text style={styles.bookModalImageFooter}>Fayda Digital</Text>
+                    </View>
+                  </ImageBackground>
+                </View>
+
+                {/* Titre principal */}
+                <Text style={[styles.bookModalMainTitle, { color: theme.text }]}>
+                  {selectedBook.titleAr || selectedBook.title}
+                </Text>
+
+                {/* Auteur */}
+                {selectedBook.author && (
+                  <Text style={[styles.bookModalAuthor, { color: theme.textSecondary }]}>
+                    {selectedBook.author}
+                  </Text>
+                )}
+
+                {/* Métadonnées */}
+                <View style={styles.bookModalMetadata}>
+                  <Text style={[styles.bookModalMetadataText, { color: theme.textSecondary }]}>
+                    {selectedBook.pages || 0} {t('stats.pages')} • {selectedBook.date || new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                  </Text>
+                </View>
+
+                {/* Boutons de contrôle */}
+                <View style={styles.bookModalControls}>
+                  <TouchableOpacity 
+                    style={styles.bookModalReadButton}
+                    onPress={handleOpenBook}
+                    activeOpacity={0.9}
+                  >
+                    <LinearGradient
+                      colors={['#0F5132', '#0B3C5D']}
+                      style={styles.bookModalReadButtonGradient}
+                    >
+                      <Text style={styles.bookModalReadIcon}>▶</Text>
+                      <Text style={styles.bookModalReadText}>Lire</Text>
+                    </LinearGradient>
+                  </TouchableOpacity>
+                  <TouchableOpacity 
+                    style={styles.bookModalMenuButton}
+                    onPress={handleMenuPress}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={styles.bookModalMenuIcon}>⋯</Text>
+                  </TouchableOpacity>
+                </View>
+
+                {/* Onglets Overview / Chapters */}
+                <View style={styles.bookModalTabs}>
+                  <TouchableOpacity 
+                    style={[
+                      styles.bookModalTab, 
+                      activeTab === 'overview' && styles.bookModalTabActive
+                    ]}
+                    onPress={() => setActiveTab('overview')}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={[
+                      styles.bookModalTabText, 
+                      activeTab === 'overview' ? styles.bookModalTabTextActive : { color: theme.textSecondary }
+                    ]}>
+                      {language === 'fr' ? 'Aperçu' : language === 'ar' ? 'نظرة عامة' : 'Overview'}
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity 
+                    style={[
+                      styles.bookModalTab,
+                      activeTab === 'chapters' && styles.bookModalTabActive
+                    ]}
+                    onPress={() => setActiveTab('chapters')}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={[
+                      styles.bookModalTabText, 
+                      activeTab === 'chapters' ? styles.bookModalTabTextActive : { color: theme.textSecondary }
+                    ]}>
+                      {language === 'fr' ? 'Chapitres' : language === 'ar' ? 'فصول' : 'Chapters'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+
+                {/* Contenu selon l'onglet actif */}
+                {activeTab === 'overview' ? (
+                  <View style={styles.bookModalAboutSection}>
+                    <Text style={[styles.bookModalSectionTitle, { color: theme.text }]}>
+                      {language === 'fr' ? 'À propos' : language === 'ar' ? 'حول' : 'About'}
+                    </Text>
+                    <Text style={[styles.bookModalAboutText, { color: theme.text }]}>
+                      {selectedBook.description || 'Livre islamique de grande valeur spirituelle.'}
+                    </Text>
+                    
+                    {/* Informations supplémentaires */}
+                    <View style={{ marginTop: 20 }}>
+                      <View style={{ flexDirection: 'row', marginBottom: 12 }}>
+                        <Text style={[styles.bookModalSectionTitle, { color: theme.text, fontSize: 16, marginRight: 15 }]}>
+                          📄 {t('stats.pages')}:
+                        </Text>
+                        <Text style={[styles.bookModalAboutText, { color: theme.text }]}>
+                          {selectedBook.pages || 0}
+                        </Text>
+                      </View>
+                      {selectedBook.rating && (
+                        <View style={{ flexDirection: 'row', marginBottom: 12 }}>
+                          <Text style={[styles.bookModalSectionTitle, { color: theme.text, fontSize: 16, marginRight: 15 }]}>
+                            ⭐ {t('stats.rating')}:
+                          </Text>
+                          <Text style={[styles.bookModalAboutText, { color: theme.text }]}>
+                            {selectedBook.rating}/5.0
+                          </Text>
+                        </View>
+                      )}
+                      {selectedBook.downloads && (
+                        <View style={{ flexDirection: 'row' }}>
+                          <Text style={[styles.bookModalSectionTitle, { color: theme.text, fontSize: 16, marginRight: 15 }]}>
+                            ⬇️ {t('stats.downloads')}:
+                          </Text>
+                          <Text style={[styles.bookModalAboutText, { color: theme.text }]}>
+                            {selectedBook.downloads.toLocaleString()}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                  </View>
+                ) : (
+                  <View style={styles.bookModalAboutSection}>
+                    <Text style={[styles.bookModalSectionTitle, { color: theme.text }]}>
+                      {language === 'fr' ? 'Chapitres' : language === 'ar' ? 'فصول' : 'Chapters'}
+                    </Text>
+                    <Text style={[styles.bookModalAboutText, { color: theme.text }]}>
+                      {language === 'fr' 
+                        ? 'Les chapitres de ce livre seront affichés ici.' 
+                        : language === 'ar'
+                        ? 'سيتم عرض فصول هذا الكتاب هنا.'
+                        : 'Book chapters will be displayed here.'}
+                    </Text>
+                  </View>
+                )}
+
+                {/* Espace supplémentaire en bas */}
+                <View style={{ height: 30 }} />
+              </ScrollView>
+            </>
+          )}
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
@@ -1867,6 +2223,8 @@ function BooksScreen({ navigation }: any) {
   const [selectedBook, setSelectedBook] = React.useState<any>(null);
   const [modalVisible, setModalVisible] = React.useState(false);
   const [expandedCategory, setExpandedCategory] = React.useState<string | null>(null);
+  const [isBookmarked, setIsBookmarked] = React.useState(false);
+  const [activeTab, setActiveTab] = React.useState<'overview' | 'chapters'>('overview');
   const lastScrollY = React.useRef(0);
   const scrollTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -1880,24 +2238,12 @@ function BooksScreen({ navigation }: any) {
   }, []);
 
   const handleBookPress = (book: any) => {
-    // Si c'est un PDF, l'ouvrir directement
-    if (book.pdfFile) {
-      addToHistory(book, 'pdf');
-      setCurrentPlayer({ item: book, type: 'book' });
-      navigation.navigate('PDFReader', { book });
-      return;
-    }
-    
-    // Si c'est un fichier HTML, l'ouvrir directement avec WebView
-    if (book.htmlFile) {
-      addToHistory(book, 'pdf');
-      setCurrentPlayer({ item: book, type: 'book' });
-      navigation.navigate('PDFReader', { book });
-      return;
-    }
-    
-    // Sinon, afficher le modal
-    const fullBook = ebooks.find(b => b.id === book.id) || {
+    // Toujours afficher le modal pour tous les livres
+    const fullBook = ebooks.find(b => b.id === book.id) || 
+                     allPdfFilesWithPages.find(b => b.id === book.id) ||
+                     frenchPdfFilesWithPages.find(b => b.id === book.id) ||
+                     englishPdfFilesWithPages.find(b => b.id === book.id) ||
+                     arabicPdfFilesWithPages.find(b => b.id === book.id) || {
       ...book,
       description: 'Livre islamique de grande valeur spirituelle.',
       rating: 4.5,
@@ -1905,15 +2251,57 @@ function BooksScreen({ navigation }: any) {
       category: 'Islam',
     };
     setSelectedBook(fullBook);
+    setActiveTab('overview'); // Réinitialiser l'onglet
     setModalVisible(true);
   };
 
   const handleOpenBook = () => {
     if (selectedBook) {
+      addToHistory(selectedBook, 'pdf');
       setCurrentPlayer({ item: selectedBook, type: 'book' });
       navigation.navigate('PDFReader', { book: selectedBook });
       setModalVisible(false);
     }
+  };
+
+  const handleBookmark = () => {
+    setIsBookmarked(!isBookmarked);
+    // Ici vous pouvez ajouter la logique pour sauvegarder les favoris
+    Alert.alert(
+      isBookmarked ? 'Retiré des favoris' : 'Ajouté aux favoris',
+      isBookmarked ? 'Le livre a été retiré de vos favoris.' : 'Le livre a été ajouté à vos favoris.'
+    );
+  };
+
+  const handleMenuPress = () => {
+    Alert.alert(
+      selectedBook?.title || 'Options',
+      'Que souhaitez-vous faire ?',
+      [
+        {
+          text: 'Partager',
+          onPress: () => {
+            Share.share({
+              message: `${selectedBook?.title} - ${selectedBook?.author || ''}`,
+              title: selectedBook?.title || 'Livre',
+            });
+          },
+        },
+        {
+          text: 'Ajouter à l\'historique',
+          onPress: () => {
+            if (selectedBook) {
+              addToHistory(selectedBook, 'pdf');
+              Alert.alert('Succès', 'Livre ajouté à l\'historique');
+            }
+          },
+        },
+        {
+          text: 'Annuler',
+          style: 'cancel',
+        },
+      ]
+    );
   };
 
   // Obtenir les catégories filtrées selon la langue
@@ -1996,7 +2384,7 @@ function BooksScreen({ navigation }: any) {
                     {(book as any).image ? (
                       <ImageBackground
                         source={(book as any).image}
-                        style={styles.bookCoverModern}
+                        style={(book as any).htmlFile ? styles.bookCoverArticle : styles.bookCoverModern}
                         imageStyle={styles.bookCoverImageStyle}
                       >
                         <View style={styles.bookCoverOverlay} />
@@ -2006,7 +2394,7 @@ function BooksScreen({ navigation }: any) {
                         colors={['#0F5132', '#0B3C5D', '#0F5132']}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 1 }}
-                        style={styles.bookCoverModern}
+                        style={(book as any).htmlFile ? styles.bookCoverArticle : styles.bookCoverModern}
                       >
                         <Text style={styles.bookCoverEmojiModern}>{book.cover || '📖'}</Text>
                       </LinearGradient>
@@ -2023,6 +2411,53 @@ function BooksScreen({ navigation }: any) {
                   );
                 })}
               </View>
+            ) : category.id === 'tariqa' || category.id === 'maarifa' ? (
+              // Affichage en slide (ScrollView horizontal) pour Tariqa et Ma'rifa avec format carré
+              <ScrollView 
+                horizontal 
+                showsHorizontalScrollIndicator={false} 
+                style={styles.horizontalScrollModern} 
+                contentContainerStyle={styles.horizontalScrollContentModern}
+              >
+                {(expandedCategory === category.id ? category.books : category.books.slice(0, 3)).map(book => (
+                  <TouchableOpacity
+                    key={book.id}
+                    style={[styles.bookCardArticle, { backgroundColor: theme.surface }]}
+                    activeOpacity={0.8}
+                    onPress={() => handleBookPress(book)}
+                  >
+                    {(book as any).image ? (
+                      <ImageBackground
+                        source={(book as any).image}
+                        style={styles.bookCoverArticle}
+                        imageStyle={styles.bookCoverImageStyle}
+                      >
+                        <View style={styles.bookCoverOverlay} />
+                      </ImageBackground>
+                    ) : (
+                      <LinearGradient
+                        colors={['#0F5132', '#0B3C5D', '#0F5132']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={styles.bookCoverArticle}
+                      >
+                        <Text style={styles.bookCoverEmojiModern}>{book.cover || '📖'}</Text>
+                      </LinearGradient>
+                    )}
+                    <View style={styles.bookCardContentModern}>
+                      <Text style={[styles.bookTitleModern, { color: theme.text }]} numberOfLines={2}>{book.title}</Text>
+                      {book.titleAr && (
+                        <Text style={[styles.bookTitleArModern, { color: theme.textSecondary }]} numberOfLines={2}>{book.titleAr}</Text>
+                      )}
+                      <Text style={[styles.bookAuthorModern, { color: theme.textSecondary }]} numberOfLines={1}>{book.author}</Text>
+                      <View style={styles.bookPagesContainerModern}>
+                        <Text style={styles.bookPagesIcon}>📄</Text>
+                        <Text style={styles.bookPagesModern}>{book.pages} pages</Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
             ) : (
               <ScrollView 
                 horizontal 
@@ -2040,7 +2475,7 @@ function BooksScreen({ navigation }: any) {
                   {(book as any).image ? (
                     <ImageBackground
                       source={(book as any).image}
-                      style={styles.bookCoverModern}
+                      style={(book as any).htmlFile ? styles.bookCoverArticle : styles.bookCoverModern}
                       imageStyle={styles.bookCoverImageStyle}
                     >
                       <View style={styles.bookCoverOverlay} />
@@ -2050,7 +2485,7 @@ function BooksScreen({ navigation }: any) {
                       colors={['#0F5132', '#0B3C5D', '#0F5132']}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 1 }}
-                      style={styles.bookCoverModern}
+                      style={(book as any).htmlFile ? styles.bookCoverArticle : styles.bookCoverModern}
                     >
                       <Text style={styles.bookCoverEmojiModern}>{book.cover || '📖'}</Text>
                     </LinearGradient>
@@ -2071,83 +2506,205 @@ function BooksScreen({ navigation }: any) {
         ))}
       </ScrollView>
 
-      {/* Modal de détail du livre - Moderne */}
+      {/* Modal de détail du livre - Design comme l'image */}
       <Modal
         visible={modalVisible}
-        transparent={true}
+        transparent={false}
         animationType="slide"
         onRequestClose={() => setModalVisible(false)}
       >
-        <TouchableOpacity 
-          style={styles.modalOverlayModern}
-          activeOpacity={1}
-          onPress={() => setModalVisible(false)}
-        >
-          <TouchableOpacity 
-            activeOpacity={1}
-            onPress={(e) => e.stopPropagation()}
-          >
-            <View style={[styles.bookModalModern, { backgroundColor: theme.surface }]}>
+        <View style={[styles.bookModalContainer, { backgroundColor: theme.surface || '#F5F5F5' }]}>
               {selectedBook && (
                 <>
-                  <LinearGradient
-                    colors={['#0F5132', '#0B3C5D']}
-                    style={styles.modalHeaderModern}
-                  >
-                    <View style={styles.modalHeaderContent}>
-                      <View style={styles.modalTitleContainer}>
-                        <Text style={styles.modalTitleModern} numberOfLines={2}>{selectedBook.title}</Text>
-                        <Text style={styles.modalAuthorModern}>{t('modal.by')} {selectedBook.author}</Text>
-                      </View>
+              {/* StatusBar et Header avec X et Bookmark */}
+              <StatusBar barStyle={darkMode ? 'light-content' : 'dark-content'} />
+              <View style={styles.bookModalHeader}>
                       <TouchableOpacity 
-                        style={styles.modalCloseButton}
+                  style={styles.bookModalCloseBtn}
                         onPress={() => setModalVisible(false)}
+                >
+                  <Text style={[styles.bookModalCloseIcon, { color: theme.text }]}>✕</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={styles.bookModalBookmarkBtn}
+                  onPress={handleBookmark}
                         activeOpacity={0.7}
                       >
-                        <Text style={styles.modalCloseModern}>✕</Text>
+                  <Text style={[
+                    styles.bookModalBookmarkIcon, 
+                    { color: isBookmarked ? '#0F5132' : theme.text }
+                  ]}>
+                    {isBookmarked ? '🔖' : '🔖'}
+                  </Text>
                       </TouchableOpacity>
                     </View>
-                  </LinearGradient>
-                  <ScrollView style={styles.modalContentModern} showsVerticalScrollIndicator={false}>
-                    <Text style={[styles.modalDescriptionModern, { color: theme.text }]}>{selectedBook.description}</Text>
-                    <View style={styles.modalInfoModern}>
-                      <View style={styles.modalInfoItem}>
-                        <Text style={styles.modalInfoIcon}>📄</Text>
-                        <Text style={[styles.modalInfoTextModern, { color: theme.textSecondary }]}>
-                          {selectedBook.pages} {t('stats.pages')}
+
+              <ScrollView
+                style={styles.bookModalScroll}
+                contentContainerStyle={styles.bookModalContent}
+                showsVerticalScrollIndicator={false}
+              >
+                {/* Image de couverture avec texte superposé */}
+                <View style={styles.bookModalImageContainer}>
+                  <ImageBackground
+                    source={selectedBook.image || require('./assets/pdf/cover3.png')}
+                    style={styles.bookModalImage}
+                    imageStyle={styles.bookModalImageStyle}
+                  >
+                    <View style={styles.bookModalImageOverlay}>
+                      <Text style={styles.bookModalImageTitle}>
+                        {selectedBook.titleAr || selectedBook.title}
+                        </Text>
+                      {selectedBook.titleAr && (
+                        <Text style={styles.bookModalImageSubtitle}>
+                          {selectedBook.title}
+                        </Text>
+                      )}
+                      <Text style={styles.bookModalImageFooter}>Fayda Digital</Text>
+                      </View>
+                  </ImageBackground>
+                </View>
+
+                {/* Titre principal */}
+                <Text style={[styles.bookModalMainTitle, { color: theme.text }]}>
+                  {selectedBook.titleAr || selectedBook.title}
+                </Text>
+
+                {/* Auteur */}
+                {selectedBook.author && (
+                  <Text style={[styles.bookModalAuthor, { color: theme.textSecondary }]}>
+                    {selectedBook.author}
+                  </Text>
+                )}
+
+                {/* Métadonnées */}
+                <View style={styles.bookModalMetadata}>
+                  <Text style={[styles.bookModalMetadataText, { color: theme.textSecondary }]}>
+                    {selectedBook.pages || 0} {t('stats.pages')} • {selectedBook.date || new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
                         </Text>
                       </View>
-                      <View style={styles.modalInfoItem}>
-                        <Text style={styles.modalInfoIcon}>⭐</Text>
-                        <Text style={[styles.modalInfoTextModern, { color: theme.textSecondary }]}>
-                          {selectedBook.rating || 4.5} {t('stats.rating')}
-                        </Text>
-                      </View>
-                      <View style={styles.modalInfoItem}>
-                        <Text style={styles.modalInfoIcon}>⬇️</Text>
-                        <Text style={[styles.modalInfoTextModern, { color: theme.textSecondary }]}>
-                          {selectedBook.downloads || 1000} {t('stats.downloads')}
-                        </Text>
-                      </View>
-                    </View>
-                  </ScrollView>
+
+                {/* Boutons de contrôle */}
+                <View style={styles.bookModalControls}>
                   <TouchableOpacity 
-                    style={styles.openButtonModern} 
+                    style={styles.bookModalReadButton}
                     onPress={handleOpenBook}
                     activeOpacity={0.9}
                   >
                     <LinearGradient
                       colors={['#0F5132', '#0B3C5D']}
-                      style={styles.openButtonGradient}
+                      style={styles.bookModalReadButtonGradient}
                     >
-                      <Text style={styles.openButtonTextModern}>{t('modal.readBook')}</Text>
+                      <Text style={styles.bookModalReadIcon}>▶</Text>
+                      <Text style={styles.bookModalReadText}>Lire</Text>
                     </LinearGradient>
                   </TouchableOpacity>
-                </>
-              )}
+                  <TouchableOpacity 
+                    style={styles.bookModalMenuButton}
+                    onPress={handleMenuPress}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={styles.bookModalMenuIcon}>⋯</Text>
+                  </TouchableOpacity>
             </View>
+
+                {/* Onglets Overview / Chapters */}
+                <View style={styles.bookModalTabs}>
+                  <TouchableOpacity 
+                    style={[
+                      styles.bookModalTab, 
+                      activeTab === 'overview' && styles.bookModalTabActive
+                    ]}
+                    onPress={() => setActiveTab('overview')}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={[
+                      styles.bookModalTabText, 
+                      activeTab === 'overview' ? styles.bookModalTabTextActive : { color: theme.textSecondary }
+                    ]}>
+                      {language === 'fr' ? 'Aperçu' : language === 'ar' ? 'نظرة عامة' : 'Overview'}
+                    </Text>
           </TouchableOpacity>
+                  <TouchableOpacity 
+                    style={[
+                      styles.bookModalTab,
+                      activeTab === 'chapters' && styles.bookModalTabActive
+                    ]}
+                    onPress={() => setActiveTab('chapters')}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={[
+                      styles.bookModalTabText, 
+                      activeTab === 'chapters' ? styles.bookModalTabTextActive : { color: theme.textSecondary }
+                    ]}>
+                      {language === 'fr' ? 'Chapitres' : language === 'ar' ? 'فصول' : 'Chapters'}
+                    </Text>
         </TouchableOpacity>
+                </View>
+
+                {/* Contenu selon l'onglet actif */}
+                {activeTab === 'overview' ? (
+                  <View style={styles.bookModalAboutSection}>
+                    <Text style={[styles.bookModalSectionTitle, { color: theme.text }]}>
+                      {language === 'fr' ? 'À propos' : language === 'ar' ? 'حول' : 'About'}
+                    </Text>
+                    <Text style={[styles.bookModalAboutText, { color: theme.text }]}>
+                      {selectedBook.description || 'Livre islamique de grande valeur spirituelle.'}
+                    </Text>
+                    
+                    {/* Informations supplémentaires */}
+                    <View style={{ marginTop: 20 }}>
+                      <View style={{ flexDirection: 'row', marginBottom: 12 }}>
+                        <Text style={[styles.bookModalSectionTitle, { color: theme.text, fontSize: 16, marginRight: 15 }]}>
+                          📄 {t('stats.pages')}:
+                        </Text>
+                        <Text style={[styles.bookModalAboutText, { color: theme.text }]}>
+                          {selectedBook.pages || 0}
+                        </Text>
+                      </View>
+                      {selectedBook.rating && (
+                        <View style={{ flexDirection: 'row', marginBottom: 12 }}>
+                          <Text style={[styles.bookModalSectionTitle, { color: theme.text, fontSize: 16, marginRight: 15 }]}>
+                            ⭐ {t('stats.rating')}:
+                          </Text>
+                          <Text style={[styles.bookModalAboutText, { color: theme.text }]}>
+                            {selectedBook.rating}/5.0
+                          </Text>
+                        </View>
+                      )}
+                      {selectedBook.downloads && (
+                        <View style={{ flexDirection: 'row' }}>
+                          <Text style={[styles.bookModalSectionTitle, { color: theme.text, fontSize: 16, marginRight: 15 }]}>
+                            ⬇️ {t('stats.downloads')}:
+                          </Text>
+                          <Text style={[styles.bookModalAboutText, { color: theme.text }]}>
+                            {selectedBook.downloads.toLocaleString()}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                  </View>
+                ) : (
+                  <View style={styles.bookModalAboutSection}>
+                    <Text style={[styles.bookModalSectionTitle, { color: theme.text }]}>
+                      {language === 'fr' ? 'Chapitres' : language === 'ar' ? 'فصول' : 'Chapters'}
+                    </Text>
+                    <Text style={[styles.bookModalAboutText, { color: theme.text }]}>
+                      {language === 'fr' 
+                        ? 'Les chapitres de ce livre seront affichés ici.' 
+                        : language === 'ar'
+                        ? 'سيتم عرض فصول هذا الكتاب هنا.'
+                        : 'Book chapters will be displayed here.'}
+                    </Text>
+                  </View>
+                )}
+
+                {/* Espace supplémentaire en bas */}
+                <View style={{ height: 30 }} />
+              </ScrollView>
+            </>
+          )}
+        </View>
       </Modal>
     </View>
   );
@@ -2277,17 +2834,13 @@ function MusicScreen({ navigation }: any) {
               navigation.navigate('Zikr');
             }}
           >
-            <LinearGradient
-              colors={['#0B3C5D', '#0F5132', '#0B3C5D']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
+            <ImageBackground
+              source={require('./assets/pdf/cover/zikr.png')}
               style={styles.podcastZikrGradient}
+              resizeMode="cover"
             >
-              <View style={styles.podcastZikrPattern}>
-                <Text style={styles.podcastZikrTextAr}>ذكر</Text>
-                <Text style={styles.podcastZikrTextLatin}>ZIKR</Text>
-              </View>
-            </LinearGradient>
+              {/* L'image contient déjà les textes "Zikr" et "ذكر" */}
+            </ImageBackground>
           </TouchableOpacity>
         </View>
 
@@ -2307,17 +2860,39 @@ function MusicScreen({ navigation }: any) {
               navigation.navigate('Coran');
             }}
           >
-            <LinearGradient
-              colors={['#0B3C5D', '#0F5132', '#0B3C5D']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
+            <ImageBackground
+              source={require('./assets/pdf/cover/coran.png')}
               style={styles.podcastZikrGradient}
+              resizeMode="cover"
             >
-              <View style={styles.podcastZikrPattern}>
-                <Text style={styles.podcastZikrTextAr}>القرآن</Text>
-                <Text style={styles.podcastZikrTextLatin}>CORAN</Text>
-              </View>
-            </LinearGradient>
+              {/* L'image contient déjà les textes "AL qur'ane" et "القرآن الكريم" */}
+            </ImageBackground>
+          </TouchableOpacity>
+        </View>
+
+        {/* Section Gamou - Grande carte */}
+        <View style={styles.podcastsSection}>
+          <View style={styles.podcastsSectionHeader}>
+            <Text style={[styles.podcastsSectionTitle, { color: '#0F5132' }]}>Gamou</Text>
+            <TouchableOpacity style={styles.podcastsViewAllButton}>
+              <Text style={styles.podcastsViewAllText}>View all</Text>
+            </TouchableOpacity>
+          </View>
+          
+          <TouchableOpacity 
+            style={styles.podcastZikrCard}
+            activeOpacity={0.9}
+            onPress={() => {
+              navigation.navigate('Gamou');
+            }}
+          >
+            <ImageBackground
+              source={require('./assets/pdf/cover/gamou.png')}
+              style={styles.podcastZikrGradient}
+              resizeMode="cover"
+            >
+              {/* L'image contient déjà les textes "GAMOU" et les textes arabes */}
+            </ImageBackground>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -2591,17 +3166,13 @@ function ZikrScreen({ navigation }: any) {
       >
         {/* Banner Zikr en haut */}
         <View style={styles.zikrBannerContainer}>
-          <LinearGradient
-            colors={['#0B3C5D', '#0F5132', '#0B3C5D']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
+          <ImageBackground
+            source={require('./assets/pdf/cover/zikr.png')}
             style={styles.zikrBannerGradient}
+            resizeMode="cover"
           >
-            <View style={styles.zikrBannerPattern}>
-              <Text style={styles.zikrBannerTextAr}>ذكر</Text>
-              <Text style={styles.zikrBannerTextLatin}>ZIKR</Text>
-            </View>
-          </LinearGradient>
+            {/* L'image contient déjà les textes "Zikr" et "ذكر" avec les portraits */}
+          </ImageBackground>
         </View>
 
         {/* Section Header */}
@@ -3146,17 +3717,13 @@ function CoranScreen({ navigation }: any) {
       >
         {/* Banner Coran en haut */}
         <View style={styles.zikrBannerContainer}>
-          <LinearGradient
-            colors={['#0B3C5D', '#0F5132', '#0B3C5D']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
+          <ImageBackground
+            source={require('./assets/pdf/cover/coran.png')}
             style={styles.zikrBannerGradient}
+            resizeMode="cover"
           >
-            <View style={styles.zikrBannerPattern}>
-              <Text style={styles.zikrBannerTextAr}>القرآن</Text>
-              <Text style={styles.zikrBannerTextLatin}>CORAN</Text>
-            </View>
-          </LinearGradient>
+            {/* L'image contient déjà les textes "AL qur'ane" et "القرآن الكريم" */}
+          </ImageBackground>
         </View>
 
         {/* Section Header */}
@@ -3422,6 +3989,517 @@ function CoranScreen({ navigation }: any) {
   );
 }
 
+// Écran Gamou - Design similaire à ZikrScreen
+function GamouScreen({ navigation }: any) {
+  const { language, darkMode, setCurrentPlayer, currentPlayer, addToHistory } = React.useContext(AppContext);
+  const theme = darkMode ? darkTheme : lightTheme;
+  const [isPlaying, setIsPlaying] = React.useState(false);
+  const [position, setPosition] = React.useState(0);
+  const [duration, setDuration] = React.useState(0);
+  const [showInfo, setShowInfo] = React.useState(false);
+  const [showCarMode, setShowCarMode] = React.useState(false);
+  const [playbackSpeed, setPlaybackSpeed] = React.useState(1.0);
+  const [showMenu, setShowMenu] = React.useState(false);
+  const [showSleepTimer, setShowSleepTimer] = React.useState(false);
+
+  // Filtrer les fichiers Gamou
+  const gamouFiles = zikrFiles.filter(zikr => zikr.title.toLowerCase().includes('gamou'));
+
+  // Utiliser expo-audio pour la lecture
+  const getAudioSource = () => {
+    if (currentPlayer?.type === 'zikr' && currentPlayer.item) {
+      if (currentPlayer.item.file) {
+        return currentPlayer.item.file;
+      }
+      return require('./assets/audio/audio.mp3');
+    }
+    return require('./assets/audio/audio.mp3');
+  };
+
+  const player = useAudioPlayer(getAudioSource());
+
+  React.useEffect(() => {
+    if (player && currentPlayer?.type === 'zikr' && gamouFiles.some(f => f.id === currentPlayer.item?.id)) {
+      setPosition(0);
+      setDuration(0);
+      
+      // Démarrer automatiquement la lecture
+      const startPlayback = async () => {
+        try {
+          if (player && !player.playing) {
+            await player.play();
+            setIsPlaying(true);
+          }
+        } catch (error) {
+          console.log('Erreur démarrage automatique:', error);
+        }
+      };
+      
+      startPlayback();
+      
+      const updateStatus = () => {
+        try {
+          if (player) {
+            setIsPlaying(player.playing || false);
+            setPosition((player.currentTime || 0) * 1000);
+            const dur = (player.duration || 0) * 1000;
+            if (dur > 0) {
+              setDuration(dur);
+            }
+          }
+        } catch (error) {
+          console.log('Erreur mise à jour audio:', error);
+        }
+      };
+      const interval = setInterval(updateStatus, 500);
+      return () => clearInterval(interval);
+    } else {
+      setIsPlaying(false);
+      setPosition(0);
+      setDuration(0);
+    }
+  }, [player, currentPlayer]);
+
+  // Appliquer la vitesse de lecture quand elle change
+  React.useEffect(() => {
+    if (player && currentPlayer?.type === 'zikr') {
+      try {
+        if ('rate' in player) {
+          (player as any).rate = playbackSpeed;
+        }
+      } catch (error) {
+        console.log('Erreur application vitesse:', error);
+      }
+    }
+  }, [playbackSpeed, player, currentPlayer]);
+
+  const togglePlay = async () => {
+    try {
+      if (player) {
+        if (player.playing) {
+          await player.pause();
+          setIsPlaying(false);
+        } else {
+          await player.play();
+          setIsPlaying(true);
+          if (duration === 0) {
+            setTimeout(() => {
+              if (player.duration) {
+                setDuration(player.duration * 1000);
+              }
+            }, 500);
+          }
+        }
+      }
+    } catch (error) {
+      console.log('Erreur toggle play:', error);
+      setIsPlaying(!isPlaying);
+      if (!isPlaying && duration === 0) {
+        setDuration(180000);
+      }
+    }
+  };
+
+  const formatTime = (ms: number) => {
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const formatRemainingTime = (current: number, total: number) => {
+    const remaining = total - current;
+    const totalSeconds = Math.floor(remaining / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `-${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  const handleRewind = async () => {
+    try {
+      if (player) {
+        const currentTime = player.currentTime || 0;
+        const newTime = Math.max(0, currentTime - 30);
+        setPosition(newTime * 1000);
+        if (player.playing) {
+          await player.pause();
+          await player.play();
+        }
+      }
+    } catch (error) {
+      console.log('Erreur rewind:', error);
+    }
+  };
+
+  const handleForward = async () => {
+    try {
+      if (player) {
+        const currentTime = player.currentTime || 0;
+        const maxTime = player.duration || 0;
+        const newTime = Math.min(maxTime, currentTime + 30);
+        setPosition(newTime * 1000);
+        if (player.playing) {
+          await player.pause();
+          await player.play();
+        }
+      }
+    } catch (error) {
+      console.log('Erreur forward:', error);
+    }
+  };
+
+  const handleShare = async () => {
+    if (currentPlayer?.item) {
+      try {
+        await Share.share({
+          message: `Écoutez "${currentPlayer.item.title}" - ${currentPlayer.item.titleAr} sur Fayda Digital`,
+          title: currentPlayer.item.title,
+        });
+      } catch (error) {
+        console.error('Erreur partage:', error);
+      }
+    }
+  };
+
+  const handleClosePlayer = () => {
+    setCurrentPlayer(null);
+    if (player) {
+      player.pause();
+    }
+  };
+
+  const handleSpeedChange = async () => {
+    const speeds = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
+    const currentIndex = speeds.indexOf(playbackSpeed);
+    const nextIndex = (currentIndex + 1) % speeds.length;
+    const newSpeed = speeds[nextIndex];
+    setPlaybackSpeed(newSpeed);
+    
+    try {
+      if (player && 'rate' in player) {
+        (player as any).rate = newSpeed;
+      }
+    } catch (error) {
+      console.log('Erreur changement vitesse:', error);
+    }
+  };
+
+  const handleMenuPress = () => {
+    setShowMenu(!showMenu);
+    Alert.alert(
+      'Options',
+      'Choisissez une option',
+      [
+        { text: 'Ajouter à la playlist', onPress: () => {} },
+        { text: 'Télécharger', onPress: () => {} },
+        { text: 'Supprimer', onPress: () => {}, style: 'destructive' },
+        { text: 'Annuler', style: 'cancel' },
+      ]
+    );
+  };
+
+  const handleSleepTimer = () => {
+    setShowSleepTimer(!showSleepTimer);
+    Alert.alert(
+      'Minuteur de sommeil',
+      'Choisissez la durée',
+      [
+        { text: '5 minutes', onPress: () => {} },
+        { text: '10 minutes', onPress: () => {} },
+        { text: '15 minutes', onPress: () => {} },
+        { text: '30 minutes', onPress: () => {} },
+        { text: 'Désactiver', onPress: () => setShowSleepTimer(false) },
+        { text: 'Annuler', style: 'cancel' },
+      ]
+    );
+  };
+
+  return (
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <StatusBar style={darkMode ? 'light' : 'dark'} />
+      
+      {/* Header avec bouton retour */}
+      <View style={[styles.zikrHeader, { backgroundColor: theme.surface }]}>
+        <TouchableOpacity 
+          onPress={() => navigation.goBack()}
+          style={styles.zikrBackButton}
+        >
+          <Text style={[styles.zikrBackIcon, { color: theme.text }]}>←</Text>
+        </TouchableOpacity>
+        <Text style={[styles.zikrHeaderTitle, { color: '#0F5132' }]}>Gamou</Text>
+        <View style={styles.zikrHeaderSpacer} />
+      </View>
+
+      <ScrollView 
+        style={styles.zikrScrollView} 
+        contentContainerStyle={[styles.zikrScrollContent, currentPlayer?.type === 'zikr' && gamouFiles.some(f => f.id === currentPlayer.item?.id) && { paddingBottom: 220 }]}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Banner Gamou en haut */}
+        <View style={styles.zikrBannerContainer}>
+          <ImageBackground
+            source={require('./assets/pdf/cover/gamou.png')}
+            style={styles.zikrBannerGradient}
+            resizeMode="cover"
+          >
+            {/* L'image contient déjà les textes "GAMOU" et les textes arabes */}
+          </ImageBackground>
+        </View>
+
+        {/* Section Header */}
+        <View style={styles.zikrSectionHeader}>
+          <Text style={[styles.zikrSectionTitle, { color: theme.text }]}>Gamou</Text>
+          <Text style={[styles.zikrSectionSubtitle, { color: theme.textSecondary }]}>
+            {gamouFiles.length} tracks
+          </Text>
+        </View>
+
+        {/* Liste des fichiers Gamou */}
+        {gamouFiles.map((gamou) => {
+          const isPlaying = currentPlayer?.type === 'zikr' && currentPlayer.item?.id === gamou.id;
+          
+          return (
+            <TouchableOpacity
+              key={gamou.id}
+              style={[styles.zikrCard, { backgroundColor: theme.surface }]}
+              activeOpacity={0.9}
+              onPress={() => {
+                addToHistory(gamou, 'audio');
+                setCurrentPlayer({ item: gamou, type: 'zikr' });
+              }}
+            >
+              {/* Thumbnail avec overlay */}
+              <View style={styles.zikrThumbnailContainer}>
+                <Image 
+                  source={gamou.image || require('./assets/thierno.png')} 
+                  style={styles.zikrThumbnail}
+                  resizeMode="cover"
+                />
+                <View style={styles.zikrThumbnailOverlay}>
+                  <Text style={styles.zikrThumbnailOverlayText}>
+                    {gamou.subtitle?.toUpperCase() || gamou.title.toUpperCase()}
+                  </Text>
+                </View>
+              </View>
+
+              {/* Contenu de la carte */}
+              <View style={styles.zikrCardContent}>
+                <Text style={[styles.zikrCardTitleAr, { color: theme.text }]} numberOfLines={1}>
+                  {gamou.titleAr}
+                </Text>
+                <Text style={[styles.zikrCardTitle, { color: theme.text }]} numberOfLines={2}>
+                  {gamou.title}
+                </Text>
+                {gamou.subtitle && (
+                  <Text style={[styles.zikrCardSubtitle, { color: theme.textSecondary }]} numberOfLines={1}>
+                    {gamou.subtitle}
+                  </Text>
+                )}
+                <Text style={[styles.zikrCardDescription, { color: theme.textSecondary }]} numberOfLines={2}>
+                  {gamou.description}
+                </Text>
+                
+                {/* Métadonnées */}
+                <View style={styles.zikrCardFooter}>
+                  <View style={styles.zikrCardFooterLeft}>
+                    <Text style={styles.zikrCardFooterIcon}>🎧</Text>
+                    <Text style={[styles.zikrCardFooterText, { color: theme.textSecondary }]}>
+                      {gamou.duration || gamou.tracks || '--:--'}
+                    </Text>
+                  </View>
+                  <View style={styles.zikrCardFooterRight}>
+                    <TouchableOpacity style={styles.zikrCardFooterButton}>
+                      <Text style={styles.zikrCardFooterButtonIcon}>🔖</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                      style={styles.zikrCardFooterButton}
+                      onPress={() => setShowInfo(!showInfo)}
+                    >
+                      <Text style={styles.zikrCardFooterButtonIcon}>ℹ️</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+
+      {/* Lecteur audio selon l'image - Design complet */}
+      {currentPlayer?.type === 'zikr' && currentPlayer.item && gamouFiles.some(f => f.id === currentPlayer.item?.id) && (
+        <View style={styles.zikrPlayerContainer}>
+          {/* Header avec icônes */}
+          <View style={styles.zikrPlayerHeader}>
+            <TouchableOpacity 
+              onPress={handleClosePlayer}
+              style={styles.zikrPlayerHeaderIcon}
+            >
+              <Text style={styles.zikrPlayerHeaderIconText}>←</Text>
+            </TouchableOpacity>
+            <View style={styles.zikrPlayerHeaderIcons}>
+              <TouchableOpacity 
+                style={[styles.zikrPlayerHeaderIcon, showCarMode && { backgroundColor: '#0F5132', borderRadius: 20 }]}
+                onPress={() => setShowCarMode(!showCarMode)}
+              >
+                <Text style={styles.zikrPlayerHeaderIconText}>🚗</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.zikrPlayerHeaderIcon}
+                onPress={handleShare}
+              >
+                <Text style={styles.zikrPlayerHeaderIconText}>📤</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.zikrPlayerHeaderIcon}
+                onPress={() => {
+                  setShowInfo(!showInfo);
+                  if (currentPlayer?.item) {
+                    Alert.alert(
+                      currentPlayer.item.title,
+                      currentPlayer.item.description || 'Informations sur cette piste',
+                      [{ text: 'OK' }]
+                    );
+                  }
+                }}
+              >
+                <Text style={styles.zikrPlayerHeaderIconText}>ℹ️</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Carte principale avec image */}
+          <View style={styles.zikrPlayerCard}>
+            <ImageBackground
+              source={currentPlayer.item.image || require('./assets/thierno.png')}
+              style={styles.zikrPlayerImage}
+              resizeMode="cover"
+              imageStyle={styles.zikrPlayerImageStyle}
+            >
+              {/* Overlay avec texte doré */}
+              <View style={styles.zikrPlayerOverlay}>
+                <Text style={styles.zikrPlayerOverlayText}>GAMOU</Text>
+                <Text style={styles.zikrPlayerOverlayText}>المولد النبوي</Text>
+              </View>
+            </ImageBackground>
+            
+            {/* Section turquoise avec motif */}
+            <LinearGradient
+              colors={['#20B2AA', '#17A2B8', '#20B2AA']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.zikrPlayerTealSection}
+            >
+              <View style={styles.zikrPlayerLogos}>
+                <View style={styles.zikrPlayerFaydaLogo}>
+                  <Text style={styles.zikrPlayerFaydaLogoAr}>فيضة</Text>
+                  <Text style={styles.zikrPlayerFaydaLogoText}>FAYDA DIGITAL</Text>
+                </View>
+              </View>
+            </LinearGradient>
+          </View>
+
+          {/* Titre de la piste */}
+          <View style={styles.zikrPlayerTrackInfo}>
+            <Text style={[styles.zikrPlayerTrackTitle, { color: theme.text }]} numberOfLines={1}>
+              {currentPlayer.item.titleAr} {currentPlayer.item.title}
+            </Text>
+            <TouchableOpacity 
+              style={styles.zikrPlayerOptions}
+              onPress={handleMenuPress}
+            >
+              <Text style={styles.zikrPlayerOptionsIcon}>☰</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Barre de progression */}
+          <View style={styles.zikrPlayerProgressContainer}>
+            <Slider
+              style={styles.zikrPlayerSlider}
+              value={position}
+              maximumValue={duration || 100}
+              minimumValue={0}
+              onValueChange={(value) => {
+                setPosition(value);
+              }}
+              minimumTrackTintColor="#0F5132"
+              maximumTrackTintColor="#e0e0e0"
+              thumbTintColor="#0F5132"
+            />
+            <View style={styles.zikrPlayerTimeContainer}>
+              <Text style={[styles.zikrPlayerTimeText, { color: theme.text }]}>
+                {formatTime(position)}
+              </Text>
+              <Text style={[styles.zikrPlayerTimeText, { color: theme.text }]}>
+                {duration > 0 ? formatRemainingTime(position, duration) : '--:--'}
+              </Text>
+            </View>
+          </View>
+
+          {/* Contrôles de lecture - Design selon l'image */}
+          <View style={styles.zikrPlayerControls}>
+            {/* 30s Rewind Circle */}
+            <TouchableOpacity 
+              style={styles.zikrPlayer30sBtn}
+              onPress={handleRewind}
+              activeOpacity={0.7}
+            >
+              <View style={styles.zikrPlayer30sCircle}>
+                <Text style={styles.zikrPlayer30sText}>30s</Text>
+              </View>
+            </TouchableOpacity>
+            
+            {/* Play/Pause Button */}
+            <TouchableOpacity 
+              style={styles.zikrPlayerPlayBtn}
+              onPress={togglePlay}
+              activeOpacity={0.9}
+            >
+              <LinearGradient
+                colors={['#0F5132', '#0B3C5D']}
+                style={styles.zikrPlayerPlayBtnGradient}
+              >
+                <Text style={styles.zikrPlayerPlayIcon}>{isPlaying ? '⏸' : '▶'}</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+            
+            {/* 30s Forward Circle */}
+            <TouchableOpacity 
+              style={styles.zikrPlayer30sBtn}
+              onPress={handleForward}
+              activeOpacity={0.7}
+            >
+              <View style={styles.zikrPlayer30sCircle}>
+                <Text style={styles.zikrPlayer30sText}>30s</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+
+          {/* Contrôles supplémentaires */}
+          <View style={styles.zikrPlayerBottomControls}>
+            <TouchableOpacity 
+              style={styles.zikrPlayerSpeedControl}
+              onPress={handleSpeedChange}
+            >
+              <Text style={styles.zikrPlayerSpeedIcon}>⏱</Text>
+              <Text style={[styles.zikrPlayerSpeedText, { color: theme.text }]}>
+                {playbackSpeed.toFixed(1)}x
+              </Text>
+            </TouchableOpacity>
+            <View style={styles.zikrPlayerBottomIcons}>
+              <TouchableOpacity 
+                style={[styles.zikrPlayerBottomIcon, showSleepTimer && { backgroundColor: '#C9A24D' }]}
+                onPress={handleSleepTimer}
+              >
+                <Text style={styles.zikrPlayerBottomIconText}>Z</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
+    </View>
+  );
+}
+
 // Écran de podcasts - Design amélioré
 function PodcastsScreen({ navigation, route }: any) {
   const { language, darkMode, setCurrentPlayer, currentPlayer, addToHistory, setShowDonationBanner } = React.useContext(AppContext);
@@ -3530,7 +4608,7 @@ function PodcastsScreen({ navigation, route }: any) {
               styles.podcastsHeaderPillText,
               selectedTab === 'knowledgecast' && styles.podcastsHeaderPillTextActive
             ]}>
-              KnowledgeCast
+              Gamou
             </Text>
           </TouchableOpacity>
         </View>
@@ -4406,7 +5484,7 @@ function PDFReaderScreen({ route, navigation }: any) {
           setHtmlContent(htmlContent);
           setLoading(false);
         } else if (book?.pdfFile) {
-          // Charger le PDF
+          // Charger le PDF normal
           setLoading(true);
           const asset = Asset.fromModule(book.pdfFile);
           await asset.downloadAsync();
@@ -4981,14 +6059,35 @@ function DonationBanner({ onPress }: { onPress: () => void }) {
   const translateY = React.useRef(new Animated.Value(0)).current;
   const opacity = React.useRef(new Animated.Value(1)).current;
 
-  // Ne pas afficher la bande sur la page Assistant
-  const shouldShow = showDonationBanner && currentRoute !== 'Assistant';
+  // Ne pas afficher la bande sur la page Assistant/Fayda IA
+  // Triple vérification pour être absolument sûr
+  const isAssistantPage = currentRoute === 'Assistant';
+  const shouldShow = showDonationBanner && !isAssistantPage;
 
   React.useEffect(() => {
-    // Quand showDonationBanner est true et qu'on n'est pas sur Assistant, la bande est visible
-    // Sinon, la bande disparaît complètement
-    const targetTranslateY = shouldShow ? 0 : 100; // Sortir complètement de l'écran
-    const targetOpacity = shouldShow ? 1 : 0; // Rendre invisible
+    // Si on est sur Assistant, forcer shouldShow à false
+    if (isAssistantPage) {
+      const targetTranslateY = 100; // Sortir complètement de l'écran
+      const targetOpacity = 0; // Rendre invisible
+      
+      Animated.parallel([
+        Animated.timing(translateY, {
+          toValue: targetTranslateY,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, {
+          toValue: targetOpacity,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
+      return;
+    }
+
+    // Sinon, utiliser shouldShow normalement
+    const targetTranslateY = shouldShow ? 0 : 100;
+    const targetOpacity = shouldShow ? 1 : 0;
     
     Animated.parallel([
       Animated.timing(translateY, {
@@ -5002,10 +6101,11 @@ function DonationBanner({ onPress }: { onPress: () => void }) {
         useNativeDriver: true,
       }),
     ]).start();
-  }, [shouldShow]);
+  }, [shouldShow, isAssistantPage]);
 
-  // Ne pas rendre la bande si on est sur la page Assistant
-  if (currentRoute === 'Assistant') {
+  // Ne pas rendre la bande si on est sur la page Assistant - retourner null immédiatement
+  // Vérification prioritaire avant même le rendu
+  if (isAssistantPage || !shouldShow) {
     return null;
   }
 
@@ -5286,13 +6386,16 @@ function DonationModal({ visible, onClose }: { visible: boolean; onClose: () => 
                   alignItems: 'center',
                   justifyContent: 'center',
                   marginRight: 16,
+                  overflow: 'hidden',
                 }}>
-                  <Text style={{ 
-                    fontSize: 32, 
-                    fontWeight: 'bold',
-                    color: '#1E88E5',
-                    letterSpacing: -1,
-                  }}>W</Text>
+                  <Image
+                    source={require('./assets/payments/wave-logo.png')}
+                    style={{
+                      width: 50,
+                      height: 50,
+                      resizeMode: 'contain',
+                    }}
+                  />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={{
@@ -5345,12 +6448,16 @@ function DonationModal({ visible, onClose }: { visible: boolean; onClose: () => 
                   alignItems: 'center',
                   justifyContent: 'center',
                   marginRight: 16,
+                  overflow: 'hidden',
                 }}>
-                  <Text style={{ 
-                    fontSize: 24, 
-                    fontWeight: 'bold',
-                    color: '#FF6600',
-                  }}>OM</Text>
+                  <Image
+                    source={require('./assets/payments/orange-money-logo.png')}
+                    style={{
+                      width: 50,
+                      height: 50,
+                      resizeMode: 'contain',
+                    }}
+                  />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={{
@@ -5660,14 +6767,21 @@ function AIScreen({ navigation }: any) {
   const lastScrollY = React.useRef(0);
   const scrollTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Cacher la bande de don quand on arrive sur cette page
-  React.useEffect(() => {
-    setShowDonationBanner(false);
-    // Remettre la bande à true quand on quitte la page
-    return () => {
-      setShowDonationBanner(true);
-    };
-  }, []);
+  // Utiliser useFocusEffect pour cacher la bande dès que la page est focalisée
+  useFocusEffect(
+    React.useCallback(() => {
+      // Cacher la bande immédiatement quand on arrive sur cette page
+      setShowDonationBanner(false);
+      
+      // Remettre la bande à true quand on quitte la page
+      return () => {
+        // Petit délai pour éviter un flash lors de la transition
+        setTimeout(() => {
+          setShowDonationBanner(true);
+        }, 100);
+      };
+    }, [setShowDonationBanner])
+  );
 
   // Nettoyer le timer au démontage
   React.useEffect(() => {
@@ -5735,42 +6849,42 @@ function AIScreen({ navigation }: any) {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
     >
-      <View style={[styles.container, { backgroundColor: theme.background }]}>
-        <StatusBar style={darkMode ? 'light' : 'dark'} />
-        
-        {/* Header */}
-        <LinearGradient
-          colors={darkMode ? ['#0B3C5D', '#0F5132'] : ['#F8F9F6', '#ffffff']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.headerModern}
-        >
-          <View style={styles.headerContent}>
-            <View style={styles.headerLeft}>
-              <Text style={[styles.appTitleModern, { color: theme.text }]}>
-                {t('assistant.title')}
-              </Text>
-              <Text style={[styles.appSubtitle, { color: theme.textSecondary }]}>
-                {t('assistant.subtitle')}
-              </Text>
-            </View>
-            <TouchableOpacity onPress={clearConversation} style={styles.clearButton}>
-              <Text style={[styles.clearButtonText, { color: theme.primary }]}>
-                {t('assistant.clear')}
-              </Text>
-            </TouchableOpacity>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <StatusBar style={darkMode ? 'light' : 'dark'} />
+      
+      {/* Header */}
+      <LinearGradient
+        colors={darkMode ? ['#0B3C5D', '#0F5132'] : ['#F8F9F6', '#ffffff']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.headerModern}
+      >
+        <View style={styles.headerContent}>
+          <View style={styles.headerLeft}>
+            <Text style={[styles.appTitleModern, { color: theme.text }]}>
+              {t('assistant.title')}
+            </Text>
+            <Text style={[styles.appSubtitle, { color: theme.textSecondary }]}>
+              {t('assistant.subtitle')}
+            </Text>
           </View>
-        </LinearGradient>
+          <TouchableOpacity onPress={clearConversation} style={styles.clearButton}>
+            <Text style={[styles.clearButtonText, { color: theme.primary }]}>
+              {t('assistant.clear')}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </LinearGradient>
 
-        {/* Messages */}
-        <ScrollView
-          ref={scrollViewRef}
-          style={styles.chatContainer}
-          contentContainerStyle={styles.chatContent}
-          showsVerticalScrollIndicator={false}
+      {/* Messages */}
+      <ScrollView
+        ref={scrollViewRef}
+        style={styles.chatContainer}
+        contentContainerStyle={styles.chatContent}
+        showsVerticalScrollIndicator={false}
           scrollEventThrottle={16}
           keyboardShouldPersistTaps="handled"
-        >
+      >
         {messages.map((message, index) => (
           <View
             key={index}
@@ -6234,10 +7348,13 @@ export default function App() {
           <Stack.Screen name="VideoPlayer" component={VideoPlayerScreen} />
           <Stack.Screen name="Zikr" component={ZikrScreen} />
           <Stack.Screen name="Coran" component={CoranScreen} />
+          <Stack.Screen name="Gamou" component={GamouScreen} />
           <Stack.Screen name="PodcastPlayer" component={PodcastPlayerScreen} />
           <Stack.Screen name="Assistant" component={AIScreen} />
         </Stack.Navigator>
       </NavigationContainer>
+      {/* Note: PdfPageCounter est désactivé car react-native-pdf nécessite un développement build
+          Voir README-PDF-PAGES.md pour plus d'informations */}
     </AppContext.Provider>
   );
 }
@@ -8085,6 +9202,17 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 6,
   },
+  bookCardArticle: {
+    width: 150,
+    marginRight: 15,
+    borderRadius: 18,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    elevation: 6,
+  },
   booksGridContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -8113,6 +9241,53 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  bookCoverArticle: {
+    width: '100%',
+    aspectRatio: 1, // Format carré pour les articles
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  // Styles pour les cartes pleine largeur (Tariqa et Ma'rifa)
+  bookCardFullWidth: {
+    width: '100%',
+    marginBottom: 16,
+    borderRadius: 16,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    elevation: 6,
+  },
+  bookCoverFullWidth: {
+    width: '100%',
+    aspectRatio: 1.3, // Format rectangulaire large
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bookCardContentFullWidth: {
+    padding: 16,
+  },
+  bookTitleFullWidth: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 6,
+  },
+  bookTitleArFullWidth: {
+    fontSize: 16,
+    marginBottom: 8,
+    textAlign: 'right',
+  },
+  bookAuthorFullWidth: {
+    fontSize: 14,
+    marginBottom: 8,
+    opacity: 0.8,
+  },
+  bookPagesContainerFullWidth: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+  },
   bookCoverImageStyle: {
     resizeMode: 'cover',
     borderRadius: 8,
@@ -8137,6 +9312,12 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginBottom: 6,
     lineHeight: 18,
+  },
+  bookTitleArModern: {
+    fontSize: 13,
+    marginBottom: 4,
+    textAlign: 'right',
+    opacity: 0.8,
   },
   bookAuthorModern: {
     fontSize: 12,
@@ -8875,6 +10056,196 @@ const styles = StyleSheet.create({
   podcastModalTagIcon: {
     fontSize: 12,
     color: '#000000',
+  },
+  // Styles pour le modal de livre (design selon l'image)
+  bookModalContainer: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+  },
+  bookModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: Platform.OS === 'ios' ? 50 : 20,
+    paddingBottom: 20,
+  },
+  bookModalCloseBtn: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bookModalCloseIcon: {
+    fontSize: 24,
+    fontWeight: '300',
+  },
+  bookModalBookmarkBtn: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bookModalBookmarkIcon: {
+    fontSize: 24,
+  },
+  bookModalScroll: {
+    flex: 1,
+  },
+  bookModalContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 30,
+  },
+  bookModalImageContainer: {
+    width: '70%',
+    alignSelf: 'center',
+    aspectRatio: 0.75, // Format livre
+    marginBottom: 20,
+    borderRadius: 16,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  bookModalImage: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'flex-end',
+  },
+  bookModalImageStyle: {
+    borderRadius: 16,
+    resizeMode: 'cover',
+  },
+  bookModalImageOverlay: {
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    padding: 16,
+    paddingBottom: 20,
+  },
+  bookModalImageTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#ffffff',
+    marginBottom: 6,
+    textAlign: 'left',
+  },
+  bookModalImageSubtitle: {
+    fontSize: 14,
+    color: '#ffffff',
+    opacity: 0.9,
+    marginBottom: 8,
+    textAlign: 'left',
+  },
+  bookModalImageFooter: {
+    fontSize: 10,
+    color: '#ffffff',
+    opacity: 0.7,
+    marginTop: 4,
+    fontStyle: 'italic',
+  },
+  bookModalMainTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    textAlign: 'left',
+    lineHeight: 32,
+  },
+  bookModalAuthor: {
+    fontSize: 16,
+    marginBottom: 12,
+    textAlign: 'left',
+  },
+  bookModalMetadata: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  bookModalMetadataText: {
+    fontSize: 14,
+    marginRight: 8,
+  },
+  bookModalControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+    gap: 12,
+  },
+  bookModalReadButton: {
+    flex: 1,
+    borderRadius: 12,
+    overflow: 'hidden',
+    shadowColor: '#0F5132',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  bookModalReadButtonGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    gap: 8,
+  },
+  bookModalReadIcon: {
+    fontSize: 20,
+    color: '#ffffff',
+  },
+  bookModalReadText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#ffffff',
+  },
+  bookModalMenuButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#E0E0E0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bookModalMenuIcon: {
+    fontSize: 24,
+    color: '#666',
+    fontWeight: '300',
+  },
+  bookModalTabs: {
+    flexDirection: 'row',
+    marginBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+    gap: 20,
+  },
+  bookModalTab: {
+    paddingBottom: 12,
+    marginBottom: -1,
+  },
+  bookModalTabActive: {
+    borderBottomWidth: 2,
+    borderBottomColor: '#0F5132',
+  },
+  bookModalTabText: {
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  bookModalTabTextActive: {
+    color: '#0F5132',
+    fontWeight: '600',
+  },
+  bookModalAboutSection: {
+    marginTop: 10,
+  },
+  bookModalSectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 12,
+  },
+  bookModalAboutText: {
+    fontSize: 15,
+    lineHeight: 24,
+    textAlign: 'left',
   },
   // Styles pour le lecteur podcast plein écran
   podcastPlayerScreen: {
