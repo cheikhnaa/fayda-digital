@@ -703,7 +703,7 @@ const podcasts = [
     subscribed: false,
     duration: '00:00',
     date: new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }),
-    image: require('./assets/thierno.png'),
+    image: require('./assets/pdf/cover/pod1.png'),
     description: 'Archive audio de Wakhtanu Thierno Assane Deme sur la Tarbiya Ilalah (Éducation divine).',
     locked: false,
     episodeType: 'Archive',
@@ -720,7 +720,7 @@ const podcasts = [
     subscribed: false,
     duration: '00:00',
     date: new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }),
-    image: require('./assets/thierno.png'),
+    image: require('./assets/pdf/cover/pod2.png'),
     description: 'Explication de la wazifa d\'un Arif Bilah (Celui qui connaît Allah) par Cheikh Assane Dème.',
     locked: false,
     episodeType: 'Enseignement',
@@ -737,7 +737,7 @@ const podcasts = [
     subscribed: false,
     duration: '00:00',
     date: new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }),
-    image: require('./assets/thierno.png'),
+    image: require('./assets/pdf/cover/pod3.png'),
     description: 'Paroles et enseignements du Cheikh Thierno Assane Dème.',
     locked: false,
     episodeType: 'Enseignement',
@@ -1100,11 +1100,109 @@ const allPdfFiles = [
     pages: 180,
     cover: '📖',
     pdfFile: require('./assets/pdf/LETTRES_PRECIEUSES_DEFINITIF.pdf'),
-    image: require('./assets/pdf/lettre1.jpeg'),
+    image: require('./assets/pdf/cover/lettre1.jpeg'),
     description: 'Collection de lettres précieuses de Cheikh Ibrahim Niass.',
     category: 'Tariqa',
     rating: 4.8,
     downloads: 6500,
+  },
+  {
+    id: 117,
+    title: 'Le Discours de Khartoum',
+    titleAr: 'خطاب الخرطوم',
+    author: 'Cheikh Ibrahim Niass',
+    pages: 50,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/LE DISCOURS DE KHARTOUM_230608_000728.pdf'),
+    image: require('./assets/pdf/cover/congr.png'),
+    description: 'Discours historique de Cheikh Ibrahim Niass.',
+    category: 'Tariqa',
+    rating: 4.8,
+    downloads: 5000,
+  },
+  {
+    id: 118,
+    title: 'Testament Shaykh Ibrahima Niasse',
+    titleAr: 'وصية الشيخ إبراهيم نياس',
+    author: 'Cheikh Ibrahim Niass',
+    pages: 100,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/Testament Shaykh Ibrahima Niasse.pdf'),
+    image: require('./assets/pdf/cover/cheikh.jpeg'),
+    description: 'Testament spirituel de Cheikh Ibrahim Niass.',
+    category: 'Tariqa',
+    rating: 5.0,
+    downloads: 6000,
+  },
+  {
+    id: 119,
+    title: 'Al-Tijaniya',
+    titleAr: 'التجانية',
+    author: 'Cheikh Ahmed Tijani',
+    pages: 300,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/al-tijaniya_imp_elect_v01-1.pdf'),
+    image: require('./assets/pdf/cover/cover1.png'),
+    description: 'Ouvrage fondamental sur la Tariqa Tijaniyya.',
+    category: 'Tariqa',
+    rating: 5.0,
+    downloads: 8000,
+  },
+  {
+    id: 120,
+    title: 'Diwan Sayrul Qalb',
+    titleAr: 'ديوان سير القلب',
+    author: 'Cheikh Ahmed Tijani',
+    pages: 250,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/diwan_sayrulqalb_v01.pdf'),
+    image: require('./assets/pdf/cover/sayrou.png'),
+    description: 'Recueil poétique spirituel.',
+    category: 'Tariqa',
+    rating: 4.9,
+    downloads: 7000,
+  },
+  {
+    id: 121,
+    title: 'Doua Wazifa',
+    titleAr: 'دعاء الوظيفة',
+    author: 'Fayda Tidianiya',
+    pages: 80,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/doua-wazifa.pdf'),
+    image: require('./assets/pdf/cover/articles/art5.png'),
+    description: 'Invocation de la Wazifa.',
+    category: 'Tariqa',
+    rating: 4.8,
+    downloads: 5500,
+  },
+  {
+    id: 122,
+    title: 'Boughiyat',
+    titleAr: 'البغية',
+    author: 'Cheikh Ahmed Tijani',
+    pages: 180,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/boughiyat.pdf'),
+    image: require('./assets/pdf/cover/boughiyat.png'),
+    description: 'Ouvrage spirituel important.',
+    category: 'Tariqa',
+    rating: 4.8,
+    downloads: 6000,
+  },
+  {
+    id: 123,
+    title: 'Kachf al-Hijab',
+    titleAr: 'كشف الحجاب',
+    author: 'Cheikh Ahmed Tijani',
+    pages: 170,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/kachf-al-hijab.pdf'),
+    image: require('./assets/pdf/cover/khidiab.png'),
+    description: 'Ouvrage spirituel de grande valeur.',
+    category: 'Tariqa',
+    rating: 4.9,
+    downloads: 6200,
   },
 ];
 
@@ -1189,11 +1287,67 @@ const frenchPdfFiles = [
     pages: 180,
     cover: '📖',
     pdfFile: require('./assets/pdf/francais/LETTRES_PRECIEUSES_DEFINITIF.pdf'),
-    image: require('./assets/pdf/lettre1.jpeg'),
+    image: require('./assets/pdf/cover/lettre1.jpeg'),
     description: 'Collection de lettres précieuses de Cheikh Ibrahim Niass.',
     category: 'Tariqa',
     rating: 4.8,
     downloads: 6500,
+  },
+  {
+    id: 207,
+    title: 'Le Discours de Khartoum',
+    titleAr: 'خطاب الخرطوم',
+    author: 'Cheikh Ibrahim Niass',
+    pages: 50,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/francais/LE DISCOURS DE KHARTOUM_230608_000728.pdf'),
+    image: require('./assets/pdf/cover/congr.png'),
+    description: 'Discours historique de Cheikh Ibrahim Niass.',
+    category: 'Tariqa',
+    rating: 4.8,
+    downloads: 5000,
+  },
+  {
+    id: 208,
+    title: 'Testament Shaykh Ibrahima Niasse',
+    titleAr: 'وصية الشيخ إبراهيم نياس',
+    author: 'Cheikh Ibrahim Niass',
+    pages: 100,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/francais/Testament Shaykh Ibrahima Niasse.pdf'),
+    image: require('./assets/pdf/cover/cheikh.jpeg'),
+    description: 'Testament spirituel de Cheikh Ibrahim Niass.',
+    category: 'Tariqa',
+    rating: 5.0,
+    downloads: 6000,
+  },
+  {
+    id: 209,
+    title: 'Al-Tijaniya',
+    titleAr: 'التجانية',
+    author: 'Cheikh Ahmed Tijani',
+    pages: 300,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/francais/al-tijaniya_imp_elect_v01-1.pdf'),
+    image: require('./assets/pdf/cover/cover1.png'),
+    description: 'Ouvrage fondamental sur la Tariqa Tijaniyya.',
+    category: 'Tariqa',
+    rating: 5.0,
+    downloads: 8000,
+  },
+  {
+    id: 210,
+    title: 'Diwan Sayrul Qalb',
+    titleAr: 'ديوان سير القلب',
+    author: 'Cheikh Ahmed Tijani',
+    pages: 250,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/francais/diwan_sayrulqalb_v01.pdf'),
+    image: require('./assets/pdf/cover/sayrou.png'),
+    description: 'Recueil poétique spirituel.',
+    category: 'Tariqa',
+    rating: 4.9,
+    downloads: 7000,
   },
 ];
 
@@ -1399,6 +1553,62 @@ const arabicPdfFiles = [
     rating: 4.8,
     downloads: 6500,
   },
+  {
+    id: 412,
+    title: 'Le Discours de Khartoum',
+    titleAr: 'خطاب الخرطوم',
+    author: 'Cheikh Ibrahim Niass',
+    pages: 50,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/arabe/LE DISCOURS DE KHARTOUM_230608_000728.pdf'),
+    image: require('./assets/pdf/cover/congr.png'),
+    description: 'Discours historique de Cheikh Ibrahim Niass.',
+    category: 'Tariqa',
+    rating: 4.8,
+    downloads: 5000,
+  },
+  {
+    id: 413,
+    title: 'Testament Shaykh Ibrahima Niasse',
+    titleAr: 'وصية الشيخ إبراهيم نياس',
+    author: 'Cheikh Ibrahim Niass',
+    pages: 100,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/arabe/Testament Shaykh Ibrahima Niasse.pdf'),
+    image: require('./assets/pdf/cover/cheikh.jpeg'),
+    description: 'Testament spirituel de Cheikh Ibrahim Niass.',
+    category: 'Tariqa',
+    rating: 5.0,
+    downloads: 6000,
+  },
+  {
+    id: 414,
+    title: 'Al-Tijaniya',
+    titleAr: 'التجانية',
+    author: 'Cheikh Ahmed Tijani',
+    pages: 300,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/arabe/al-tijaniya_imp_elect_v01-1.pdf'),
+    image: require('./assets/pdf/cover/cover1.png'),
+    description: 'Ouvrage fondamental sur la Tariqa Tijaniyya.',
+    category: 'Tariqa',
+    rating: 5.0,
+    downloads: 8000,
+  },
+  {
+    id: 415,
+    title: 'Diwan Sayrul Qalb',
+    titleAr: 'ديوان سير القلب',
+    author: 'Cheikh Ahmed Tijani',
+    pages: 250,
+    cover: '📖',
+    pdfFile: require('./assets/pdf/arabe/diwan_sayrulqalb_v01.pdf'),
+    image: require('./assets/pdf/cover/sayrou.png'),
+    description: 'Recueil poétique spirituel.',
+    category: 'Tariqa',
+    rating: 4.9,
+    downloads: 7000,
+  },
 ];
 
 // Appliquer les nombres de pages réels depuis le mapping
@@ -1411,18 +1621,23 @@ const arabicPdfFilesWithPages = arabicPdfFiles.map(book => ({ ...book, pages: ge
 const pdfFiles = allPdfFilesWithPages;
 
 // Fonction pour obtenir les catégories de livres filtrées selon la langue
+// Filtre les PDFs selon leur dossier d'origine :
+// - null (Tous) : tous les PDFs du dossier pdf/ (racine)
+// - 'fr' (French) : seulement les PDFs du dossier pdf/francais/
+// - 'en' (English) : seulement les PDFs du dossier pdf/anglais/
+// - 'ar' (Arabe) : seulement les PDFs du dossier pdf/arabe/
 const getBookCategories = (language: Language | null) => {
   // Déterminer quels PDFs afficher selon la langue
-  let pdfsToShow = allPdfFilesWithPages; // Par défaut (null), tous les PDFs
+  let pdfsToShow = allPdfFilesWithPages; // Par défaut (null = "Tous"), tous les PDFs du dossier pdf/ (racine)
   
   if (language === 'fr') {
-    pdfsToShow = frenchPdfFilesWithPages; // Seulement les PDFs français
+    pdfsToShow = frenchPdfFilesWithPages; // Seulement les PDFs du dossier pdf/francais/
   } else if (language === 'en') {
-    pdfsToShow = englishPdfFilesWithPages; // Seulement les PDFs anglais
+    pdfsToShow = englishPdfFilesWithPages; // Seulement les PDFs du dossier pdf/anglais/
   } else if (language === 'ar') {
-    pdfsToShow = arabicPdfFilesWithPages; // Seulement les PDFs arabes
+    pdfsToShow = arabicPdfFilesWithPages; // Seulement les PDFs du dossier pdf/arabe/
   }
-  // Si language === null, on garde allPdfFiles
+  // Si language === null (bouton "Tous"), on garde allPdfFiles (tous les PDFs de la racine)
 
   return [
     {
@@ -1529,6 +1744,9 @@ function LanguageSelectorBar() {
                 setLang(lang.code);
                 if (lang.code) {
                   setLanguage(lang.code);
+                } else {
+                  // Pour "Tous", on garde la langue actuelle pour les traductions
+                  // mais on réinitialise le filtre des livres à null
                 }
               }}
             >
@@ -2026,7 +2244,7 @@ function HomeScreen({ navigation }: any) {
                        item.searchType === 'zikr' ? '🕌 Zikr' :
                        '📄 Article'}
                     </Text>
-                  </View>
+            </View>
                   {isViewed && item.searchType === 'pdf' && (
                     <Image source={require('./assets/pdf/cover/icones/lun3.png')} style={styles.searchResultViewedIcon} />
                   )}
@@ -2037,7 +2255,7 @@ function HomeScreen({ navigation }: any) {
               );
             })}
           </ScrollView>
-        </View>
+      </View>
       )}
 
       {/* Message si aucun résultat */}
@@ -2494,13 +2712,17 @@ function HomeScreen({ navigation }: any) {
         <ScrollView 
           horizontal 
           showsHorizontalScrollIndicator={false} 
+          pagingEnabled
+          snapToInterval={width * 4 / 5 + 12}
+          snapToAlignment="start"
+          decelerationRate="fast"
           style={styles.horizontalScrollModern} 
-          contentContainerStyle={styles.horizontalScrollContentModern}
+          contentContainerStyle={styles.podcastsHorizontalScrollFull}
         >
           {podcasts.slice(0, 5).map(podcast => (
             <TouchableOpacity 
               key={podcast.id} 
-              style={styles.podcastCardHome}
+              style={styles.podcastCardHomeFull}
               activeOpacity={0.8}
               onPress={() => {
                 addToHistory(podcast, 'audio');
@@ -2513,8 +2735,6 @@ function HomeScreen({ navigation }: any) {
                 imageStyle={styles.podcastCardImageStyleHome}
               >
                 <View style={styles.podcastCardOverlayHome}>
-                  <Text style={styles.podcastCardTitleHome} numberOfLines={2}>{podcast.title}</Text>
-                  <Text style={styles.podcastCardSubtitleHome} numberOfLines={1}>{podcast.host}</Text>
                 </View>
               </ImageBackground>
             </TouchableOpacity>
@@ -5187,15 +5407,6 @@ function PodcastsScreen({ navigation, route }: any) {
       >
         {podcasts.map((podcast) => (
           <View key={podcast.id} style={styles.podcastCardNew}>
-            {/* Icône FAYDA avec date */}
-            <View style={styles.podcastCardHeader}>
-              <View style={styles.podcastFaydaIcon}>
-                <Text style={styles.podcastFaydaIconText}>فيضة</Text>
-              </View>
-              <Text style={[styles.podcastDate, { color: theme.textSecondary }]}>
-                {podcast.date}
-              </Text>
-            </View>
 
             {/* Thumbnail avec overlay */}
             <TouchableOpacity
@@ -5216,34 +5427,51 @@ function PodcastsScreen({ navigation, route }: any) {
                 </View>
               )}
               
-              {/* Overlay avec texte */}
+              {/* Overlay vide - logo retiré */}
               <View style={styles.podcastThumbnailOverlay}>
-                <View style={styles.podcastThumbnailTextContainer}>
-                  <Text style={styles.podcastThumbnailTitle}>{podcast.title}</Text>
-                  <Text style={styles.podcastThumbnailSubtitle}>{podcast.subtitle}</Text>
-                  <Text style={styles.podcastThumbnailEpisodes}>Episodes - {podcast.episodeType}</Text>
-                </View>
-                
-                {/* Logo FAYDA TIDIANIYA avec waveform */}
-                <View style={styles.podcastThumbnailLogo}>
-                  <Text style={styles.podcastThumbnailLogoAr}>فيضة</Text>
-                  <Text style={styles.podcastThumbnailLogoText}>DIGITAL</Text>
-                  <Text style={styles.podcastThumbnailWaveform}>〰️</Text>
-                </View>
               </View>
             </TouchableOpacity>
 
-            {/* Titre en dessous */}
+            {/* Informations en bas de la carte */}
+            <View style={styles.podcastCardInfoContainer}>
+              {/* Titre */}
             <Text style={[styles.podcastCardTitleNew, { color: theme.text }]} numberOfLines={2}>
               {podcast.title}
             </Text>
             
-            {/* Description si disponible */}
+              {/* Sous-titre / Hôte */}
+              {podcast.subtitle && (
+                <Text style={[styles.podcastCardSubtitleNew, { color: theme.textSecondary }]} numberOfLines={1}>
+                  {podcast.subtitle}
+                </Text>
+              )}
+              
+              {/* Hôte */}
+              {podcast.host && (
+                <Text style={[styles.podcastCardHost, { color: theme.textSecondary }]} numberOfLines={1}>
+                  Par {podcast.host}
+                </Text>
+              )}
+              
+              {/* Description */}
             {podcast.description && (
               <Text style={[styles.podcastCardDescription, { color: theme.textSecondary }]} numberOfLines={2}>
                 {podcast.description}
               </Text>
             )}
+              
+              {/* Date et type */}
+              <View style={styles.podcastCardMetadata}>
+                <Text style={[styles.podcastCardDate, { color: theme.textSecondary }]}>
+                  {podcast.date}
+                </Text>
+                {podcast.episodeType && (
+                  <Text style={[styles.podcastCardEpisodeType, { color: theme.textSecondary }]}>
+                    • {podcast.episodeType}
+                  </Text>
+                )}
+              </View>
+            </View>
 
             {/* Infos avec icônes */}
             <View style={styles.podcastCardFooterNew}>
@@ -5311,18 +5539,9 @@ function PodcastsScreen({ navigation, route }: any) {
                         imageStyle={styles.podcastModalImageStyle}
                       >
                         <View style={styles.podcastModalImageOverlay}>
-                          <Text style={styles.podcastModalImageTitle}>{selectedPodcast.title}</Text>
-                          <Text style={styles.podcastModalImageSubtitle}>
-                            {selectedPodcast.subtitle || `Par ${selectedPodcast.host}`}
-                          </Text>
                         </View>
                       </ImageBackground>
                     </View>
-
-                    {/* Titre principal */}
-                    <Text style={[styles.podcastModalMainTitle, { color: theme.text }]}>
-                      {selectedPodcast.title}
-                    </Text>
 
                     {/* Métadonnées */}
                     <View style={styles.podcastModalMetadata}>
@@ -5354,13 +5573,6 @@ function PodcastsScreen({ navigation, route }: any) {
                       </TouchableOpacity>
                     </View>
 
-                    {/* Section About */}
-                    <View style={styles.podcastModalAboutSection}>
-                      <Text style={[styles.podcastModalSectionTitle, { color: theme.text }]}>About</Text>
-                      <Text style={[styles.podcastModalAboutText, { color: theme.text }]}>
-                        {selectedPodcast.description || 'Podcast spirituel de grande valeur.'}
-                      </Text>
-                    </View>
 
                     {/* Section Tags */}
                     <View style={styles.podcastModalTagsSection}>
@@ -5860,25 +6072,8 @@ function PodcastPlayerScreen({ route, navigation }: any) {
             imageStyle={styles.podcastPlayerImageStyle}
           >
             <View style={styles.podcastPlayerImageOverlay}>
-              <Text style={styles.podcastPlayerImageTitle}>{podcast.title}</Text>
-              <Text style={styles.podcastPlayerImageSubtitle}>
-                {podcast.subtitle || `Par ${podcast.host}`}
-              </Text>
             </View>
           </ImageBackground>
-        </View>
-
-        {/* Titre de la piste */}
-        <View style={styles.podcastPlayerTrackInfo}>
-          <Text style={[styles.podcastPlayerTrackTitle, { color: theme.text }]} numberOfLines={2}>
-            {podcast.title}
-          </Text>
-          <TouchableOpacity 
-            style={styles.podcastPlayerOptions}
-            onPress={handleMenuPress}
-          >
-            <Text style={styles.podcastPlayerOptionsIcon}>☰</Text>
-          </TouchableOpacity>
         </View>
 
         {/* Barre de progression */}
@@ -11088,7 +11283,7 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   podcastPlayerImageOverlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.05)',
     padding: 16,
     paddingBottom: 20,
   },
@@ -11910,11 +12105,6 @@ const styles = StyleSheet.create({
   },
   podcastCardNew: {
     borderRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    elevation: 6,
     overflow: 'hidden',
   },
   podcastCardContentNew: {
@@ -12314,7 +12504,7 @@ const styles = StyleSheet.create({
   },
   podcastThumbnailContainer: {
     width: '100%',
-    height: 280,
+    height: 220,
     borderRadius: 16,
     overflow: 'hidden',
     marginBottom: 12,
@@ -12344,7 +12534,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    backgroundColor: 'rgba(0, 0, 0, 0.05)',
     justifyContent: 'space-between',
     padding: 20,
   },
@@ -12402,17 +12592,41 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     marginLeft: 4,
   },
+  podcastCardInfoContainer: {
+    paddingHorizontal: 4,
+    paddingTop: 12,
+    paddingBottom: 8,
+  },
   podcastCardTitleNew: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 6,
-    paddingHorizontal: 4,
+  },
+  podcastCardSubtitleNew: {
+    fontSize: 14,
+    marginBottom: 4,
+  },
+  podcastCardHost: {
+    fontSize: 13,
+    marginBottom: 8,
+    fontStyle: 'italic',
   },
   podcastCardDescription: {
     fontSize: 14,
     lineHeight: 20,
-    marginBottom: 12,
-    paddingHorizontal: 4,
+    marginBottom: 8,
+  },
+  podcastCardMetadata: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  podcastCardDate: {
+    fontSize: 12,
+  },
+  podcastCardEpisodeType: {
+    fontSize: 12,
+    marginLeft: 4,
   },
   podcastCardFooterNew: {
     flexDirection: 'row',
@@ -13510,6 +13724,20 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 5,
   },
+  podcastsHorizontalScrollFull: {
+    paddingRight: 20,
+  },
+  podcastCardHomeFull: {
+    width: width * 4 / 5,
+    height: 200,
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginRight: 12,
+    marginLeft: 20,
+  },
+  podcastCardHomeFullFirst: {
+    marginLeft: 0,
+  },
   podcastCardImageHome: {
     width: '100%',
     height: '100%',
@@ -13520,7 +13748,7 @@ const styles = StyleSheet.create({
   },
   podcastCardOverlayHome: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.05)',
     justifyContent: 'flex-end',
     padding: 12,
     borderRadius: 12,
