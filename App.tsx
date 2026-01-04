@@ -1446,8 +1446,8 @@ const getBookCategories = (language: Language | null) => {
     books: [
       { id: 30, title: 'La Connaissance Spirituelle', titleAr: 'المعرفة الروحية', author: 'Fayda Digital', pages: 28, cover: '🌟', htmlFile: 'maarifa-articles.html', image: require('./assets/pdf/cover/articles/art6.png'), description: 'Découvrez ce qu\'est la Ma\'arifa, la gnose divine dans la tradition soufie.' },
       { id: 31, title: 'Les Degrés de la Connaissance', titleAr: 'درجات المعرفة', author: 'Fayda Digital', pages: 24, cover: '💫', htmlFile: 'maarifa-articles.html', image: require('./assets/pdf/cover/articles/art7.png'), description: 'Comprenez les différents niveaux de connaissance spirituelle : science, compréhension et gnose.' },
-      { id: 32, title: 'La Ma\'arifa dans la Tariqa Tijaniyya', titleAr: 'المعرفة في الطريقة التجانية', author: 'Fayda Digital', pages: 26, cover: '🌙', htmlFile: 'maarifa-articles.html', description: 'Explorez comment la Ma\'arifa est cultivée dans la voie tidiane.' },
-      { id: 33, title: 'Le Chemin vers la Gnose', titleAr: 'طريق المعرفة', author: 'Fayda Digital', pages: 30, cover: '🔮', htmlFile: 'maarifa-articles.html', description: 'Apprenez les étapes et les qualités nécessaires pour atteindre la connaissance spirituelle.' },
+      { id: 32, title: 'La Ma\'arifa dans la Tariqa Tijaniyya', titleAr: 'المعرفة في الطريقة التجانية', author: 'Fayda Digital', pages: 26, cover: '🌙', htmlFile: 'maarifa-articles.html', image: require('./assets/pdf/cover/articles/art8.png'), description: 'Explorez comment la Ma\'arifa est cultivée dans la voie tidiane.' },
+      { id: 33, title: 'Le Chemin vers la Gnose', titleAr: 'طريق المعرفة', author: 'Fayda Digital', pages: 30, cover: '🔮', htmlFile: 'maarifa-articles.html', image: require('./assets/pdf/cover/articles/art9.png'), description: 'Apprenez les étapes et les qualités nécessaires pour atteindre la connaissance spirituelle.' },
     ]
   },
   ];
@@ -1681,7 +1681,7 @@ function HomeScreen({ navigation }: any) {
         </ImageBackground>
       </View>
 
-      {/* Rubrique 1 : Derniers articles consultés - Format cartes verticales avec portraits */}
+      {/* Rubrique 1 : Derniers articles consultés - Format cartes carrées 1/4 largeur */}
       {recentItems.length > 0 && (
         <View style={styles.sectionModern}>
           <View style={styles.sectionHeaderModern}>
@@ -1708,10 +1708,12 @@ function HomeScreen({ navigation }: any) {
                 cardImage = item.item.image || null;
               }
               
+              const cardWidth = width * 1.7 / 5; // 1.7/5 de la largeur de l'écran
+              
               return (
                 <TouchableOpacity 
                   key={`${item.id}-${item.type}-${index}`}
-                  style={styles.recentCardVertical}
+                  style={[styles.recentCardSquare, { width: cardWidth, height: cardWidth }]}
                   activeOpacity={0.9}
                   onPress={() => {
                     if (item.type === 'pdf') {
@@ -1725,25 +1727,46 @@ function HomeScreen({ navigation }: any) {
                       setActiveTab('overview');
                       setModalVisible(true);
                     } else {
-                      setCurrentPlayer({ item: item.item, type: item.item.type || 'music' });
+                      // Déterminer le type d'audio et naviguer vers l'écran approprié
+                      const isCoran = coranTracks.some(track => track.id === item.item.id);
+                      const isZikr = zikrFiles.some(zikr => zikr.id === item.item.id);
+                      
+                      if (isCoran) {
+                        setCurrentPlayer({ item: item.item, type: 'coran' });
+                        navigation.navigate('Coran');
+                      } else if (isZikr) {
+                        setCurrentPlayer({ item: item.item, type: 'zikr' });
+                        navigation.navigate('Zikr');
+                      } else {
+                        setCurrentPlayer({ item: item.item, type: item.item.type || 'music' });
+                      }
                     }
                   }}
                 >
                   <ImageBackground
                     source={cardImage || require('./assets/thierno.png')}
-                    style={styles.recentCardImage}
-                    imageStyle={styles.recentCardImageStyle}
+                    style={styles.recentCardImageSquare}
+                    imageStyle={styles.recentCardImageStyleSquare}
                   >
                     {/* Overlay sombre en bas pour la lisibilité du texte */}
-                    <View style={styles.recentCardOverlay} />
+                    <View style={styles.recentCardOverlaySquare} />
+                    
+                    {/* Icône pour les éléments consultés */}
+                    <View style={styles.viewedIconContainerRecent}>
+                      {item.type === 'pdf' ? (
+                        <Image source={require('./assets/pdf/cover/icones/lun3.png')} style={styles.viewedIconImage} />
+                      ) : (
+                        <Image source={require('./assets/pdf/cover/icones/pl3.png')} style={styles.viewedIconImageAudio} />
+                      )}
+                    </View>
                     
                     {/* Texte superposé en bas de l'image */}
-                    <View style={styles.recentCardTextContainer}>
-                      <Text style={styles.recentCardTitle} numberOfLines={2}>
+                    <View style={styles.recentCardTextContainerSquare}>
+                      <Text style={styles.recentCardTitleSquare} numberOfLines={2}>
                         {item.title}
                       </Text>
                       {item.titleAr && (
-                        <Text style={styles.recentCardTitleAr} numberOfLines={2}>
+                        <Text style={styles.recentCardTitleArSquare} numberOfLines={2}>
                           {item.titleAr}
                         </Text>
                       )}
@@ -1779,10 +1802,12 @@ function HomeScreen({ navigation }: any) {
           style={styles.horizontalScrollModern} 
           contentContainerStyle={styles.horizontalScrollContentModern}
         >
-          {pdfFiles.slice(0, 6).map(book => (
+          {pdfFiles.slice(0, 6).map(book => {
+            const isViewed = recentItems.some(item => item.id === book.id && item.type === 'pdf');
+            return (
             <TouchableOpacity 
               key={book.id} 
-              style={[styles.bookCardHome, { backgroundColor: theme.surface }]}
+              style={[styles.bookCardHome, { backgroundColor: theme.surface, width: width / 5 }]}
               activeOpacity={0.8}
               onPress={() => {
                 // Utiliser le modal pour les PDFs
@@ -1799,19 +1824,29 @@ function HomeScreen({ navigation }: any) {
               {book.image ? (
                 <ImageBackground
                   source={book.image}
-                  style={book.htmlFile ? styles.bookCoverArticle : styles.bookCoverHome}
+                  style={[book.htmlFile ? styles.bookCoverArticle : styles.bookCoverHome, { height: 140 }]}
                   imageStyle={styles.bookCoverImageStyle}
                 >
                   <View style={styles.bookCoverOverlay} />
+                  {isViewed && (
+                    <View style={styles.viewedIconContainer}>
+                      <Image source={require('./assets/pdf/cover/icones/lun3.png')} style={styles.viewedIconImage} />
+                    </View>
+                  )}
                 </ImageBackground>
               ) : (
                 <LinearGradient
                   colors={['#0F5132', '#0B3C5D', '#0F5132']}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
-                  style={book.htmlFile ? styles.bookCoverArticle : styles.bookCoverHome}
+                  style={[book.htmlFile ? styles.bookCoverArticle : styles.bookCoverHome, { height: 140 }]}
                 >
                   <Text style={styles.bookCoverEmojiHome}>{book.cover || '📖'}</Text>
+                  {isViewed && (
+                    <View style={styles.viewedIconContainer}>
+                      <Image source={require('./assets/pdf/cover/icones/lun3.png')} style={styles.viewedIconImage} />
+                    </View>
+                  )}
                 </LinearGradient>
               )}
               <View style={styles.bookCardContentHome}>
@@ -1821,7 +1856,8 @@ function HomeScreen({ navigation }: any) {
                 )}
               </View>
             </TouchableOpacity>
-          ))}
+            );
+          })}
         </ScrollView>
       </View>
 
@@ -1886,7 +1922,9 @@ function HomeScreen({ navigation }: any) {
           style={styles.horizontalScrollModern} 
           contentContainerStyle={styles.horizontalScrollContentModern}
         >
-          {coranTracks.slice(0, 5).map(track => (
+          {coranTracks.slice(0, 5).map(track => {
+            const isViewed = recentItems.some(item => item.id === track.id && item.type === 'audio');
+            return (
             <TouchableOpacity 
               key={track.id} 
               style={styles.coranCardHome}
@@ -1903,6 +1941,11 @@ function HomeScreen({ navigation }: any) {
                 imageStyle={styles.coranCardImageStyle}
               >
                 <View style={styles.coranCardOverlay} />
+                {isViewed && (
+                  <View style={styles.viewedIconContainerAudio}>
+                    <Image source={require('./assets/pdf/cover/icones/pl3.png')} style={styles.viewedIconImageAudio} />
+                  </View>
+                )}
                 <View style={styles.coranCardContent}>
                   <Text style={styles.coranCardTitle}>{track.title}</Text>
                   <Text style={styles.coranCardTitleAr}>{track.titleAr}</Text>
@@ -1910,7 +1953,8 @@ function HomeScreen({ navigation }: any) {
                 </View>
               </ImageBackground>
             </TouchableOpacity>
-          ))}
+            );
+          })}
         </ScrollView>
       </View>
 
@@ -1937,7 +1981,9 @@ function HomeScreen({ navigation }: any) {
           style={styles.horizontalScrollModern} 
           contentContainerStyle={styles.horizontalScrollContentModern}
         >
-          {zikrFiles.slice(0, 6).map(zikr => (
+          {zikrFiles.slice(0, 6).map(zikr => {
+            const isViewed = recentItems.some(item => item.id === zikr.id && item.type === 'audio');
+            return (
             <TouchableOpacity 
               key={zikr.id} 
               style={[styles.audiobookCardModern, { opacity: 1 }]}
@@ -1954,13 +2000,19 @@ function HomeScreen({ navigation }: any) {
                 end={{ x: 1, y: 1 }}
                 style={styles.audiobookGradientModern}
               >
+                {isViewed && (
+                  <View style={styles.viewedIconContainerAudioHome}>
+                    <Image source={require('./assets/pdf/cover/icones/pl3.png')} style={styles.viewedIconImageAudio} />
+                  </View>
+                )}
                 <View style={styles.audiobookContent}>
                   <Text style={styles.audiobookTitleModern}>{zikr.title}</Text>
                   <Text style={styles.audiobookTitleArModern}>{zikr.titleAr}</Text>
                 </View>
               </LinearGradient>
             </TouchableOpacity>
-          ))}
+            );
+          })}
         </ScrollView>
       </View>
 
@@ -2218,7 +2270,7 @@ function HomeScreen({ navigation }: any) {
 
 // Écran des livres
 function BooksScreen({ navigation }: any) {
-  const { language, darkMode, setCurrentPlayer, addToHistory, setShowDonationBanner } = React.useContext(AppContext);
+  const { language, darkMode, setCurrentPlayer, addToHistory, setShowDonationBanner, recentItems } = React.useContext(AppContext);
   const theme = darkMode ? darkTheme : lightTheme;
   const [selectedBook, setSelectedBook] = React.useState<any>(null);
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -2368,15 +2420,16 @@ function BooksScreen({ navigation }: any) {
             </View>
             {category.id === 'pdf' ? (
               <View style={styles.booksGridContainer}>
-                {(expandedCategory === category.id ? category.books : category.books.slice(0, 6)).map((book, index) => {
-                  const isLastInRow = (index + 1) % 3 === 0;
+                {(expandedCategory === category.id ? category.books : category.books.slice(0, 8)).map((book, index) => {
+                  const isLastInRow = (index + 1) % 4 === 0;
+                  const isViewed = recentItems.some(item => item.id === book.id && item.type === 'pdf');
                   return (
                   <TouchableOpacity
                     key={book.id}
                     style={[
                       styles.bookCardGrid, 
-                      { backgroundColor: theme.surface },
-                      isLastInRow && { marginRight: 0 } // Pas de marginRight sur la 3ème colonne
+                      { backgroundColor: theme.surface, width: (width - 40) / 4 - 8 },
+                      isLastInRow && { marginRight: 0 } // Pas de marginRight sur la 4ème colonne
                     ]}
                     activeOpacity={0.8}
                     onPress={() => handleBookPress(book)}
@@ -2384,19 +2437,29 @@ function BooksScreen({ navigation }: any) {
                     {(book as any).image ? (
                       <ImageBackground
                         source={(book as any).image}
-                        style={(book as any).htmlFile ? styles.bookCoverArticle : styles.bookCoverModern}
+                        style={[(book as any).htmlFile ? styles.bookCoverArticle : styles.bookCoverModern, !(book as any).htmlFile && { height: 140 }]}
                         imageStyle={styles.bookCoverImageStyle}
                       >
                         <View style={styles.bookCoverOverlay} />
+                        {isViewed && (
+                          <View style={styles.viewedIconContainer}>
+                            <Image source={require('./assets/pdf/cover/icones/lun3.png')} style={styles.viewedIconImage} />
+                          </View>
+                        )}
                       </ImageBackground>
                     ) : (
                       <LinearGradient
                         colors={['#0F5132', '#0B3C5D', '#0F5132']}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 1 }}
-                        style={(book as any).htmlFile ? styles.bookCoverArticle : styles.bookCoverModern}
+                        style={[(book as any).htmlFile ? styles.bookCoverArticle : styles.bookCoverModern, !(book as any).htmlFile && { height: 140 }]}
                       >
                         <Text style={styles.bookCoverEmojiModern}>{book.cover || '📖'}</Text>
+                        {isViewed && (
+                          <View style={styles.viewedIconContainer}>
+                            <Image source={require('./assets/pdf/cover/icones/lun3.png')} style={styles.viewedIconImage} />
+                          </View>
+                        )}
                       </LinearGradient>
                     )}
                     <View style={styles.bookCardContentModern}>
@@ -2902,7 +2965,7 @@ function MusicScreen({ navigation }: any) {
 
 // Écran Zikr - Design selon l'image
 function ZikrScreen({ navigation }: any) {
-  const { language, darkMode, setCurrentPlayer, currentPlayer, addToHistory } = React.useContext(AppContext);
+  const { language, darkMode, setCurrentPlayer, currentPlayer, addToHistory, recentItems } = React.useContext(AppContext);
   const theme = darkMode ? darkTheme : lightTheme;
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [position, setPosition] = React.useState(0);
@@ -3186,6 +3249,7 @@ function ZikrScreen({ navigation }: any) {
         {/* Liste des fichiers Zikr */}
         {zikrFiles.map((zikr) => {
           const isPlaying = currentPlayer?.type === 'zikr' && currentPlayer.item?.id === zikr.id;
+          const isViewed = recentItems.some(item => item.id === zikr.id && item.type === 'audio');
           
           return (
             <TouchableOpacity
@@ -3209,6 +3273,11 @@ function ZikrScreen({ navigation }: any) {
                     {zikr.subtitle?.toUpperCase() || zikr.title.toUpperCase()}
                   </Text>
                 </View>
+                {isViewed && (
+                  <View style={styles.viewedIconContainerAudio}>
+                    <Image source={require('./assets/pdf/cover/icones/pl3.png')} style={styles.viewedIconImageAudio} />
+                  </View>
+                )}
               </View>
 
               {/* Contenu de la carte */}
@@ -3433,7 +3502,7 @@ function ZikrScreen({ navigation }: any) {
 
 // Écran Coran - Design similaire à ZikrScreen
 function CoranScreen({ navigation }: any) {
-  const { language, darkMode, setCurrentPlayer, currentPlayer, addToHistory } = React.useContext(AppContext);
+  const { language, darkMode, setCurrentPlayer, currentPlayer, addToHistory, recentItems } = React.useContext(AppContext);
   const theme = darkMode ? darkTheme : lightTheme;
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [position, setPosition] = React.useState(0);
@@ -3737,6 +3806,7 @@ function CoranScreen({ navigation }: any) {
         {/* Liste des fichiers Coran */}
         {coranFiles.map((coran) => {
           const isPlaying = currentPlayer?.type === 'coran' && currentPlayer.item?.id === coran.id;
+          const isViewed = recentItems.some(item => item.id === coran.id && item.type === 'audio');
           
           return (
             <TouchableOpacity
@@ -3760,6 +3830,11 @@ function CoranScreen({ navigation }: any) {
                     {coran.subtitle?.toUpperCase() || coran.title.toUpperCase()}
                   </Text>
                 </View>
+                {isViewed && (
+                  <View style={styles.viewedIconContainerAudio}>
+                    <Image source={require('./assets/pdf/cover/icones/pl3.png')} style={styles.viewedIconImageAudio} />
+                  </View>
+                )}
               </View>
 
               {/* Contenu de la carte */}
@@ -3991,7 +4066,7 @@ function CoranScreen({ navigation }: any) {
 
 // Écran Gamou - Design similaire à ZikrScreen
 function GamouScreen({ navigation }: any) {
-  const { language, darkMode, setCurrentPlayer, currentPlayer, addToHistory } = React.useContext(AppContext);
+  const { language, darkMode, setCurrentPlayer, currentPlayer, addToHistory, recentItems } = React.useContext(AppContext);
   const theme = darkMode ? darkTheme : lightTheme;
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [position, setPosition] = React.useState(0);
@@ -4257,6 +4332,7 @@ function GamouScreen({ navigation }: any) {
         {/* Liste des fichiers Gamou */}
         {gamouFiles.map((gamou) => {
           const isPlaying = currentPlayer?.type === 'zikr' && currentPlayer.item?.id === gamou.id;
+          const isViewed = recentItems.some(item => item.id === gamou.id && item.type === 'audio');
           
           return (
             <TouchableOpacity
@@ -4280,6 +4356,11 @@ function GamouScreen({ navigation }: any) {
                     {gamou.subtitle?.toUpperCase() || gamou.title.toUpperCase()}
                   </Text>
                 </View>
+                {isViewed && (
+                  <View style={styles.viewedIconContainerAudio}>
+                    <Image source={require('./assets/pdf/cover/icones/pl3.png')} style={styles.viewedIconImageAudio} />
+                  </View>
+                )}
               </View>
 
               {/* Contenu de la carte */}
@@ -4602,7 +4683,7 @@ function PodcastsScreen({ navigation, route }: any) {
               styles.podcastsHeaderPill,
               selectedTab === 'knowledgecast' && styles.podcastsHeaderPillActive
             ]}
-            onPress={() => setSelectedTab('knowledgecast')}
+            onPress={() => navigation.navigate('Gamou')}
           >
             <Text style={[
               styles.podcastsHeaderPillText,
@@ -6389,7 +6470,7 @@ function DonationModal({ visible, onClose }: { visible: boolean; onClose: () => 
                   overflow: 'hidden',
                 }}>
                   <Image
-                    source={require('./assets/payments/wave-logo.png')}
+                    source={require('./assets/pdf/cover/icones/wave.png')}
                     style={{
                       width: 50,
                       height: 50,
@@ -6451,7 +6532,7 @@ function DonationModal({ visible, onClose }: { visible: boolean; onClose: () => 
                   overflow: 'hidden',
                 }}>
                   <Image
-                    source={require('./assets/payments/orange-money-logo.png')}
+                    source={require('./assets/pdf/cover/icones/om.png')}
                     style={{
                       width: 50,
                       height: 50,
@@ -7174,7 +7255,7 @@ function MainTabs() {
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
-          tabBarActiveTintColor: '#999',
+          tabBarActiveTintColor: '#0F5132',
           tabBarInactiveTintColor: '#999',
           tabBarStyle: {
             backgroundColor: darkMode ? darkTheme.surface : lightTheme.surface,
@@ -12656,6 +12737,54 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     opacity: 0.9,
   },
+  // Styles pour les cartes récentes carrées (2/5 largeur)
+  recentCardSquare: {
+    marginRight: 12,
+    borderRadius: 12,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  recentCardImageSquare: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'flex-end',
+    position: 'relative',
+  },
+  recentCardImageStyleSquare: {
+    borderRadius: 12,
+    resizeMode: 'cover',
+  },
+  recentCardOverlaySquare: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: '50%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  recentCardTextContainerSquare: {
+    padding: 6,
+    zIndex: 1,
+    position: 'relative',
+  },
+  recentCardTitleSquare: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#ffffff',
+    marginBottom: 2,
+    lineHeight: 12,
+  },
+  recentCardTitleArSquare: {
+    fontSize: 9,
+    color: '#ffffff',
+    lineHeight: 11,
+    textAlign: 'right',
+    opacity: 0.9,
+  },
   // Styles pour les cartes Coran avec image
   podcastCardHome: {
     width: 180,
@@ -12744,6 +12873,44 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#F5E6D3',
     opacity: 0.9,
+  },
+  viewedIconContainer: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+  },
+  viewedIconText: {
+    fontSize: 14,
+  },
+  viewedIconImage: {
+    width: 32,
+    height: 32,
+    resizeMode: 'contain',
+  },
+  viewedIconContainerAudio: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+  },
+  viewedIconTextAudio: {
+    fontSize: 12,
+  },
+  viewedIconImageAudio: {
+    width: 32,
+    height: 32,
+    resizeMode: 'contain',
+  },
+  viewedIconContainerAudioHome: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    zIndex: 10,
+  },
+  viewedIconContainerRecent: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    zIndex: 10,
   },
 });
 
