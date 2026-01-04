@@ -1,0 +1,18 @@
+HTTrack3.49-2 launched on Wed, 24 Dec 2025 21:19:38 at https://luxride-nextjs.vercel.app/home-2
+(winhttrack https://luxride-nextjs.vercel.app/home-2 -O "https://luxride-nextjs.vercel.app/home-2/am3" -%v )
+
+Information, Warnings and Errors reported for this mirror:
+note:	the hts-log.txt file, and hts-cache folder, may contain sensitive information,
+	such as username/password authentication for websites mirrored in this project
+	do not share these files/folders if you want these information to remain private
+
+21:27:02	Error: 	"Not Found" (404) at link https://luxride-nextjs.vercel.app/assets/imgs/theme/favicon.svg (from https://luxride-nextjs.vercel.app/_next/static/css/2b8c3c571487e69b.css)
+21:27:02	Error: 	"Not Found" (404) at link https://luxride-nextjs.vercel.app/assets/imgs/page/register/check.svg (from https://luxride-nextjs.vercel.app/_next/static/css/2b8c3c571487e69b.css)
+21:27:02	Error: 	"Not Found" (404) at link https://luxride-nextjs.vercel.app/assets/imgs/slider/swiper/dot.svg (from https://luxride-nextjs.vercel.app/_next/static/css/2b8c3c571487e69b.css)
+21:27:02	Error: 	"Not Found" (404) at link https://luxride-nextjs.vercel.app/assets/imgs/slider/swiper/dot-active.svg (from https://luxride-nextjs.vercel.app/_next/static/css/2b8c3c571487e69b.css)
+21:27:06	Error: 	"Not Found" (404) at link https://luxride-nextjs.vercel.app/index.html (from https://luxride-nextjs.vercel.app/contact-2)
+21:27:06	Error: 	"Not Found" (404) at link https://luxride-nextjs.vercel.app/service-grid.html (from https://luxride-nextjs.vercel.app/contact-2)
+21:27:13	Error: 	"Not Found" (404) at link https://luxride-nextjs.vercel.app/www.luxride.com (from https://luxride-nextjs.vercel.app/invoice)
+
+HTTrack Website Copier/3.49-2 mirror complete in 7 minutes 35 seconds : 439 links scanned, 431 files written (41886959 bytes overall) [36114792 bytes received at 79373 bytes/sec], 8000078 bytes transferred using HTTP compression in 214 files, ratio 20%
+(7 errors, 0 warnings, 0 messages)

@@ -6,10 +6,9 @@ export interface Message {
 }
 
 // Clé API Groq
-// ⚠️ IMPORTANT: Remplacez 'YOUR_GROQ_API_KEY' par votre vraie clé API
-// Obtenez votre clé sur https://console.groq.com
+// ⚠️ IMPORTANT: Cette clé est pour le développement local uniquement
 // Pour la production, utilisez des variables d'environnement pour sécuriser la clé
-const GROQ_API_KEY = 'YOUR_GROQ_API_KEY';
+const GROQ_API_KEY = process.env.EXPO_PUBLIC_GROQ_API_KEY || 'YOUR_GROQ_API_KEY';
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
 // Prompts système pour spécialiser l'IA selon la langue
@@ -20,7 +19,7 @@ const getSystemPrompt = (language: 'fr' | 'en' | 'ar'): string => {
 - La Tariqa Tijaniyya (fondements, pratiques comme le Zikr, la Salat al-Fatih, la Wazifa, Cheikh Ahmed Tijani)
 - La Fayda Tidianiyya (Baye Niass/Cheikh Ibrahim Niass, Médina Baye, le mouvement de renouveau spirituel)
 - Les pratiques spirituelles (comment pratiquer le Zikr, la Wazifa, le Doua de la Wazifa)
-- L'application Fayda Digital (comment utiliser les sections Livres, Musique, Podcasts)
+- L'application Fayda Tidianiya (comment utiliser les sections Livres, Musique, Podcasts)
 
 Réponds toujours en français de manière détaillée, claire, respectueuse et spirituellement appropriée. Si tu ne connais pas quelque chose, dis-le honnêtement. Utilise un langage accessible et éducatif.`,
 
@@ -29,7 +28,7 @@ Réponds toujours en français de manière détaillée, claire, respectueuse et 
 - Tijaniyya Tariqa (foundations, practices like Zikr, Salat al-Fatih, Wazifa, Sheikh Ahmed Tijani)
 - Fayda Tidianiyya (Baye Niass/Sheikh Ibrahim Niass, Medina Baye, the spiritual renewal movement)
 - Spiritual practices (how to practice Zikr, Wazifa, Doua of Wazifa)
-- Fayda Digital app (how to use Books, Music, Podcasts sections)
+- Fayda Tidianiya app (how to use Books, Music, Podcasts sections)
 
 Always respond in English in a detailed, clear, respectful and spiritually appropriate manner. If you don't know something, say so honestly. Use accessible and educational language.`,
 

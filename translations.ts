@@ -78,7 +78,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'modal.by': 'Par',
     
     // Donation
-    'donation.title': 'Soutenir Fayda Digital',
+    'donation.title': 'Soutenir Fayda Tidianiya',
     'donation.message': 'Votre soutien nous aide à continuer à partager la connaissance spirituelle.',
     'donation.button': 'Faire un don',
     'donation.subtitle': 'Choisissez votre moyen de paiement',
@@ -181,7 +181,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'modal.by': 'By',
     
     // Donation
-    'donation.title': 'Support Fayda Digital',
+    'donation.title': 'Support Fayda Tidianiya',
     'donation.message': 'Your support helps us continue sharing spiritual knowledge.',
     'donation.button': 'Make a donation',
     'donation.subtitle': 'Choose your payment method',
@@ -284,7 +284,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'modal.by': 'بواسطة',
     
     // Donation
-    'donation.title': 'دعم فيدا الرقمية',
+    'donation.title': 'دعم الفيضة التجانية',
     'donation.message': 'دعمك يساعدنا على مواصلة مشاركة المعرفة الروحية.',
     'donation.button': 'التبرع',
     'donation.subtitle': 'اختر طريقة الدفع',

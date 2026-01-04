@@ -10,6 +10,7 @@ import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { StatusBar } from 'expo-status-bar';
 import { VideoView, useVideoPlayer } from 'expo-video';
+import { Ionicons } from '@expo/vector-icons';
 import * as React from 'react';
 import { ActivityIndicator, Alert, Animated, Dimensions, Image, ImageBackground, KeyboardAvoidingView, Linking, Modal, Platform, ScrollView, Share, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { WebView } from 'react-native-webview';
@@ -54,7 +55,7 @@ const getIntroductionTariqaHTML = () => `<!DOCTYPE html>
         </div>
         <div class="footer">
             <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
-            <p style="margin-top: 10px;">© Fayda Digital - Sagesse & Spiritualité</p>
+            <p style="margin-top: 10px;">© Fayda Tidianiya - Sagesse & Spiritualité</p>
         </div>
     </div>
 </body>
@@ -92,7 +93,7 @@ const getZikrTariqaHTML = () => `<!DOCTYPE html>
         </div>
         <div class="footer">
             <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
-            <p style="margin-top: 10px;">© Fayda Digital - Sagesse & Spiritualité</p>
+            <p style="margin-top: 10px;">© Fayda Tidianiya - Sagesse & Spiritualité</p>
         </div>
     </div>
 </body>
@@ -127,7 +128,7 @@ const getSalatFatihHTML = () => `<!DOCTYPE html>
         </div>
         <div class="footer">
             <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
-            <p style="margin-top: 10px;">© Fayda Digital - Sagesse & Spiritualité</p>
+            <p style="margin-top: 10px;">© Fayda Tidianiya - Sagesse & Spiritualité</p>
         </div>
     </div>
 </body>
@@ -162,7 +163,7 @@ const getAttachementPropheteHTML = () => `<!DOCTYPE html>
         </div>
         <div class="footer">
             <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
-            <p style="margin-top: 10px;">© Fayda Digital - Sagesse & Spiritualité</p>
+            <p style="margin-top: 10px;">© Fayda Tidianiya - Sagesse & Spiritualité</p>
         </div>
     </div>
 </body>
@@ -324,7 +325,7 @@ const getDouaWazifaHTML = () => `<!DOCTYPE html>
         </div>
         <div class="footer">
             <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
-            <p style="margin-top: 10px;">© Fayda Digital - Sagesse & Spiritualité</p>
+            <p style="margin-top: 10px;">© Fayda Tidianiya - Sagesse & Spiritualité</p>
         </div>
     </div>
 </body>
@@ -364,7 +365,7 @@ const getConnaissanceSpirituelleHTML = () => `<!DOCTYPE html>
         </div>
         <div class="footer">
             <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
-            <p style="margin-top: 10px;">© Fayda Digital - Sagesse & Spiritualité</p>
+            <p style="margin-top: 10px;">© Fayda Tidianiya - Sagesse & Spiritualité</p>
         </div>
     </div>
 </body>
@@ -409,7 +410,7 @@ const getDegresConnaissanceHTML = () => `<!DOCTYPE html>
         </div>
         <div class="footer">
             <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
-            <p style="margin-top: 10px;">© Fayda Digital - Sagesse & Spiritualité</p>
+            <p style="margin-top: 10px;">© Fayda Tidianiya - Sagesse & Spiritualité</p>
         </div>
     </div>
 </body>
@@ -455,7 +456,7 @@ const getMaarifaTariqaHTML = () => `<!DOCTYPE html>
         </div>
         <div class="footer">
             <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
-            <p style="margin-top: 10px;">© Fayda Digital - Sagesse & Spiritualité</p>
+            <p style="margin-top: 10px;">© Fayda Tidianiya - Sagesse & Spiritualité</p>
         </div>
     </div>
 </body>
@@ -511,7 +512,7 @@ const getCheminGnoseHTML = () => `<!DOCTYPE html>
         </div>
         <div class="footer">
             <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
-            <p style="margin-top: 10px;">© Fayda Digital - Sagesse & Spiritualité</p>
+            <p style="margin-top: 10px;">© Fayda Tidianiya - Sagesse & Spiritualité</p>
         </div>
     </div>
 </body>
@@ -1024,7 +1025,7 @@ const allPdfFiles = [
     id: 111,
     title: 'Congratulations to Ibrahim',
     titleAr: 'تهاني لإبراهيم',
-    author: 'Fayda Digital',
+    author: 'Fayda Tidianiya',
     pages: 100,
     cover: '📖',
     pdfFile: require('./assets/pdf/ed-congratulations-to-ibrahim-whenever-his-month-appears.pdf'),
@@ -1202,7 +1203,7 @@ const englishPdfFiles = [
     id: 300,
     title: 'Congratulations to Ibrahim',
     titleAr: 'تهاني لإبراهيم',
-    author: 'Fayda Digital',
+    author: 'Fayda Tidianiya',
     pages: 100,
     cover: '📖',
     pdfFile: require('./assets/pdf/anglais/ed-congratulations-to-ibrahim-whenever-his-month-appears.pdf'),
@@ -1360,7 +1361,7 @@ const arabicPdfFiles = [
     id: 409,
     title: 'Congratulations to Ibrahim',
     titleAr: 'تهاني لإبراهيم',
-    author: 'Fayda Digital',
+    author: 'Fayda Tidianiya',
     pages: 100,
     cover: '📖',
     pdfFile: require('./assets/pdf/arabe/ed-congratulations-to-ibrahim-whenever-his-month-appears.pdf'),
@@ -1433,21 +1434,21 @@ const getBookCategories = (language: Language | null) => {
     id: 'tariqa',
     title: 'Tariqa (Français)',
     books: [
-      { id: 20, title: 'Introduction à la Tariqa Tijaniyya', titleAr: 'الطريقة التجانية', author: 'Fayda Digital', pages: 25, cover: '📿', htmlFile: 'tariqa-articles.html', image: require('./assets/pdf/cover/articles/art1.png'), description: 'Découvrez les fondements, les pratiques et les bienfaits de la Tariqa Tijaniyya, voie spirituelle de lumière et de guidance.' },
-      { id: 21, title: 'Le Zikr dans la Voie Tijaniyya', titleAr: 'الذكر في الطريقة التجانية', author: 'Fayda Digital', pages: 20, cover: '🕌', htmlFile: 'tariqa-articles.html', image: require('./assets/pdf/cover/articles/art2.png'), description: 'Comprenez l\'importance et la pratique du Zikr (invocation) dans la Tariqa Tijaniyya.' },
-      { id: 22, title: 'La Salat al-Fatih', titleAr: 'صلاة الفاتح', author: 'Fayda Digital', pages: 18, cover: '📖', htmlFile: 'tariqa-articles.html', image: require('./assets/pdf/cover/articles/art3.png'), description: 'Apprenez-en plus sur la Salat al-Fatih, cette prière spéciale de la Tariqa Tijaniyya.' },
-      { id: 23, title: 'L\'Attachement au Prophète', titleAr: 'التعلق بالنبي', author: 'Fayda Digital', pages: 22, cover: '☪️', htmlFile: 'tariqa-articles.html', image: require('./assets/pdf/cover/articles/art4.png'), description: 'Explorez la relation spirituelle avec le Prophète Muhammad (paix et bénédictions sur lui) dans la voie tidiane.' },
-      { id: 24, title: 'Doua Wazifa', titleAr: 'دعاء الوظيفة', author: 'Fayda Digital', pages: 15, cover: '🤲', htmlFile: 'tariqa-articles.html', image: require('./assets/pdf/cover/articles/art5.png'), description: 'Invocation de la Wazifa - Douas et prières de la Tariqa Tijaniyya.' },
+      { id: 20, title: 'Introduction à la Tariqa Tijaniyya', titleAr: 'الطريقة التجانية', author: 'Fayda Tidianiya', pages: 25, cover: '📿', htmlFile: 'tariqa-articles.html', image: require('./assets/pdf/cover/articles/art1.png'), description: 'Découvrez les fondements, les pratiques et les bienfaits de la Tariqa Tijaniyya, voie spirituelle de lumière et de guidance.' },
+      { id: 21, title: 'Le Zikr dans la Voie Tijaniyya', titleAr: 'الذكر في الطريقة التجانية', author: 'Fayda Tidianiya', pages: 20, cover: '🕌', htmlFile: 'tariqa-articles.html', image: require('./assets/pdf/cover/articles/art2.png'), description: 'Comprenez l\'importance et la pratique du Zikr (invocation) dans la Tariqa Tijaniyya.' },
+      { id: 22, title: 'La Salat al-Fatih', titleAr: 'صلاة الفاتح', author: 'Fayda Tidianiya', pages: 18, cover: '📖', htmlFile: 'tariqa-articles.html', image: require('./assets/pdf/cover/articles/art3.png'), description: 'Apprenez-en plus sur la Salat al-Fatih, cette prière spéciale de la Tariqa Tijaniyya.' },
+      { id: 23, title: 'L\'Attachement au Prophète', titleAr: 'التعلق بالنبي', author: 'Fayda Tidianiya', pages: 22, cover: '☪️', htmlFile: 'tariqa-articles.html', image: require('./assets/pdf/cover/articles/art4.png'), description: 'Explorez la relation spirituelle avec le Prophète Muhammad (paix et bénédictions sur lui) dans la voie tidiane.' },
+      { id: 24, title: 'Doua Wazifa', titleAr: 'دعاء الوظيفة', author: 'Fayda Tidianiya', pages: 15, cover: '🤲', htmlFile: 'tariqa-articles.html', image: require('./assets/pdf/cover/articles/art5.png'), description: 'Invocation de la Wazifa - Douas et prières de la Tariqa Tijaniyya.' },
     ]
   },
   {
     id: 'maarifa',
     title: 'Ma\'arifa (Français)',
     books: [
-      { id: 30, title: 'La Connaissance Spirituelle', titleAr: 'المعرفة الروحية', author: 'Fayda Digital', pages: 28, cover: '🌟', htmlFile: 'maarifa-articles.html', image: require('./assets/pdf/cover/articles/art6.png'), description: 'Découvrez ce qu\'est la Ma\'arifa, la gnose divine dans la tradition soufie.' },
-      { id: 31, title: 'Les Degrés de la Connaissance', titleAr: 'درجات المعرفة', author: 'Fayda Digital', pages: 24, cover: '💫', htmlFile: 'maarifa-articles.html', image: require('./assets/pdf/cover/articles/art7.png'), description: 'Comprenez les différents niveaux de connaissance spirituelle : science, compréhension et gnose.' },
-      { id: 32, title: 'La Ma\'arifa dans la Tariqa Tijaniyya', titleAr: 'المعرفة في الطريقة التجانية', author: 'Fayda Digital', pages: 26, cover: '🌙', htmlFile: 'maarifa-articles.html', image: require('./assets/pdf/cover/articles/art8.png'), description: 'Explorez comment la Ma\'arifa est cultivée dans la voie tidiane.' },
-      { id: 33, title: 'Le Chemin vers la Gnose', titleAr: 'طريق المعرفة', author: 'Fayda Digital', pages: 30, cover: '🔮', htmlFile: 'maarifa-articles.html', image: require('./assets/pdf/cover/articles/art9.png'), description: 'Apprenez les étapes et les qualités nécessaires pour atteindre la connaissance spirituelle.' },
+      { id: 30, title: 'La Connaissance Spirituelle', titleAr: 'المعرفة الروحية', author: 'Fayda Tidianiya', pages: 28, cover: '🌟', htmlFile: 'maarifa-articles.html', image: require('./assets/pdf/cover/articles/art6.png'), description: 'Découvrez ce qu\'est la Ma\'arifa, la gnose divine dans la tradition soufie.' },
+      { id: 31, title: 'Les Degrés de la Connaissance', titleAr: 'درجات المعرفة', author: 'Fayda Tidianiya', pages: 24, cover: '💫', htmlFile: 'maarifa-articles.html', image: require('./assets/pdf/cover/articles/art7.png'), description: 'Comprenez les différents niveaux de connaissance spirituelle : science, compréhension et gnose.' },
+      { id: 32, title: 'La Ma\'arifa dans la Tariqa Tijaniyya', titleAr: 'المعرفة في الطريقة التجانية', author: 'Fayda Tidianiya', pages: 26, cover: '🌙', htmlFile: 'maarifa-articles.html', image: require('./assets/pdf/cover/articles/art8.png'), description: 'Explorez comment la Ma\'arifa est cultivée dans la voie tidiane.' },
+      { id: 33, title: 'Le Chemin vers la Gnose', titleAr: 'طريق المعرفة', author: 'Fayda Tidianiya', pages: 30, cover: '🔮', htmlFile: 'maarifa-articles.html', image: require('./assets/pdf/cover/articles/art9.png'), description: 'Apprenez les étapes et les qualités nécessaires pour atteindre la connaissance spirituelle.' },
     ]
   },
   ];
@@ -1548,12 +1549,17 @@ function LanguageSelectorBar() {
 
 // Écran d'accueil
 function HomeScreen({ navigation }: any) {
-  const { language, darkMode, setCurrentPlayer, recentItems, addToHistory, setShowDonationBanner } = React.useContext(AppContext);
+  const { language, darkMode, setCurrentPlayer, recentItems, addToHistory, setShowDonationBanner, setLang, setDarkMode } = React.useContext(AppContext);
   const theme = darkMode ? darkTheme : lightTheme;
   const [selectedBook, setSelectedBook] = React.useState<any>(null);
   const [modalVisible, setModalVisible] = React.useState(false);
   const [isBookmarked, setIsBookmarked] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState<'overview' | 'chapters'>('overview');
+  const [showSearch, setShowSearch] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [searchResults, setSearchResults] = React.useState<any[]>([]);
+  const [searchSuggestions, setSearchSuggestions] = React.useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = React.useState(false);
   const lastScrollY = React.useRef(0);
   const scrollTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -1633,6 +1639,193 @@ function HomeScreen({ navigation }: any) {
     );
   };
 
+  const [showSettingsModal, setShowSettingsModal] = React.useState(false);
+
+  const handleSettingsPress = () => {
+    setShowSettingsModal(true);
+  };
+
+  const handleThemeChange = (newTheme: boolean) => {
+    setDarkMode(newTheme);
+  };
+
+  const handleLanguageChange = (newLang: Language | null) => {
+    setLang(newLang);
+    if (newLang) {
+      setLanguage(newLang);
+    }
+  };
+
+  const handleSearchPress = () => {
+    setShowSearch(!showSearch);
+    if (showSearch) {
+      setSearchQuery('');
+      setSearchResults([]);
+    }
+  };
+
+  const performSearchWithQuery = (queryText: string) => {
+    const query = queryText.toLowerCase().trim();
+    if (!query) {
+      setSearchResults([]);
+      return;
+    }
+
+    const results: any[] = [];
+
+    // Rechercher dans les PDFs
+    pdfFiles.forEach(book => {
+      const matchTitle = book.title?.toLowerCase().includes(query);
+      const matchTitleAr = book.titleAr?.toLowerCase().includes(query);
+      const matchAuthor = book.author?.toLowerCase().includes(query);
+      const matchDescription = book.description?.toLowerCase().includes(query);
+      
+      if (matchTitle || matchTitleAr || matchAuthor || matchDescription) {
+        results.push({ ...book, searchType: 'pdf' });
+      }
+    });
+
+    // Rechercher dans les podcasts
+    podcasts.forEach(podcast => {
+      const matchTitle = podcast.title?.toLowerCase().includes(query);
+      const matchTitleAr = podcast.titleAr?.toLowerCase().includes(query);
+      const matchSubtitle = podcast.subtitle?.toLowerCase().includes(query);
+      
+      if (matchTitle || matchTitleAr || matchSubtitle) {
+        results.push({ ...podcast, searchType: 'podcast' });
+      }
+    });
+
+    // Rechercher dans les articles récents
+    recentItems.forEach(item => {
+      const matchTitle = item.title?.toLowerCase().includes(query);
+      const matchTitleAr = item.titleAr?.toLowerCase().includes(query);
+      
+      if (matchTitle || matchTitleAr) {
+        results.push({ ...item, searchType: item.type });
+      }
+    });
+
+    // Rechercher dans les fichiers Coran
+    coranTracks.forEach(track => {
+      const matchTitle = track.title?.toLowerCase().includes(query);
+      const matchTitleAr = track.titleAr?.toLowerCase().includes(query);
+      const matchReciter = track.reciter?.toLowerCase().includes(query);
+      
+      if (matchTitle || matchTitleAr || matchReciter) {
+        results.push({ ...track, searchType: 'coran' });
+      }
+    });
+
+    // Rechercher dans les fichiers Zikr
+    zikrFiles.forEach(zikr => {
+      const matchTitle = zikr.title?.toLowerCase().includes(query);
+      const matchTitleAr = zikr.titleAr?.toLowerCase().includes(query);
+      const matchSubtitle = zikr.subtitle?.toLowerCase().includes(query);
+      
+      if (matchTitle || matchTitleAr || matchSubtitle) {
+        results.push({ ...zikr, searchType: 'zikr' });
+      }
+    });
+
+    setSearchResults(results);
+  };
+
+  const performSearch = () => {
+    performSearchWithQuery(searchQuery);
+    setShowSuggestions(false);
+  };
+
+  const generateSuggestions = (query: string) => {
+    if (!query.trim()) {
+      setSearchSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    const queryLower = query.toLowerCase().trim();
+    const suggestionsSet = new Set<string>();
+
+    // Générer des suggestions à partir des PDFs
+    pdfFiles.forEach(book => {
+      if (book.title?.toLowerCase().includes(queryLower)) {
+        suggestionsSet.add(book.title);
+      }
+      if (book.titleAr?.toLowerCase().includes(queryLower)) {
+        suggestionsSet.add(book.titleAr);
+      }
+      if (book.author?.toLowerCase().includes(queryLower)) {
+        suggestionsSet.add(book.author);
+      }
+    });
+
+    // Générer des suggestions à partir des podcasts
+    podcasts.forEach(podcast => {
+      if (podcast.title?.toLowerCase().includes(queryLower)) {
+        suggestionsSet.add(podcast.title);
+      }
+      if (podcast.titleAr?.toLowerCase().includes(queryLower)) {
+        suggestionsSet.add(podcast.titleAr);
+      }
+    });
+
+    // Générer des suggestions à partir des articles récents
+    recentItems.forEach(item => {
+      if (item.title?.toLowerCase().includes(queryLower)) {
+        suggestionsSet.add(item.title);
+      }
+      if (item.titleAr?.toLowerCase().includes(queryLower)) {
+        suggestionsSet.add(item.titleAr);
+      }
+    });
+
+    // Générer des suggestions à partir des fichiers Coran
+    coranTracks.forEach(track => {
+      if (track.title?.toLowerCase().includes(queryLower)) {
+        suggestionsSet.add(track.title);
+      }
+      if (track.titleAr?.toLowerCase().includes(queryLower)) {
+        suggestionsSet.add(track.titleAr);
+      }
+      if (track.reciter?.toLowerCase().includes(queryLower)) {
+        suggestionsSet.add(track.reciter);
+      }
+    });
+
+    // Générer des suggestions à partir des fichiers Zikr
+    zikrFiles.forEach(zikr => {
+      if (zikr.title?.toLowerCase().includes(queryLower)) {
+        suggestionsSet.add(zikr.title);
+      }
+      if (zikr.titleAr?.toLowerCase().includes(queryLower)) {
+        suggestionsSet.add(zikr.titleAr);
+      }
+      if (zikr.subtitle?.toLowerCase().includes(queryLower)) {
+        suggestionsSet.add(zikr.subtitle);
+      }
+    });
+
+    // Limiter à 8 suggestions
+    const suggestions = Array.from(suggestionsSet).slice(0, 8);
+    setSearchSuggestions(suggestions);
+    setShowSuggestions(suggestions.length > 0);
+  };
+
+  const handleSearchQueryChange = (text: string) => {
+    setSearchQuery(text);
+    generateSuggestions(text);
+    // Lancer la recherche automatiquement pendant la saisie
+    performSearchWithQuery(text);
+  };
+
+  const handleSuggestionPress = (suggestion: string) => {
+    setSearchQuery(suggestion);
+    setShowSuggestions(false);
+    setSearchSuggestions([]);
+    // Utiliser performSearchWithQuery avec la suggestion sélectionnée
+    performSearchWithQuery(suggestion);
+  };
+
   return (
     <ScrollView 
       style={[styles.container, { backgroundColor: theme.background }]} 
@@ -1650,39 +1843,302 @@ function HomeScreen({ navigation }: any) {
         style={styles.headerModern}
       >
         <View style={styles.headerContent}>
-          <View style={styles.headerLeft}>
-            <Text style={[styles.appTitleModern, { color: theme.text }]}>Hassaniya Digital</Text>
-            <Text style={[styles.appSubtitle, { color: theme.textSecondary }]}>Sagesse & Spiritualité</Text>
-          </View>
-          <LanguageSelector />
+          <TouchableOpacity 
+            style={styles.headerIconButton}
+            onPress={handleSettingsPress}
+          >
+            <Ionicons name="settings-outline" size={24} color={theme.text} />
+          </TouchableOpacity>
+          <Image 
+            source={require('./assets/pdf/cover/icones/logo.png')} 
+            style={styles.headerLogo}
+            resizeMode="contain"
+          />
+          <TouchableOpacity 
+            style={styles.headerIconButton}
+            onPress={handleSearchPress}
+          >
+            <Ionicons name="search-outline" size={24} color={theme.text} />
+          </TouchableOpacity>
         </View>
       </LinearGradient>
 
-      {/* Hero Section moderne */}
-      <View style={styles.heroSectionModern}>
-        <ImageBackground 
-          source={require('./assets/thierno.png')} 
-          style={styles.heroImageModern}
-          imageStyle={{ opacity: 1 }}
-        >
-          <LinearGradient
-            colors={darkMode 
-              ? ['rgba(11, 60, 93, 0.92)', 'rgba(15, 81, 50, 0.88)', 'rgba(11, 60, 93, 0.95)']
-              : ['rgba(15, 81, 50, 0.90)', 'rgba(11, 60, 93, 0.85)', 'rgba(15, 81, 50, 0.92)']
-            }
-            style={styles.heroGradientModern}
+      {/* Barre de recherche */}
+      {showSearch && (
+        <View style={[styles.searchContainer, { backgroundColor: theme.surface }]}>
+          <TextInput
+            style={[styles.searchInput, { color: theme.text, borderColor: theme.textSecondary }]}
+            placeholder="Rechercher..."
+            placeholderTextColor={theme.textSecondary}
+            value={searchQuery}
+            onChangeText={handleSearchQueryChange}
+            autoFocus={true}
+            onSubmitEditing={() => {
+              setShowSuggestions(false);
+              performSearch();
+            }}
+            returnKeyType="search"
+            onFocus={() => {
+              if (searchQuery.trim()) {
+                generateSuggestions(searchQuery);
+              }
+            }}
+            onBlur={() => {
+              // Délai pour permettre le clic sur une suggestion
+              setTimeout(() => setShowSuggestions(false), 200);
+            }}
+          />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity
+              style={styles.searchButton}
+              onPress={() => {
+                setShowSuggestions(false);
+                performSearch();
+              }}
+            >
+              <Ionicons name="search" size={24} color={theme.primary} />
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity
+            style={styles.searchCloseButton}
+            onPress={() => {
+              setShowSearch(false);
+              setSearchQuery('');
+              setSearchSuggestions([]);
+              setShowSuggestions(false);
+              setSearchResults([]);
+            }}
           >
-            <View style={styles.heroContentModern}>
-              <Text style={styles.heroTitleModern}>Bienvenue</Text>
-              <Text style={styles.heroSubtitleModern}>Explorez la sagesse islamique</Text>
-              <View style={styles.heroDecorativeLine} />
+            <Ionicons name="close" size={24} color={theme.text} />
+          </TouchableOpacity>
+        </View>
+      )}
+
+      {/* Suggestions d'autocomplétion */}
+      {showSearch && showSuggestions && searchSuggestions.length > 0 && (
+        <View style={[styles.searchSuggestionsContainer, { backgroundColor: theme.surface }]}>
+          {searchSuggestions.map((suggestion, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[styles.searchSuggestionItem, { borderBottomColor: theme.textSecondary + '20' }]}
+              onPress={() => handleSuggestionPress(suggestion)}
+            >
+              <Ionicons name="search-outline" size={18} color={theme.textSecondary} style={styles.searchSuggestionIcon} />
+              <Text style={[styles.searchSuggestionText, { color: theme.text }]} numberOfLines={1}>
+                {suggestion}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+
+      {/* Résultats de recherche */}
+      {showSearch && searchQuery.trim() && searchResults.length > 0 && (
+        <View style={styles.sectionModern}>
+          <View style={styles.sectionHeaderModern}>
+            <View style={styles.sectionTitleContainerModern}>
+              <View style={styles.sectionIconContainer}>
+                <Text style={styles.sectionIconModern}>🔍</Text>
+              </View>
+              <View>
+                <Text style={[styles.sectionTitleModern, { color: theme.text }]}>
+                  Résultats de recherche ({searchResults.length})
+                </Text>
+                <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>
+                  Pour: "{searchQuery}"
+                </Text>
+              </View>
             </View>
-          </LinearGradient>
-        </ImageBackground>
-      </View>
+          </View>
+          <ScrollView 
+            style={styles.searchResultsContainer}
+            showsVerticalScrollIndicator={false}
+          >
+            {searchResults.map((item, index) => {
+              const isViewed = (item.searchType === 'pdf' && recentItems.some(ri => ri.id === item.id && ri.type === 'pdf')) ||
+                               ((item.searchType === 'audio' || item.searchType === 'coran' || item.searchType === 'zikr' || item.searchType === 'podcast') && 
+                                recentItems.some(ri => ri.id === item.id && ri.type === 'audio'));
+              return (
+                <TouchableOpacity
+                  key={`search-${item.id}-${index}`}
+                  style={[styles.searchResultItem, { backgroundColor: theme.surface }]}
+                  onPress={() => {
+                    if (item.searchType === 'pdf') {
+                      const fullBook = allPdfFilesWithPages.find(b => b.id === item.id) ||
+                                       frenchPdfFilesWithPages.find(b => b.id === item.id) ||
+                                       englishPdfFilesWithPages.find(b => b.id === item.id) ||
+                                       arabicPdfFilesWithPages.find(b => b.id === item.id) ||
+                                       item;
+                      setSelectedBook(fullBook);
+                      setActiveTab('overview');
+                      setModalVisible(true);
+                    } else if (item.searchType === 'podcast') {
+                      addToHistory(item, 'audio');
+                      navigation.navigate('Podcasts', { selectedPodcast: item });
+                    } else if (item.searchType === 'coran') {
+                      addToHistory(item, 'audio');
+                      setCurrentPlayer({ item: item, type: 'coran' });
+                      navigation.navigate('Coran');
+                    } else if (item.searchType === 'zikr') {
+                      addToHistory(item, 'audio');
+                      setCurrentPlayer({ item: item, type: 'zikr' });
+                      navigation.navigate('Zikr');
+                    } else if (item.searchType === 'audio') {
+                      // Pour les articles récents de type audio
+                      addToHistory(item, 'audio');
+                      // Naviguer vers l'écran approprié selon le type d'audio
+                      if (coranTracks.some(t => t.id === item.id)) {
+                        setCurrentPlayer({ item: item, type: 'coran' });
+                        navigation.navigate('Coran');
+                      } else if (zikrFiles.some(z => z.id === item.id)) {
+                        setCurrentPlayer({ item: item, type: 'zikr' });
+                        navigation.navigate('Zikr');
+                      } else {
+                        navigation.navigate('Podcasts', { selectedPodcast: item });
+                      }
+                    }
+                  }}
+                >
+                  {item.image && (
+                    <Image
+                      source={item.image}
+                      style={styles.searchResultImage}
+                    />
+                  )}
+                  <View style={styles.searchResultContent}>
+                    <Text style={[styles.searchResultTitle, { color: theme.text }]} numberOfLines={2}>
+                      {item.title}
+                    </Text>
+                    {item.titleAr && (
+                      <Text style={[styles.searchResultTitleAr, { color: theme.textSecondary }]} numberOfLines={1}>
+                        {item.titleAr}
+                      </Text>
+                    )}
+                    {item.author && (
+                      <Text style={[styles.searchResultAuthor, { color: theme.textSecondary }]}>
+                        {item.author}
+                      </Text>
+                    )}
+                    <Text style={[styles.searchResultType, { color: theme.primary }]}>
+                      {item.searchType === 'pdf' ? '📚 Livre PDF' : 
+                       item.searchType === 'podcast' ? '🎙️ Podcast' : 
+                       item.searchType === 'coran' ? '📖 Coran' :
+                       item.searchType === 'zikr' ? '🕌 Zikr' :
+                       '📄 Article'}
+                    </Text>
+                  </View>
+                  {isViewed && item.searchType === 'pdf' && (
+                    <Image source={require('./assets/pdf/cover/icones/lun3.png')} style={styles.searchResultViewedIcon} />
+                  )}
+                  {isViewed && (item.searchType === 'audio' || item.searchType === 'coran' || item.searchType === 'zikr' || item.searchType === 'podcast') && (
+                    <Image source={require('./assets/pdf/cover/icones/pl3.png')} style={styles.searchResultViewedIcon} />
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+      )}
+
+      {/* Message si aucun résultat */}
+      {showSearch && searchQuery.trim() && searchResults.length === 0 && (
+        <View style={styles.sectionModern}>
+          <View style={styles.noResultsContainer}>
+            <Text style={[styles.noResultsText, { color: theme.textSecondary }]}>
+              Aucun résultat trouvé pour "{searchQuery}"
+            </Text>
+          </View>
+        </View>
+      )}
+
+      {/* Modal des paramètres */}
+      <Modal
+        visible={showSettingsModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowSettingsModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.settingsModal, { backgroundColor: theme.surface }]}>
+            <View style={styles.settingsModalHeader}>
+              <Text style={[styles.settingsModalTitle, { color: theme.text }]}>Paramètres</Text>
+              <TouchableOpacity
+                onPress={() => setShowSettingsModal(false)}
+                style={styles.settingsModalCloseButton}
+              >
+                <Ionicons name="close" size={24} color={theme.text} />
+              </TouchableOpacity>
+            </View>
+
+            {/* Section Thème */}
+            <View style={styles.settingsSection}>
+              <Text style={[styles.settingsSectionTitle, { color: theme.text }]}>Thème</Text>
+              <View style={styles.settingsOptions}>
+                <TouchableOpacity
+                  style={[
+                    styles.settingsOption,
+                    { backgroundColor: theme.background },
+                    !darkMode && styles.settingsOptionActive
+                  ]}
+                  onPress={() => handleThemeChange(false)}
+                >
+                  <Ionicons name="sunny" size={24} color={!darkMode ? '#0F5132' : '#ffffff'} />
+                  <Text style={[styles.settingsOptionText, { color: !darkMode ? '#0F5132' : '#ffffff' }]}>
+                    Clair
+                  </Text>
+                  {!darkMode && <Ionicons name="checkmark-circle" size={20} color="#0F5132" />}
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.settingsOption,
+                    { backgroundColor: theme.background },
+                    darkMode && styles.settingsOptionActive
+                  ]}
+                  onPress={() => handleThemeChange(true)}
+                >
+                  <Ionicons name="moon" size={24} color={darkMode ? '#ffffff' : theme.textSecondary} />
+                  <Text style={[styles.settingsOptionText, { color: darkMode ? '#ffffff' : theme.textSecondary }]}>
+                    Sombre
+                  </Text>
+                  {darkMode && <Ionicons name="checkmark-circle" size={20} color="#ffffff" />}
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Section Langue */}
+            <View style={styles.settingsSection}>
+              <Text style={[styles.settingsSectionTitle, { color: theme.text }]}>Langue</Text>
+              <View style={styles.settingsOptions}>
+                {[
+                  { code: null as Language | null, label: 'Tous', flag: '🌍' },
+                  { code: 'fr' as Language, label: 'Français', flag: '🇫🇷' },
+                  { code: 'en' as Language, label: 'English', flag: '🇬🇧' },
+                  { code: 'ar' as Language, label: 'عربي', flag: '🇸🇦' },
+                ].map((lang) => (
+                  <TouchableOpacity
+                    key={lang.code || 'all'}
+                    style={[
+                      styles.settingsOption,
+                      { backgroundColor: theme.background },
+                      language === lang.code && styles.settingsOptionActive
+                    ]}
+                    onPress={() => handleLanguageChange(lang.code)}
+                  >
+                    <Text style={styles.settingsOptionFlag}>{lang.flag}</Text>
+                    <Text style={[styles.settingsOptionText, { color: language === lang.code ? (darkMode ? '#ffffff' : '#0F5132') : theme.textSecondary }]}>
+                      {lang.label}
+                    </Text>
+                    {language === lang.code && <Ionicons name="checkmark-circle" size={20} color={darkMode ? '#ffffff' : '#0F5132'} />}
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       {/* Rubrique 1 : Derniers articles consultés - Format cartes carrées 1/4 largeur */}
-      {recentItems.length > 0 && (
+      {!showSearch && recentItems.length > 0 && (
         <View style={styles.sectionModern}>
           <View style={styles.sectionHeaderModern}>
             <View style={styles.sectionTitleContainerModern}>
@@ -1737,8 +2193,8 @@ function HomeScreen({ navigation }: any) {
                       } else if (isZikr) {
                         setCurrentPlayer({ item: item.item, type: 'zikr' });
                         navigation.navigate('Zikr');
-                      } else {
-                        setCurrentPlayer({ item: item.item, type: item.item.type || 'music' });
+                    } else {
+                      setCurrentPlayer({ item: item.item, type: item.item.type || 'music' });
                       }
                     }
                   }}
@@ -1780,6 +2236,7 @@ function HomeScreen({ navigation }: any) {
       )}
 
       {/* Rubrique 3 : Liste des PDFs */}
+      {!showSearch && (
       <View style={styles.sectionModern}>
         <View style={styles.sectionHeaderModern}>
           <View style={styles.sectionTitleContainerModern}>
@@ -1860,6 +2317,7 @@ function HomeScreen({ navigation }: any) {
           })}
         </ScrollView>
       </View>
+      )}
 
       {/* Rubrique Gamou */}
       <View style={styles.sectionModern}>
@@ -2110,7 +2568,10 @@ function HomeScreen({ navigation }: any) {
                     imageStyle={styles.bookModalImageStyle}
                   >
                     <View style={styles.bookModalImageOverlay}>
-                      <Text style={styles.bookModalImageTitle}>
+                      <Text style={[
+                        styles.bookModalImageTitle,
+                        selectedBook.titleAr && { fontFamily: 'Traditional Arabic' }
+                      ]}>
                         {selectedBook.titleAr || selectedBook.title}
                       </Text>
                       {selectedBook.titleAr && (
@@ -2118,13 +2579,17 @@ function HomeScreen({ navigation }: any) {
                           {selectedBook.title}
                         </Text>
                       )}
-                      <Text style={styles.bookModalImageFooter}>Fayda Digital</Text>
+                      <Text style={styles.bookModalImageFooter}>Fayda Tidianiya</Text>
                     </View>
                   </ImageBackground>
                 </View>
 
                 {/* Titre principal */}
-                <Text style={[styles.bookModalMainTitle, { color: theme.text }]}>
+                <Text style={[
+                  styles.bookModalMainTitle, 
+                  { color: theme.text },
+                  selectedBook.titleAr && { fontFamily: 'Traditional Arabic' }
+                ]}>
                   {selectedBook.titleAr || selectedBook.title}
                 </Text>
 
@@ -2149,13 +2614,10 @@ function HomeScreen({ navigation }: any) {
                     onPress={handleOpenBook}
                     activeOpacity={0.9}
                   >
-                    <LinearGradient
-                      colors={['#0F5132', '#0B3C5D']}
-                      style={styles.bookModalReadButtonGradient}
-                    >
+                    <View style={styles.bookModalReadButtonGradient}>
                       <Text style={styles.bookModalReadIcon}>▶</Text>
-                      <Text style={styles.bookModalReadText}>Lire</Text>
-                    </LinearGradient>
+                      <Text style={styles.bookModalReadText}>Ouvrir</Text>
+                    </View>
                   </TouchableOpacity>
                   <TouchableOpacity 
                     style={styles.bookModalMenuButton}
@@ -2623,7 +3085,7 @@ function BooksScreen({ navigation }: any) {
                           {selectedBook.title}
                         </Text>
                       )}
-                      <Text style={styles.bookModalImageFooter}>Fayda Digital</Text>
+                      <Text style={styles.bookModalImageFooter}>Fayda Tidianiya</Text>
                       </View>
                   </ImageBackground>
                 </View>
@@ -2654,13 +3116,10 @@ function BooksScreen({ navigation }: any) {
                     onPress={handleOpenBook}
                     activeOpacity={0.9}
                   >
-                    <LinearGradient
-                      colors={['#0F5132', '#0B3C5D']}
-                      style={styles.bookModalReadButtonGradient}
-                    >
+                    <View style={styles.bookModalReadButtonGradient}>
                       <Text style={styles.bookModalReadIcon}>▶</Text>
                       <Text style={styles.bookModalReadText}>Lire</Text>
-                    </LinearGradient>
+                    </View>
                   </TouchableOpacity>
                   <TouchableOpacity 
                     style={styles.bookModalMenuButton}
@@ -2795,7 +3254,7 @@ function MusicScreen({ navigation }: any) {
       
       {/* Header simple */}
       <View style={[styles.podcastsHeaderSimple, { backgroundColor: theme.surface }]}>
-        <Text style={[styles.podcastsHeaderTitleSimple, { color: '#0F5132' }]}>Musique</Text>
+        <Text style={[styles.podcastsHeaderTitleSimple, { color: darkMode ? '#ffffff' : '#0F5132' }]}>Musique</Text>
         <LanguageSelector />
       </View>
 
@@ -2826,7 +3285,7 @@ function MusicScreen({ navigation }: any) {
         {/* Section Zikr & Music Snippets - Cartes horizontales */}
         <View style={styles.podcastsSection}>
           <View style={styles.podcastsSectionHeader}>
-            <Text style={[styles.podcastsSectionTitle, { color: '#0F5132' }]}>Zikr & Music Snippets</Text>
+            <Text style={[styles.podcastsSectionTitle, { color: darkMode ? '#ffffff' : '#0F5132' }]}>Zikr & Music Snippets</Text>
             <TouchableOpacity style={styles.podcastsViewAllButton}>
               <Text style={styles.podcastsViewAllText}>View all</Text>
             </TouchableOpacity>
@@ -2884,7 +3343,7 @@ function MusicScreen({ navigation }: any) {
         {/* Section Zikr - Grande carte */}
         <View style={styles.podcastsSection}>
           <View style={styles.podcastsSectionHeader}>
-            <Text style={[styles.podcastsSectionTitle, { color: '#0F5132' }]}>Zikr</Text>
+            <Text style={[styles.podcastsSectionTitle, { color: darkMode ? '#ffffff' : '#0F5132' }]}>Zikr</Text>
             <TouchableOpacity style={styles.podcastsViewAllButton}>
               <Text style={styles.podcastsViewAllText}>View all</Text>
             </TouchableOpacity>
@@ -2910,7 +3369,7 @@ function MusicScreen({ navigation }: any) {
         {/* Section Coran - Grande carte */}
         <View style={styles.podcastsSection}>
           <View style={styles.podcastsSectionHeader}>
-            <Text style={[styles.podcastsSectionTitle, { color: '#0F5132' }]}>Coran</Text>
+            <Text style={[styles.podcastsSectionTitle, { color: darkMode ? '#ffffff' : '#0F5132' }]}>Coran</Text>
             <TouchableOpacity style={styles.podcastsViewAllButton}>
               <Text style={styles.podcastsViewAllText}>View all</Text>
             </TouchableOpacity>
@@ -2931,12 +3390,12 @@ function MusicScreen({ navigation }: any) {
               {/* L'image contient déjà les textes "AL qur'ane" et "القرآن الكريم" */}
             </ImageBackground>
           </TouchableOpacity>
-        </View>
+              </View>
 
         {/* Section Gamou - Grande carte */}
         <View style={styles.podcastsSection}>
           <View style={styles.podcastsSectionHeader}>
-            <Text style={[styles.podcastsSectionTitle, { color: '#0F5132' }]}>Gamou</Text>
+            <Text style={[styles.podcastsSectionTitle, { color: darkMode ? '#ffffff' : '#0F5132' }]}>Gamou</Text>
             <TouchableOpacity style={styles.podcastsViewAllButton}>
               <Text style={styles.podcastsViewAllText}>View all</Text>
             </TouchableOpacity>
@@ -3143,7 +3602,7 @@ function ZikrScreen({ navigation }: any) {
     if (currentPlayer?.item) {
       try {
         await Share.share({
-          message: `Écoutez "${currentPlayer.item.title}" sur Hassaniya Digital`,
+          message: `Écoutez "${currentPlayer.item.title}" sur Fayda Tidianiya`,
           title: currentPlayer.item.title,
         });
       } catch (error) {
@@ -3218,7 +3677,7 @@ function ZikrScreen({ navigation }: any) {
         >
           <Text style={[styles.zikrBackIcon, { color: theme.text }]}>←</Text>
         </TouchableOpacity>
-        <Text style={[styles.zikrHeaderTitle, { color: '#0F5132' }]}>Zikr</Text>
+        <Text style={[styles.zikrHeaderTitle, { color: darkMode ? '#ffffff' : '#0F5132' }]}>Zikr</Text>
         <View style={styles.zikrHeaderSpacer} />
       </View>
 
@@ -3390,7 +3849,7 @@ function ZikrScreen({ navigation }: any) {
               <View style={styles.zikrPlayerLogos}>
                 <View style={styles.zikrPlayerFaydaLogo}>
                   <Text style={styles.zikrPlayerFaydaLogoAr}>فيضة</Text>
-                  <Text style={styles.zikrPlayerFaydaLogoText}>FAYDA DIGITAL</Text>
+                  <Text style={styles.zikrPlayerFaydaLogoText}>FAYDA TIDIANIYA</Text>
                 </View>
               </View>
             </LinearGradient>
@@ -3688,7 +4147,7 @@ function CoranScreen({ navigation }: any) {
     if (currentPlayer?.item) {
       try {
         await Share.share({
-          message: `Écoutez "${currentPlayer.item.title}" - ${currentPlayer.item.titleAr} sur Fayda Digital`,
+          message: `Écoutez "${currentPlayer.item.title}" - ${currentPlayer.item.titleAr} sur Fayda Tidianiya`,
           title: currentPlayer.item.title,
         });
       } catch (error) {
@@ -3942,7 +4401,7 @@ function CoranScreen({ navigation }: any) {
               {/* Overlay avec texte doré */}
               <View style={styles.zikrPlayerOverlay}>
                 <Text style={styles.zikrPlayerOverlayText}>CORAN</Text>
-                <Text style={styles.zikrPlayerOverlayText}>القرآن الكريم</Text>
+                <Text style={[styles.zikrPlayerOverlayText, { fontFamily: 'Traditional Arabic' }]}>القرآن الكريم</Text>
               </View>
             </ImageBackground>
             
@@ -3956,7 +4415,7 @@ function CoranScreen({ navigation }: any) {
               <View style={styles.zikrPlayerLogos}>
                 <View style={styles.zikrPlayerFaydaLogo}>
                   <Text style={styles.zikrPlayerFaydaLogoAr}>فيضة</Text>
-                  <Text style={styles.zikrPlayerFaydaLogoText}>FAYDA DIGITAL</Text>
+                  <Text style={styles.zikrPlayerFaydaLogoText}>FAYDA TIDIANIYA</Text>
                 </View>
               </View>
             </LinearGradient>
@@ -4227,7 +4686,7 @@ function GamouScreen({ navigation }: any) {
     if (currentPlayer?.item) {
       try {
         await Share.share({
-          message: `Écoutez "${currentPlayer.item.title}" - ${currentPlayer.item.titleAr} sur Fayda Digital`,
+          message: `Écoutez "${currentPlayer.item.title}" - ${currentPlayer.item.titleAr} sur Fayda Tidianiya`,
           title: currentPlayer.item.title,
         });
       } catch (error) {
@@ -4459,7 +4918,7 @@ function GamouScreen({ navigation }: any) {
               {/* Overlay avec texte doré */}
               <View style={styles.zikrPlayerOverlay}>
                 <Text style={styles.zikrPlayerOverlayText}>GAMOU</Text>
-                <Text style={styles.zikrPlayerOverlayText}>المولد النبوي</Text>
+                <Text style={[styles.zikrPlayerOverlayText, { fontFamily: 'Traditional Arabic' }]}>المولد النبوي</Text>
               </View>
             </ImageBackground>
             
@@ -4473,7 +4932,7 @@ function GamouScreen({ navigation }: any) {
               <View style={styles.zikrPlayerLogos}>
                 <View style={styles.zikrPlayerFaydaLogo}>
                   <Text style={styles.zikrPlayerFaydaLogoAr}>فيضة</Text>
-                  <Text style={styles.zikrPlayerFaydaLogoText}>FAYDA DIGITAL</Text>
+                  <Text style={styles.zikrPlayerFaydaLogoText}>FAYDA TIDIANIYA</Text>
                 </View>
               </View>
             </LinearGradient>
@@ -4765,7 +5224,7 @@ function PodcastsScreen({ navigation, route }: any) {
                   <Text style={styles.podcastThumbnailEpisodes}>Episodes - {podcast.episodeType}</Text>
                 </View>
                 
-                {/* Logo FAYDA DIGITAL avec waveform */}
+                {/* Logo FAYDA TIDIANIYA avec waveform */}
                 <View style={styles.podcastThumbnailLogo}>
                   <Text style={styles.podcastThumbnailLogoAr}>فيضة</Text>
                   <Text style={styles.podcastThumbnailLogoText}>DIGITAL</Text>
@@ -5303,7 +5762,7 @@ function PodcastPlayerScreen({ route, navigation }: any) {
   const handleShare = async () => {
     try {
       await Share.share({
-        message: `Écoutez "${podcast?.title}" sur Fayda Digital`,
+        message: `Écoutez "${podcast?.title}" sur Fayda Tidianiya`,
         title: podcast?.title,
       });
     } catch (error) {
@@ -5904,7 +6363,7 @@ function AudioPlayerScreen({ route, navigation }: any) {
   const handleShare = async () => {
     try {
       await Share.share({
-        message: `Écoutez "${track?.title || 'cette piste'}" sur Hassaniya Digital`,
+        message: `Écoutez "${track?.title || 'cette piste'}" sur Fayda Tidianiya`,
         title: track?.title || 'Partage',
       });
     } catch (error) {
@@ -6027,7 +6486,7 @@ function AudioPlayerScreen({ route, navigation }: any) {
                 <Text style={styles.audioPlayerCardFooterText}>KABA MUHAMMAD ABDUL-FATTAAH</Text>
               </View>
               <View style={styles.audioPlayerCardFooterCenter}>
-                <Text style={styles.audioPlayerCardLogo}>FAYDA DIGITAL</Text>
+                <Text style={styles.audioPlayerCardLogo}>FAYDA TIDIANIYA</Text>
                 <Text style={styles.audioPlayerCardLogoAr}>فيضة</Text>
               </View>
               <View style={styles.audioPlayerCardFooterRight}>
@@ -6572,19 +7031,22 @@ function DonationModal({ visible, onClose }: { visible: boolean; onClose: () => 
                   width: 80,
                   height: 80,
                   borderRadius: 16,
-                  backgroundColor: selectedPayment === 'wave' ? '#1E88E5' : '#FF6600',
+                  backgroundColor: '#ffffff',
                   alignItems: 'center',
                   justifyContent: 'center',
                   marginBottom: 16,
+                  overflow: 'hidden',
                 }}>
-                  <Text style={{ 
-                    fontSize: 40, 
-                    fontWeight: 'bold',
-                    color: '#ffffff',
-                    letterSpacing: selectedPayment === 'wave' ? -2 : 0,
-                  }}>
-                    {selectedPayment === 'wave' ? 'W' : 'OM'}
-                  </Text>
+                  <Image
+                    source={selectedPayment === 'wave' 
+                      ? require('./assets/pdf/cover/icones/wave.png')
+                      : require('./assets/pdf/cover/icones/om.png')}
+                    style={{
+                      width: 60,
+                      height: 60,
+                      resizeMode: 'contain',
+                    }}
+                  />
                 </View>
                 <Text style={{
                   fontSize: 20,
@@ -7088,7 +7550,7 @@ const darkTheme = {
   surface: '#1e1e1e',
   text: '#ffffff',
   textSecondary: '#aaaaaa',
-  primary: '#0F5132',
+  primary: '#ffffff',
   secondary: '#0B3C5D',
   accent: '#C9A24D',
 };
@@ -7103,7 +7565,7 @@ function OnboardingScreen({ navigation }: any) {
   const slides = [
     {
       id: 1,
-      title: 'Bienvenue sur Hassaniya Digital',
+      title: 'Bienvenue sur Fayda Tidianiya',
       subtitle: 'Explorez la sagesse islamique',
       description: 'Découvrez une collection riche de livres, musiques, podcasts et cours spirituels',
       icon: '📚',
@@ -7268,7 +7730,13 @@ function MainTabs() {
           component={HomeScreen}
           options={{
             tabBarLabel: t('nav.home'),
-            tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>🏠</Text>,
+            tabBarIcon: ({ color, focused }) => (
+              <Ionicons 
+                name={focused ? 'home' : 'home-outline'} 
+                size={24} 
+                color={focused ? '#0F5132' : color} 
+              />
+            ),
           }}
         />
         <Tab.Screen 
@@ -7276,7 +7744,13 @@ function MainTabs() {
           component={BooksScreen}
           options={{
             tabBarLabel: t('nav.books'),
-            tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>📚</Text>,
+            tabBarIcon: ({ color, focused }) => (
+              <Ionicons 
+                name={focused ? 'library' : 'library-outline'} 
+                size={24} 
+                color={focused ? '#0F5132' : color} 
+              />
+            ),
           }}
         />
         <Tab.Screen 
@@ -7284,7 +7758,13 @@ function MainTabs() {
           component={MusicScreen}
           options={{
             tabBarLabel: t('nav.music'),
-            tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>🎵</Text>,
+            tabBarIcon: ({ color, focused }) => (
+              <Ionicons 
+                name={focused ? 'musical-notes' : 'musical-notes-outline'} 
+                size={24} 
+                color={focused ? '#0F5132' : color} 
+              />
+            ),
           }}
         />
         <Tab.Screen 
@@ -7292,7 +7772,13 @@ function MainTabs() {
           component={PodcastsScreen}
           options={{
             tabBarLabel: t('nav.podcasts'),
-            tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>🎙️</Text>,
+            tabBarIcon: ({ color, focused }) => (
+              <Ionicons 
+                name={focused ? 'mic' : 'mic-outline'} 
+                size={24} 
+                color={focused ? '#0F5132' : color} 
+              />
+            ),
           }}
         />
         <Tab.Screen 
@@ -7300,7 +7786,13 @@ function MainTabs() {
           component={AIScreen}
           options={{
             tabBarLabel: t('assistant.title'),
-            tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>🤖</Text>,
+            tabBarIcon: ({ color, focused }) => (
+              <Ionicons 
+                name={focused ? 'chatbubbles' : 'chatbubbles-outline'} 
+                size={24} 
+                color={focused ? '#0F5132' : color} 
+              />
+            ),
           }}
         />
       </Tab.Navigator>
@@ -7315,7 +7807,7 @@ function MainTabs() {
   );
 }
 
-// Écran de chargement avec "Hassaniya Digital"
+// Écran de chargement avec "Fayda Tidianiya"
 function LoadingScreen() {
   const [fadeAnim] = React.useState(new Animated.Value(0));
   const [scaleAnim] = React.useState(new Animated.Value(0.8));
@@ -7351,9 +7843,11 @@ function LoadingScreen() {
             },
           ]}
         >
-          <Text style={styles.loadingLogo}>فيضة</Text>
-          <Text style={styles.loadingTitle}>HASSANIYA DIGITAL</Text>
-          <ActivityIndicator size="large" color="#C9A24D" style={styles.loadingSpinner} />
+          <Image
+            source={require('./assets/pdf/cover/icones/chargement.png')}
+            style={styles.loadingImage}
+            resizeMode="contain"
+          />
         </Animated.View>
       </LinearGradient>
     </View>
@@ -7460,6 +7954,11 @@ const styles = StyleSheet.create({
   },
   headerLeft: {
     flex: 1,
+  },
+  headerLogo: {
+    width: 180,
+    height: 50,
+    marginTop: 8,
   },
   appTitle: {
     fontSize: 20,
@@ -8853,8 +9352,9 @@ const styles = StyleSheet.create({
   // Styles modernes - Header
   headerModern: {
     paddingTop: 50,
-    paddingBottom: 20,
+    paddingBottom: 12,
     paddingHorizontal: 20,
+    marginBottom: 10,
     width: '100%',
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
@@ -8868,6 +9368,178 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  headerIconButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  searchInput: {
+    flex: 1,
+    height: 40,
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    fontSize: 16,
+  },
+  searchButton: {
+    marginLeft: 10,
+    padding: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  searchCloseButton: {
+    marginLeft: 10,
+    padding: 5,
+  },
+  searchResultsContainer: {
+    maxHeight: 400,
+  },
+  searchResultItem: {
+    flexDirection: 'row',
+    padding: 12,
+    marginHorizontal: 20,
+    marginBottom: 12,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  searchResultImage: {
+    width: 60,
+    height: 80,
+    borderRadius: 8,
+    marginRight: 12,
+    resizeMode: 'cover',
+  },
+  searchResultContent: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  searchResultTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  searchResultTitleAr: {
+    fontSize: 14,
+    marginBottom: 4,
+    fontFamily: 'Traditional Arabic',
+  },
+  searchResultAuthor: {
+    fontSize: 13,
+    marginBottom: 4,
+  },
+  searchResultType: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  searchResultViewedIcon: {
+    width: 24,
+    height: 24,
+    resizeMode: 'contain',
+  },
+  noResultsContainer: {
+    padding: 40,
+    alignItems: 'center',
+  },
+  noResultsText: {
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  searchSuggestionsContainer: {
+    marginHorizontal: 20,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    maxHeight: 200,
+    overflow: 'hidden',
+  },
+  searchSuggestionItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    borderBottomWidth: 1,
+  },
+  searchSuggestionIcon: {
+    marginRight: 10,
+  },
+  searchSuggestionText: {
+    flex: 1,
+    fontSize: 15,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  settingsModal: {
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+    maxHeight: '80%',
+  },
+  settingsModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+    paddingBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  settingsModalTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  settingsModalCloseButton: {
+    padding: 5,
+  },
+  settingsSection: {
+    marginBottom: 30,
+  },
+  settingsSectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 15,
+  },
+  settingsOptions: {
+    gap: 12,
+  },
+  settingsOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 15,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  settingsOptionActive: {
+    borderColor: '#0F5132',
+    borderWidth: 2,
+  },
+  settingsOptionFlag: {
+    fontSize: 24,
+    marginRight: 12,
+  },
+  settingsOptionText: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: '500',
   },
   appTitleModern: {
     fontSize: 24,
@@ -9193,6 +9865,32 @@ const styles = StyleSheet.create({
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  searchInput: {
+    flex: 1,
+    height: 40,
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    fontSize: 16,
+  },
+  searchButton: {
+    marginLeft: 10,
+    padding: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  searchCloseButton: {
+    marginLeft: 10,
+    padding: 5,
   },
   headerIcon: {
     fontSize: 20,
@@ -10022,11 +10720,13 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     color: '#ffffff',
     marginBottom: 4,
+    textAlign: 'center',
   },
   podcastModalImageSubtitle: {
     fontSize: 14,
     color: '#ffffff',
     opacity: 0.9,
+    textAlign: 'center',
   },
   podcastModalMainTitle: {
     fontSize: 24,
@@ -10180,7 +10880,7 @@ const styles = StyleSheet.create({
   bookModalImageContainer: {
     width: '70%',
     alignSelf: 'center',
-    aspectRatio: 0.75, // Format livre
+    aspectRatio: 1, // Format carré
     marginBottom: 20,
     borderRadius: 16,
     overflow: 'hidden',
@@ -10209,14 +10909,14 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#ffffff',
     marginBottom: 6,
-    textAlign: 'left',
+    textAlign: 'center',
   },
   bookModalImageSubtitle: {
     fontSize: 14,
     color: '#ffffff',
     opacity: 0.9,
     marginBottom: 8,
-    textAlign: 'left',
+    textAlign: 'center',
   },
   bookModalImageFooter: {
     fontSize: 10,
@@ -10224,27 +10924,30 @@ const styles = StyleSheet.create({
     opacity: 0.7,
     marginTop: 4,
     fontStyle: 'italic',
+    textAlign: 'center',
   },
   bookModalMainTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 8,
-    textAlign: 'left',
+    textAlign: 'center',
     lineHeight: 32,
   },
   bookModalAuthor: {
     fontSize: 16,
     marginBottom: 12,
-    textAlign: 'left',
+    textAlign: 'center',
   },
   bookModalMetadata: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 20,
   },
   bookModalMetadataText: {
     fontSize: 14,
     marginRight: 8,
+    textAlign: 'center',
   },
   bookModalControls: {
     flexDirection: 'row',
@@ -10269,6 +10972,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 24,
     gap: 8,
+    backgroundColor: '#0F5132',
   },
   bookModalReadIcon: {
     fontSize: 20,
@@ -10282,14 +10986,14 @@ const styles = StyleSheet.create({
   bookModalMenuButton: {
     width: 50,
     height: 50,
-    borderRadius: 25,
-    backgroundColor: '#E0E0E0',
+    borderRadius: 12,
+    backgroundColor: '#0F5132',
     justifyContent: 'center',
     alignItems: 'center',
   },
   bookModalMenuIcon: {
     fontSize: 24,
-    color: '#666',
+    color: '#ffffff',
     fontWeight: '300',
   },
   bookModalTabs: {
@@ -10659,6 +11363,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#C9A24D',
     fontWeight: '600',
+    fontFamily: 'Traditional Arabic',
   },
   audioPlayerCardSubtitle: {
     fontSize: 14,
@@ -11858,7 +12563,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 6,
-    color: '#0F5132',
+    fontFamily: 'Traditional Arabic',
   },
   zikrCardTitle: {
     fontSize: 18,
@@ -12078,6 +12783,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  loadingImage: {
+    width: 400,
+    height: 400,
+  },
   loadingLogo: {
     fontSize: 80,
     color: '#C9A24D',
@@ -12238,6 +12947,7 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontWeight: 'bold',
     marginBottom: 4,
+    fontFamily: 'Traditional Arabic',
   },
   zikrPlayerFaydaLogoText: {
     fontSize: 14,
@@ -12736,6 +13446,7 @@ const styles = StyleSheet.create({
     lineHeight: 14,
     textAlign: 'right',
     opacity: 0.9,
+    fontFamily: 'Traditional Arabic',
   },
   // Styles pour les cartes récentes carrées (2/5 largeur)
   recentCardSquare: {
@@ -12784,6 +13495,7 @@ const styles = StyleSheet.create({
     lineHeight: 11,
     textAlign: 'right',
     opacity: 0.9,
+    fontFamily: 'Traditional Arabic',
   },
   // Styles pour les cartes Coran avec image
   podcastCardHome: {
@@ -12868,6 +13580,7 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     marginBottom: 8,
     textAlign: 'right',
+    fontFamily: 'Traditional Arabic',
   },
   coranCardReciter: {
     fontSize: 12,
