@@ -1155,8 +1155,8 @@ const allPdfFiles = [
     author: 'Cheikh Ahmed Tijani',
     pages: 250,
     cover: '📖',
-    pdfFile: require('./assets/pdf/diwan_sayrulqalb_v01.pdf'),
-    image: require('./assets/pdf/cover/sayrou.png'),
+    pdfFile: require('./assets/pdf/sayrouqalbi-fr.pdf'),
+    image: require('./assets/pdf/cover/sayrouqal.png'),
     description: 'Recueil poétique spirituel.',
     category: 'Tariqa',
     rating: 4.9,
@@ -1342,8 +1342,8 @@ const frenchPdfFiles = [
     author: 'Cheikh Ahmed Tijani',
     pages: 250,
     cover: '📖',
-    pdfFile: require('./assets/pdf/francais/diwan_sayrulqalb_v01.pdf'),
-    image: require('./assets/pdf/cover/sayrou.png'),
+    pdfFile: require('./assets/pdf/francais/sayrouqalbi-fr.pdf'),
+    image: require('./assets/pdf/cover/sayrouqal.png'),
     description: 'Recueil poétique spirituel.',
     category: 'Tariqa',
     rating: 4.9,
@@ -1602,8 +1602,8 @@ const arabicPdfFiles = [
     author: 'Cheikh Ahmed Tijani',
     pages: 250,
     cover: '📖',
-    pdfFile: require('./assets/pdf/arabe/diwan_sayrulqalb_v01.pdf'),
-    image: require('./assets/pdf/cover/sayrou.png'),
+    pdfFile: require('./assets/pdf/arabe/sayrouqalbi-fr.pdf'),
+    image: require('./assets/pdf/cover/sayrouqal.png'),
     description: 'Recueil poétique spirituel.',
     category: 'Tariqa',
     rating: 4.9,
@@ -2554,14 +2554,14 @@ function HomeScreen({ navigation }: any) {
             <Text style={styles.seeAllArrow}>→</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity 
+            <TouchableOpacity 
           style={[styles.podcastZikrCard, { marginLeft: 0, marginRight: 10, width: '100%', alignSelf: 'stretch' }]}
           activeOpacity={0.9}
-          onPress={() => {
+              onPress={() => {
             navigation.navigate('Gamou');
-          }}
-        >
-          <ImageBackground
+              }}
+            >
+              <ImageBackground
             source={require('./assets/pdf/cover/gamou.png')}
             style={styles.podcastZikrGradient}
             resizeMode="cover"
@@ -2571,67 +2571,8 @@ function HomeScreen({ navigation }: any) {
             }}
           >
             {/* L'image contient déjà les textes "GAMOU" et les textes arabes */}
-          </ImageBackground>
-        </TouchableOpacity>
-      </View>
-
-      {/* Coran */}
-      <View style={styles.sectionModern}>
-        <View style={styles.sectionHeaderModern}>
-          <View style={styles.sectionTitleContainerModern}>
-            <View style={styles.sectionIconContainer}>
-              <Text style={styles.sectionIconModern}>📖</Text>
-            </View>
-            <View>
-              <Text style={[styles.sectionTitleModern, { color: theme.text }]}>Coran</Text>
-              <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>Récitations du Saint Coran</Text>
-            </View>
-          </View>
-          <TouchableOpacity style={styles.seeAllButton} onPress={() => navigation.navigate('Coran')}>
-            <Text style={styles.seeAllModern}>Voir tout</Text>
-            <Text style={styles.seeAllArrow}>→</Text>
-          </TouchableOpacity>
-        </View>
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false} 
-          style={styles.horizontalScrollModern} 
-          contentContainerStyle={styles.horizontalScrollContentModern}
-        >
-          {coranTracks.slice(0, 5).map(track => {
-            const isViewed = recentItems.some(item => item.id === track.id && item.type === 'audio');
-            return (
-            <TouchableOpacity 
-              key={track.id} 
-              style={styles.coranCardHome}
-              activeOpacity={0.8}
-              onPress={() => {
-                addToHistory(track, 'audio');
-                setCurrentPlayer({ item: { ...track, type: 'coran' }, type: 'coran' });
-                navigation.navigate('Coran'); // Naviguer vers CoranScreen qui démarre automatiquement
-              }}
-            >
-              <ImageBackground
-                source={require('./assets/pdf/coran2.jpg')}
-                style={styles.coranCardImage}
-                imageStyle={styles.coranCardImageStyle}
-              >
-                <View style={styles.coranCardOverlay} />
-                {isViewed && (
-                  <View style={styles.viewedIconContainerAudio}>
-                    <Image source={require('./assets/pdf/cover/icones/pl3.png')} style={styles.viewedIconImageAudio} />
-                  </View>
-                )}
-                <View style={styles.coranCardContent}>
-                  <Text style={styles.coranCardTitle}>{track.title}</Text>
-                  <Text style={styles.coranCardTitleAr}>{track.titleAr}</Text>
-                  <Text style={styles.coranCardReciter}>{track.reciter}</Text>
-                </View>
               </ImageBackground>
             </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
       </View>
 
       {/* Zikr */}
@@ -2713,16 +2654,16 @@ function HomeScreen({ navigation }: any) {
           horizontal 
           showsHorizontalScrollIndicator={false} 
           pagingEnabled
-          snapToInterval={width * 4 / 5 + 12}
+          snapToInterval={width * 4 / 5 + 10}
           snapToAlignment="start"
           decelerationRate="fast"
-          style={styles.horizontalScrollModern} 
+          style={styles.horizontalScrollModernPodcasts} 
           contentContainerStyle={styles.podcastsHorizontalScrollFull}
         >
-          {podcasts.slice(0, 5).map(podcast => (
+          {podcasts.slice(0, 5).map((podcast, index) => (
             <TouchableOpacity 
               key={podcast.id} 
-              style={styles.podcastCardHomeFull}
+              style={[styles.podcastCardHomeFull, index === 0 && styles.podcastCardHomeFullFirst]}
               activeOpacity={0.8}
               onPress={() => {
                 addToHistory(podcast, 'audio');
@@ -4015,7 +3956,7 @@ function ZikrScreen({ navigation }: any) {
             </TouchableOpacity>
             <View style={styles.zikrPlayerHeaderIcons}>
               <TouchableOpacity 
-                style={[styles.zikrPlayerHeaderIcon, showCarMode && { backgroundColor: '#0F5132', borderRadius: 20 }]}
+                style={[styles.zikrPlayerHeaderIcon, showCarMode && { backgroundColor: '#0F5132', borderRadius: 12 }]}
                 onPress={() => setShowCarMode(!showCarMode)}
               >
                 <Text style={styles.zikrPlayerHeaderIconText}>🚗</Text>
@@ -4581,7 +4522,7 @@ function CoranScreen({ navigation }: any) {
             </TouchableOpacity>
             <View style={styles.zikrPlayerHeaderIcons}>
               <TouchableOpacity 
-                style={[styles.zikrPlayerHeaderIcon, showCarMode && { backgroundColor: '#0F5132', borderRadius: 20 }]}
+                style={[styles.zikrPlayerHeaderIcon, showCarMode && { backgroundColor: '#0F5132', borderRadius: 12 }]}
                 onPress={() => setShowCarMode(!showCarMode)}
               >
                 <Text style={styles.zikrPlayerHeaderIconText}>🚗</Text>
@@ -5098,7 +5039,7 @@ function GamouScreen({ navigation }: any) {
             </TouchableOpacity>
             <View style={styles.zikrPlayerHeaderIcons}>
               <TouchableOpacity 
-                style={[styles.zikrPlayerHeaderIcon, showCarMode && { backgroundColor: '#0F5132', borderRadius: 20 }]}
+                style={[styles.zikrPlayerHeaderIcon, showCarMode && { backgroundColor: '#0F5132', borderRadius: 12 }]}
                 onPress={() => setShowCarMode(!showCarMode)}
               >
                 <Text style={styles.zikrPlayerHeaderIconText}>🚗</Text>
@@ -6031,7 +5972,7 @@ function PodcastPlayerScreen({ route, navigation }: any) {
         </TouchableOpacity>
         <View style={styles.podcastPlayerHeaderIcons}>
           <TouchableOpacity 
-            style={[styles.podcastPlayerHeaderIcon, showCarMode && { backgroundColor: '#0F5132', borderRadius: 20 }]}
+                style={[styles.podcastPlayerHeaderIcon, showCarMode && { backgroundColor: '#0F5132', borderRadius: 12 }]}
             onPress={() => setShowCarMode(!showCarMode)}
           >
             <Text style={styles.podcastPlayerHeaderIconText}>🚗</Text>
@@ -6883,7 +6824,7 @@ function DonationBanner({ onPress }: { onPress: () => void }) {
           backgroundColor: '#ffffff',
           paddingVertical: 12,
           paddingHorizontal: 16,
-          borderRadius: 18,
+          borderRadius: 20,
           shadowColor: '#000',
           shadowOffset: { width: 0, height: 1 },
           shadowOpacity: 0.2,
@@ -7009,8 +6950,8 @@ function DonationModal({ visible, onClose }: { visible: boolean; onClose: () => 
         />
         <View style={{
           backgroundColor: theme.surface,
-          borderTopLeftRadius: 24,
-          borderTopRightRadius: 24,
+          borderTopLeftRadius: 14,
+          borderTopRightRadius: 14,
           paddingTop: 24,
           paddingBottom: 40,
           paddingHorizontal: 24,
@@ -7026,7 +6967,7 @@ function DonationModal({ visible, onClose }: { visible: boolean; onClose: () => 
             width: 40,
             height: 4,
             backgroundColor: theme.textSecondary + '40',
-            borderRadius: 2,
+            borderRadius: 1,
             alignSelf: 'center',
             marginBottom: 20,
           }} />
@@ -7059,7 +7000,7 @@ function DonationModal({ visible, onClose }: { visible: boolean; onClose: () => 
               style={{
                 width: 36,
                 height: 36,
-                borderRadius: 18,
+                borderRadius: 1,
                 backgroundColor: theme.background,
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -7099,7 +7040,7 @@ function DonationModal({ visible, onClose }: { visible: boolean; onClose: () => 
                 onPress={() => setSelectedPayment('wave')}
                 style={{
                   backgroundColor: '#1E88E5',
-                  borderRadius: 16,
+                  borderRadius: 1,
                   padding: 20,
                   marginBottom: 16,
                   flexDirection: 'row',
@@ -7116,7 +7057,7 @@ function DonationModal({ visible, onClose }: { visible: boolean; onClose: () => 
                 <View style={{
                   width: 60,
                   height: 60,
-                  borderRadius: 12,
+                  borderRadius: 5,
                   backgroundColor: '#ffffff',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -7161,7 +7102,7 @@ function DonationModal({ visible, onClose }: { visible: boolean; onClose: () => 
                 onPress={() => setSelectedPayment('orange')}
                 style={{
                   backgroundColor: '#FF6600',
-                  borderRadius: 16,
+                  borderRadius: 1,
                   padding: 20,
                   marginBottom: 24,
                   flexDirection: 'row',
@@ -7178,7 +7119,7 @@ function DonationModal({ visible, onClose }: { visible: boolean; onClose: () => 
                 <View style={{
                   width: 60,
                   height: 60,
-                  borderRadius: 12,
+                  borderRadius: 5,
                   backgroundColor: '#ffffff',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -7225,7 +7166,7 @@ function DonationModal({ visible, onClose }: { visible: boolean; onClose: () => 
                 <View style={{
                   width: 80,
                   height: 80,
-                  borderRadius: 16,
+                  borderRadius: 1,
                   backgroundColor: '#ffffff',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -7287,7 +7228,7 @@ function DonationModal({ visible, onClose }: { visible: boolean; onClose: () => 
                         backgroundColor: selectedAmount === amt 
                           ? (selectedPayment === 'wave' ? '#1E88E5' : '#FF6600')
                           : theme.background,
-                        borderRadius: 12,
+                        borderRadius: 5,
                         padding: 16,
                         alignItems: 'center',
                         borderWidth: 2,
@@ -7313,7 +7254,7 @@ function DonationModal({ visible, onClose }: { visible: boolean; onClose: () => 
                   <TextInput
                     style={{
                       backgroundColor: theme.background,
-                      borderRadius: 12,
+                      borderRadius: 5,
                       padding: 16,
                       fontSize: 16,
                       color: theme.text,
@@ -7342,7 +7283,7 @@ function DonationModal({ visible, onClose }: { visible: boolean; onClose: () => 
                 }}
                 style={{
                   backgroundColor: theme.background,
-                  borderRadius: 12,
+                  borderRadius: 5,
                   padding: 16,
                   alignItems: 'center',
                   marginBottom: 12,
@@ -7372,7 +7313,7 @@ function DonationModal({ visible, onClose }: { visible: boolean; onClose: () => 
                 disabled={!selectedAmount || parseFloat(selectedAmount) <= 0}
                 style={{
                   backgroundColor: selectedPayment === 'wave' ? '#1E88E5' : '#FF6600',
-                  borderRadius: 12,
+                  borderRadius: 5,
                   padding: 18,
                   alignItems: 'center',
                   shadowColor: selectedPayment === 'wave' ? '#1E88E5' : '#FF6600',
@@ -8256,7 +8197,7 @@ const styles = StyleSheet.create({
     width: 160,
     marginRight: 15,
     padding: 15,
-    borderRadius: 12,
+    borderRadius: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -8264,7 +8205,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   continueCardEnhanced: {
-    borderRadius: 16,
+    borderRadius: 1,
     shadowOpacity: 0.15,
     shadowRadius: 8,
     elevation: 5,
@@ -8273,7 +8214,7 @@ const styles = StyleSheet.create({
   continueIcon: {
     width: 50,
     height: 50,
-    borderRadius: 25,
+    borderRadius: 9,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 10,
@@ -8281,7 +8222,7 @@ const styles = StyleSheet.create({
   continueIconGradient: {
     width: 60,
     height: 60,
-    borderRadius: 30,
+    borderRadius: 1,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
@@ -8317,7 +8258,7 @@ const styles = StyleSheet.create({
     width: 140,
     marginRight: 15,
     padding: 15,
-    borderRadius: 12,
+    borderRadius: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -8325,7 +8266,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   musicCardEnhanced: {
-    borderRadius: 16,
+    borderRadius: 1,
     shadowOpacity: 0.15,
     shadowRadius: 8,
     elevation: 5,
@@ -8334,7 +8275,7 @@ const styles = StyleSheet.create({
   musicIcon: {
     width: 50,
     height: 50,
-    borderRadius: 25,
+    borderRadius: 9,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 10,
@@ -8342,7 +8283,7 @@ const styles = StyleSheet.create({
   musicIconGradient: {
     width: 60,
     height: 60,
-    borderRadius: 30,
+    borderRadius: 1,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
@@ -8368,7 +8309,7 @@ const styles = StyleSheet.create({
     height: 200,
     marginRight: 15,
     padding: 15,
-    borderRadius: 12,
+    borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -8378,7 +8319,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   audiobookCardEnhanced: {
-    borderRadius: 16,
+    borderRadius: 1,
     shadowOpacity: 0.2,
     shadowRadius: 10,
     elevation: 6,
@@ -8390,7 +8331,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 15,
-    borderRadius: 16,
+    borderRadius: 1,
   },
   audiobookTitle: {
     fontSize: 16,
@@ -8441,7 +8382,7 @@ const styles = StyleSheet.create({
     width: 120,
     marginRight: 15,
     padding: 10,
-    borderRadius: 12,
+    borderRadius: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -8449,7 +8390,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   bookCardEnhanced: {
-    borderRadius: 16,
+    borderRadius: 1,
     shadowOpacity: 0.15,
     shadowRadius: 8,
     elevation: 5,
@@ -8460,7 +8401,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 140,
     backgroundColor: '#f0f0f0',
-    borderRadius: 8,
+    borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 10,
@@ -8468,7 +8409,7 @@ const styles = StyleSheet.create({
   bookCoverEnhanced: {
     width: 110,
     height: 150,
-    borderRadius: 12,
+    borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
@@ -8506,8 +8447,8 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   bookModal: {
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
     padding: 20,
     maxHeight: '80%',
   },
@@ -8549,7 +8490,7 @@ const styles = StyleSheet.create({
   openButton: {
     backgroundColor: '#0F5132',
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 1,
     alignItems: 'center',
   },
   openButtonText: {
@@ -8572,7 +8513,7 @@ const styles = StyleSheet.create({
     width: (width - 45) / 2,
     marginBottom: 20,
     padding: 15,
-    borderRadius: 16,
+    borderRadius: 1,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
@@ -8583,7 +8524,7 @@ const styles = StyleSheet.create({
   musicCardGridIcon: {
     width: 80,
     height: 80,
-    borderRadius: 40,
+    borderRadius: 14,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
@@ -8653,7 +8594,7 @@ const styles = StyleSheet.create({
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 20,
+    borderRadius: 5,
     backgroundColor: '#f0f0f0',
   },
   musicPlayerHeaderIcon: {
@@ -8678,7 +8619,7 @@ const styles = StyleSheet.create({
   musicPlayerPlayBtn: {
     width: 70,
     height: 70,
-    borderRadius: 35,
+    borderRadius: 5,
     backgroundColor: '#0F5132',
     justifyContent: 'center',
     alignItems: 'center',
@@ -8714,7 +8655,7 @@ const styles = StyleSheet.create({
     padding: 15,
     marginHorizontal: 20,
     marginVertical: 5,
-    borderRadius: 12,
+    borderRadius: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -8724,7 +8665,7 @@ const styles = StyleSheet.create({
   musicItemIcon: {
     width: 50,
     height: 50,
-    borderRadius: 25,
+    borderRadius: 9,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 15,
@@ -8756,7 +8697,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginVertical: 10,
     padding: 15,
-    borderRadius: 12,
+    borderRadius: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -8766,7 +8707,7 @@ const styles = StyleSheet.create({
   podcastCardEnhanced: {
     marginBottom: 20,
     padding: 20,
-    borderRadius: 20,
+    borderRadius: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
@@ -8776,7 +8717,7 @@ const styles = StyleSheet.create({
   podcastIcon: {
     width: 50,
     height: 50,
-    borderRadius: 25,
+    borderRadius: 9,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 15,
@@ -8784,7 +8725,7 @@ const styles = StyleSheet.create({
   podcastIconEnhanced: {
     width: 70,
     height: 70,
-    borderRadius: 35,
+    borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 15,
@@ -8859,14 +8800,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#0F5132',
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 5,
     alignItems: 'center',
   },
   subscribeButtonEnhanced: {
     flex: 1,
     backgroundColor: '#0F5132',
     padding: 14,
-    borderRadius: 12,
+    borderRadius: 5,
     alignItems: 'center',
     shadowColor: '#0F5132',
     shadowOffset: { width: 0, height: 2 },
@@ -8900,7 +8841,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     backgroundColor: '#0F5132',
-    borderRadius: 25,
+    borderRadius: 9,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -8908,7 +8849,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     backgroundColor: '#0F5132',
-    borderRadius: 28,
+                  borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#0F5132',
@@ -8935,7 +8876,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginVertical: 10,
     padding: 15,
-    borderRadius: 12,
+    borderRadius: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -8945,7 +8886,7 @@ const styles = StyleSheet.create({
   courseCardEnhanced: {
     marginBottom: 20,
     padding: 20,
-    borderRadius: 20,
+    borderRadius: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
@@ -8962,7 +8903,7 @@ const styles = StyleSheet.create({
   courseIcon: {
     width: 50,
     height: 50,
-    borderRadius: 25,
+    borderRadius: 9,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 15,
@@ -8970,7 +8911,7 @@ const styles = StyleSheet.create({
   courseIconEnhanced: {
     width: 70,
     height: 70,
-    borderRadius: 35,
+    borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 15,
@@ -9047,12 +8988,12 @@ const styles = StyleSheet.create({
   },
   lessonItem: {
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 5,
     marginBottom: 8,
   },
   lessonItemEnhanced: {
     padding: 15,
-    borderRadius: 12,
+    borderRadius: 5,
     marginBottom: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -9143,7 +9084,7 @@ const styles = StyleSheet.create({
   pdfControlButton: {
     width: 44,
     height: 44,
-    borderRadius: 22,
+    borderRadius: 13,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -9236,7 +9177,7 @@ const styles = StyleSheet.create({
     width: 280,
     height: 280,
     marginBottom: 30,
-    borderRadius: 20,
+    borderRadius: 5,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
@@ -9303,7 +9244,7 @@ const styles = StyleSheet.create({
   audioPlayerPlayButton: {
     width: 80,
     height: 80,
-    borderRadius: 40,
+    borderRadius: 14,
     backgroundColor: '#0F5132',
     justifyContent: 'center',
     alignItems: 'center',
@@ -9340,7 +9281,7 @@ const styles = StyleSheet.create({
   audioPlayerInfoModal: {
     marginTop: 20,
     padding: 20,
-    borderRadius: 12,
+    borderRadius: 5,
     width: '100%',
   },
   audioPlayerInfoTitle: {
@@ -9365,7 +9306,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 15,
-    borderRadius: 12,
+    borderRadius: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
@@ -9482,7 +9423,7 @@ const styles = StyleSheet.create({
   indicator: {
     width: 8,
     height: 8,
-    borderRadius: 4,
+    borderRadius: 1,
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
   },
   indicatorActive: {
@@ -9510,7 +9451,7 @@ const styles = StyleSheet.create({
   onboardingArrowLeft: {
     width: 50,
     height: 50,
-    borderRadius: 25,
+    borderRadius: 9,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -9518,7 +9459,7 @@ const styles = StyleSheet.create({
   onboardingArrowRight: {
     width: 50,
     height: 50,
-    borderRadius: 25,
+    borderRadius: 9,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -9532,7 +9473,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingHorizontal: 40,
     paddingVertical: 15,
-    borderRadius: 25,
+    borderRadius: 9,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -9582,7 +9523,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 40,
     borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: 5,
     paddingHorizontal: 12,
     fontSize: 16,
   },
@@ -9604,7 +9545,7 @@ const styles = StyleSheet.create({
     padding: 12,
     marginHorizontal: 20,
     marginBottom: 12,
-    borderRadius: 12,
+    borderRadius: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -9614,7 +9555,7 @@ const styles = StyleSheet.create({
   searchResultImage: {
     width: 60,
     height: 80,
-    borderRadius: 8,
+    borderRadius: 5,
     marginRight: 12,
     resizeMode: 'cover',
   },
@@ -9655,7 +9596,7 @@ const styles = StyleSheet.create({
   },
   searchSuggestionsContainer: {
     marginHorizontal: 20,
-    borderRadius: 8,
+    borderRadius: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -9683,8 +9624,8 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   settingsModal: {
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
     padding: 20,
     maxHeight: '80%',
   },
@@ -9719,7 +9660,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 15,
-    borderRadius: 12,
+    borderRadius: 5,
     borderWidth: 1,
     borderColor: '#e0e0e0',
   },
@@ -9788,7 +9729,7 @@ const styles = StyleSheet.create({
   heroIconContainer: {
     width: 80,
     height: 80,
-    borderRadius: 40,
+    borderRadius: 14,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -9817,7 +9758,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 3,
     backgroundColor: '#C9A24D',
-    borderRadius: 2,
+    borderRadius: 1,
   },
   // Styles modernes - Sections
   sectionModern: {
@@ -9838,7 +9779,7 @@ const styles = StyleSheet.create({
   sectionIconContainer: {
     width: 45,
     height: 45,
-    borderRadius: 22.5,
+    borderRadius: 13,
     backgroundColor: 'rgba(15, 81, 50, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -9863,7 +9804,7 @@ const styles = StyleSheet.create({
     gap: 5,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 15,
+    borderRadius: 9,
     backgroundColor: '#F8F9F6',
   },
   seeAllModern: {
@@ -9880,6 +9821,11 @@ const styles = StyleSheet.create({
     marginHorizontal: -20,
     paddingHorizontal: 20,
   },
+  horizontalScrollModernPodcasts: {
+    marginHorizontal: -20,
+    paddingLeft: 0,
+    paddingRight: 20,
+  },
   horizontalScrollContentModern: {
     paddingRight: 20,
   },
@@ -9888,7 +9834,7 @@ const styles = StyleSheet.create({
     width: 180,
     marginRight: 15,
     padding: 18,
-    borderRadius: 20,
+    borderRadius: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.12,
@@ -9898,7 +9844,7 @@ const styles = StyleSheet.create({
   continueIconGradientModern: {
     width: 65,
     height: 65,
-    borderRadius: 32.5,
+    borderRadius: 19,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 15,
@@ -9948,7 +9894,7 @@ const styles = StyleSheet.create({
     width: 160,
     marginRight: 15,
     padding: 16,
-    borderRadius: 20,
+    borderRadius: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.12,
@@ -9958,7 +9904,7 @@ const styles = StyleSheet.create({
   musicIconGradientModern: {
     width: 60,
     height: 60,
-    borderRadius: 30,
+    borderRadius: 1,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
@@ -9989,7 +9935,7 @@ const styles = StyleSheet.create({
     width: 200,
     height: 140,
     marginRight: 15,
-    borderRadius: 20,
+    borderRadius: 5,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 6 },
@@ -10029,7 +9975,7 @@ const styles = StyleSheet.create({
     right: 10,
     width: 35,
     height: 35,
-    borderRadius: 17.5,
+    borderRadius: 10,
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -10073,7 +10019,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 40,
     borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: 5,
     paddingHorizontal: 12,
     fontSize: 16,
   },
@@ -10098,7 +10044,7 @@ const styles = StyleSheet.create({
   languageBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 8,
+    borderRadius: 5,
     paddingVertical: 4,
     paddingHorizontal: 4,
     minHeight: 36,
@@ -10106,7 +10052,7 @@ const styles = StyleSheet.create({
   languageBarItem: {
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 6,
+    borderRadius: 1,
     marginHorizontal: 2,
   },
   languageBarItemActive: {
@@ -10147,7 +10093,7 @@ const styles = StyleSheet.create({
   categoryIconContainer: {
     width: 45,
     height: 45,
-    borderRadius: 22.5,
+    borderRadius: 13,
     backgroundColor: '#F8F9F6',
     justifyContent: 'center',
     alignItems: 'center',
@@ -10168,7 +10114,7 @@ const styles = StyleSheet.create({
   bookCardModern: {
     width: 150,
     marginRight: 15,
-    borderRadius: 18,
+    borderRadius: 1,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -10179,7 +10125,7 @@ const styles = StyleSheet.create({
   bookCardArticle: {
     width: 150,
     marginRight: 15,
-    borderRadius: 18,
+    borderRadius: 1,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -10198,7 +10144,7 @@ const styles = StyleSheet.create({
     width: '32%', // 3 colonnes : 32% × 3 = 96%, reste 4% pour les espaces
     marginRight: '1%',
     marginBottom: 15,
-    borderRadius: 18,
+    borderRadius: 1,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -10225,7 +10171,7 @@ const styles = StyleSheet.create({
   bookCardFullWidth: {
     width: '100%',
     marginBottom: 16,
-    borderRadius: 16,
+    borderRadius: 1,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -10264,7 +10210,7 @@ const styles = StyleSheet.create({
   },
   bookCoverImageStyle: {
     resizeMode: 'cover',
-    borderRadius: 8,
+    borderRadius: 5,
   },
   bookCoverOverlay: {
     position: 'absolute',
@@ -10273,7 +10219,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
-    borderRadius: 8,
+    borderRadius: 5,
   },
   bookCoverEmojiModern: {
     fontSize: 50,
@@ -10328,7 +10274,7 @@ const styles = StyleSheet.create({
     width: (width - 60) / 2,
     marginBottom: 20,
     padding: 18,
-    borderRadius: 20,
+    borderRadius: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.12,
@@ -10338,7 +10284,7 @@ const styles = StyleSheet.create({
   musicCardGridIconModern: {
     width: 70,
     height: 70,
-    borderRadius: 35,
+    borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 15,
@@ -10389,7 +10335,7 @@ const styles = StyleSheet.create({
   podcastCardModern: {
     marginBottom: 20,
     padding: 20,
-    borderRadius: 22,
+    borderRadius: 13,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.12,
@@ -10403,7 +10349,7 @@ const styles = StyleSheet.create({
   podcastIconModern: {
     width: 70,
     height: 70,
-    borderRadius: 35,
+    borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 15,
@@ -10453,7 +10399,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 12,
     paddingHorizontal: 20,
-    borderRadius: 15,
+    borderRadius: 9,
     backgroundColor: '#F8F9F6',
     alignItems: 'center',
     justifyContent: 'center',
@@ -10472,7 +10418,7 @@ const styles = StyleSheet.create({
   playButtonModern: {
     width: 50,
     height: 50,
-    borderRadius: 25,
+    borderRadius: 9,
     backgroundColor: '#0F5132',
     justifyContent: 'center',
     alignItems: 'center',
@@ -10497,7 +10443,7 @@ const styles = StyleSheet.create({
   courseCardModern: {
     marginBottom: 20,
     padding: 20,
-    borderRadius: 22,
+    borderRadius: 13,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.12,
@@ -10510,7 +10456,7 @@ const styles = StyleSheet.create({
   courseIconModern: {
     width: 70,
     height: 70,
-    borderRadius: 35,
+    borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 15,
@@ -10547,7 +10493,7 @@ const styles = StyleSheet.create({
     gap: 5,
     paddingHorizontal: 10,
     paddingVertical: 6,
-    borderRadius: 12,
+    borderRadius: 5,
     backgroundColor: '#F8F9F6',
   },
   courseMetaIconModern: {
@@ -10565,7 +10511,7 @@ const styles = StyleSheet.create({
   },
   lessonItemModern: {
     padding: 15,
-    borderRadius: 15,
+    borderRadius: 9,
     marginBottom: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -10580,7 +10526,7 @@ const styles = StyleSheet.create({
   lessonIconContainer: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 5,
     backgroundColor: '#F8F9F6',
     justifyContent: 'center',
     alignItems: 'center',
@@ -10609,8 +10555,8 @@ const styles = StyleSheet.create({
     right: 0,
     padding: 18,
     paddingBottom: 25,
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -6 },
     shadowOpacity: 0.2,
@@ -10644,7 +10590,7 @@ const styles = StyleSheet.create({
   musicPlayerHeaderButtonModern: {
     width: 42,
     height: 42,
-    borderRadius: 21,
+                  borderRadius: 8,
     backgroundColor: 'rgba(15, 81, 50, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -10674,7 +10620,7 @@ const styles = StyleSheet.create({
   musicPlayerPlayBtnModern: {
     width: 75,
     height: 75,
-    borderRadius: 37.5,
+    borderRadius: 13,
     shadowColor: '#0F5132',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.4,
@@ -10684,7 +10630,7 @@ const styles = StyleSheet.create({
   musicPlayerPlayBtnGradient: {
     width: '100%',
     height: '100%',
-    borderRadius: 37.5,
+    borderRadius: 13,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -10716,8 +10662,8 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   bookModalModern: {
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18,
     maxHeight: '90%',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },
@@ -10728,8 +10674,8 @@ const styles = StyleSheet.create({
   modalHeaderModern: {
     padding: 25,
     paddingTop: 30,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
+    borderTopLeftRadius: 18,
+    borderTopRightRadius: 18,
   },
   modalHeaderContent: {
     flexDirection: 'row',
@@ -10757,7 +10703,7 @@ const styles = StyleSheet.create({
   modalCloseButton: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 5,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -10801,7 +10747,7 @@ const styles = StyleSheet.create({
   openButtonModern: {
     margin: 25,
     marginTop: 15,
-    borderRadius: 20,
+    borderRadius: 5,
     overflow: 'hidden',
     shadowColor: '#0F5132',
     shadowOffset: { width: 0, height: 6 },
@@ -10830,7 +10776,7 @@ const styles = StyleSheet.create({
   modalPodcastImage: {
     width: '100%',
     height: 200,
-    borderRadius: 12,
+    borderRadius: 5,
     marginBottom: 20,
   },
   modalDescriptionSection: {
@@ -10887,7 +10833,7 @@ const styles = StyleSheet.create({
     width: '100%',
     aspectRatio: 1,
     marginBottom: 20,
-    borderRadius: 16,
+    borderRadius: 1,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -10901,7 +10847,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   podcastModalImageStyle: {
-    borderRadius: 16,
+    borderRadius: 1,
     resizeMode: 'cover',
   },
   podcastModalImageOverlay: {
@@ -10949,7 +10895,7 @@ const styles = StyleSheet.create({
   },
   podcastModalPlayButton: {
     flex: 1,
-    borderRadius: 12,
+    borderRadius: 5,
     overflow: 'hidden',
     shadowColor: '#0F5132',
     shadowOffset: { width: 0, height: 4 },
@@ -10978,7 +10924,7 @@ const styles = StyleSheet.create({
   podcastModalMenuButton: {
     width: 56,
     height: 56,
-    borderRadius: 12,
+    borderRadius: 5,
     backgroundColor: '#0F5132',
     justifyContent: 'center',
     alignItems: 'center',
@@ -11020,7 +10966,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 10,
-    borderRadius: 20,
+    borderRadius: 5,
     backgroundColor: '#C9A24D',
     gap: 8,
   },
@@ -11077,7 +11023,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     aspectRatio: 1, // Format carré
     marginBottom: 20,
-    borderRadius: 16,
+    borderRadius: 1,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -11091,7 +11037,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   bookModalImageStyle: {
-    borderRadius: 16,
+    borderRadius: 1,
     resizeMode: 'cover',
   },
   bookModalImageOverlay: {
@@ -11152,7 +11098,7 @@ const styles = StyleSheet.create({
   },
   bookModalReadButton: {
     flex: 1,
-    borderRadius: 12,
+    borderRadius: 5,
     overflow: 'hidden',
     shadowColor: '#0F5132',
     shadowOffset: { width: 0, height: 4 },
@@ -11181,7 +11127,7 @@ const styles = StyleSheet.create({
   bookModalMenuButton: {
     width: 50,
     height: 50,
-    borderRadius: 12,
+    borderRadius: 5,
     backgroundColor: '#0F5132',
     justifyContent: 'center',
     alignItems: 'center',
@@ -11265,7 +11211,7 @@ const styles = StyleSheet.create({
     width: '100%',
     aspectRatio: 1,
     marginBottom: 20,
-    borderRadius: 16,
+    borderRadius: 1,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -11279,7 +11225,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   podcastPlayerImageStyle: {
-    borderRadius: 16,
+    borderRadius: 1,
     resizeMode: 'cover',
   },
   podcastPlayerImageOverlay: {
@@ -11353,7 +11299,7 @@ const styles = StyleSheet.create({
   podcastPlayer30sCircle: {
     width: 60,
     height: 60,
-    borderRadius: 30,
+    borderRadius: 1,
     backgroundColor: '#f0f0f0',
     justifyContent: 'center',
     alignItems: 'center',
@@ -11368,7 +11314,7 @@ const styles = StyleSheet.create({
   podcastPlayerPlayBtn: {
     width: 80,
     height: 80,
-    borderRadius: 40,
+    borderRadius: 14,
     overflow: 'hidden',
     shadowColor: '#0F5132',
     shadowOffset: { width: 0, height: 6 },
@@ -11397,7 +11343,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 15,
     paddingVertical: 10,
-    borderRadius: 20,
+    borderRadius: 5,
     backgroundColor: '#f0f0f0',
     gap: 8,
   },
@@ -11415,7 +11361,7 @@ const styles = StyleSheet.create({
   podcastPlayerBottomIcon: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 5,
     backgroundColor: '#f0f0f0',
     justifyContent: 'center',
     alignItems: 'center',
@@ -11446,7 +11392,7 @@ const styles = StyleSheet.create({
   },
   audioPlayerHeaderIconBtnActive: {
     backgroundColor: '#F8F9F6',
-    borderRadius: 20,
+    borderRadius: 5,
   },
   audioPlayerHeaderIconNew: {
     fontSize: 24,
@@ -11470,7 +11416,7 @@ const styles = StyleSheet.create({
   audioPlayerPage: {
     padding: 20,
     marginBottom: 20,
-    borderRadius: 12,
+    borderRadius: 5,
     backgroundColor: '#f8f8f8',
     borderWidth: 1,
     borderColor: '#e0e0e0',
@@ -11494,7 +11440,7 @@ const styles = StyleSheet.create({
   audioPlayerCardNew: {
     marginTop: 10,
     marginBottom: 30,
-    borderRadius: 20,
+    borderRadius: 5,
     backgroundColor: '#f5f5f5',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -11510,7 +11456,7 @@ const styles = StyleSheet.create({
   audioPlayerCardBorder: {
     borderWidth: 5,
     borderColor: '#C9A24D',
-    borderRadius: 15,
+    borderRadius: 9,
     padding: 25,
     backgroundColor: '#fafafa',
     position: 'relative',
@@ -11524,7 +11470,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 200,
     marginBottom: 20,
-    borderRadius: 10,
+    borderRadius: 1,
     overflow: 'hidden',
     backgroundColor: '#e0e0e0',
   },
@@ -11708,7 +11654,7 @@ const styles = StyleSheet.create({
   audioPlayerPlayButtonNew: {
     width: 70,
     height: 70,
-    borderRadius: 35,
+    borderRadius: 5,
     backgroundColor: '#0F5132',
     justifyContent: 'center',
     alignItems: 'center',
@@ -11769,7 +11715,7 @@ const styles = StyleSheet.create({
   libraryHeaderIconContainer: {
     width: 50,
     height: 50,
-    borderRadius: 25,
+    borderRadius: 9,
     backgroundColor: 'rgba(15, 81, 50, 0.15)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -11799,7 +11745,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   libraryCourseCard: {
-    borderRadius: 20,
+    borderRadius: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.12,
@@ -11814,7 +11760,7 @@ const styles = StyleSheet.create({
   libraryCourseIcon: {
     width: 70,
     height: 70,
-    borderRadius: 35,
+    borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 18,
@@ -11846,7 +11792,7 @@ const styles = StyleSheet.create({
   libraryCourseExpandIcon: {
     width: 32,
     height: 32,
-    borderRadius: 16,
+    borderRadius: 1,
     backgroundColor: '#f0f0f0',
     justifyContent: 'center',
     alignItems: 'center',
@@ -11875,7 +11821,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 15,
+    borderRadius: 9,
     gap: 6,
   },
   libraryCourseBadgeIcon: {
@@ -11903,16 +11849,16 @@ const styles = StyleSheet.create({
   libraryLessonsProgressBar: {
     height: 4,
     backgroundColor: '#e8e8e8',
-    borderRadius: 2,
+    borderRadius: 1,
     overflow: 'hidden',
   },
   libraryLessonsProgressFill: {
     height: '100%',
-    borderRadius: 2,
+    borderRadius: 1,
   },
   libraryLessonItem: {
     marginBottom: 12,
-    borderRadius: 15,
+    borderRadius: 9,
     borderLeftWidth: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -11928,7 +11874,7 @@ const styles = StyleSheet.create({
   libraryLessonNumber: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 15,
@@ -11974,7 +11920,7 @@ const styles = StyleSheet.create({
   libraryLessonPlayButton: {
     width: 45,
     height: 45,
-    borderRadius: 22.5,
+    borderRadius: 13,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -12006,7 +11952,7 @@ const styles = StyleSheet.create({
   videoPlayerBackButton: {
     width: 45,
     height: 45,
-    borderRadius: 22.5,
+    borderRadius: 13,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -12038,7 +11984,7 @@ const styles = StyleSheet.create({
   videoPlayerPlayButtonHeader: {
     width: 45,
     height: 45,
-    borderRadius: 22.5,
+    borderRadius: 13,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -12074,7 +12020,7 @@ const styles = StyleSheet.create({
   podcastsHeaderIconContainer: {
     width: 50,
     height: 50,
-    borderRadius: 25,
+    borderRadius: 9,
     backgroundColor: 'rgba(15, 81, 50, 0.15)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -12104,7 +12050,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   podcastCardNew: {
-    borderRadius: 20,
+    borderRadius: 5,
     overflow: 'hidden',
   },
   podcastCardContentNew: {
@@ -12114,7 +12060,7 @@ const styles = StyleSheet.create({
   podcastIconNew: {
     width: 75,
     height: 75,
-    borderRadius: 37.5,
+    borderRadius: 13,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 18,
@@ -12169,7 +12115,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 8,
-    borderRadius: 15,
+    borderRadius: 9,
     gap: 6,
   },
   podcastStatIconNew: {
@@ -12194,7 +12140,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 14,
     paddingHorizontal: 20,
-    borderRadius: 15,
+    borderRadius: 9,
     backgroundColor: '#F8F9F6',
     alignItems: 'center',
     justifyContent: 'center',
@@ -12210,7 +12156,7 @@ const styles = StyleSheet.create({
   podcastPlayButtonNew: {
     width: 55,
     height: 55,
-    borderRadius: 27.5,
+                  borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -12243,7 +12189,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#C9A24D',
     paddingHorizontal: 16,
     paddingVertical: 6,
-    borderRadius: 15,
+    borderRadius: 9,
   },
   podcastsViewAllText: {
     color: '#fff',
@@ -12261,7 +12207,7 @@ const styles = StyleSheet.create({
   podcastAlbumContainer: {
     width: 180,
     height: 180,
-    borderRadius: 12,
+    borderRadius: 5,
     overflow: 'hidden',
     marginBottom: 12,
     borderWidth: 2,
@@ -12336,7 +12282,7 @@ const styles = StyleSheet.create({
   podcastCardInfoButton: {
     width: 24,
     height: 24,
-    borderRadius: 12,
+    borderRadius: 5,
     backgroundColor: '#f0f0f0',
     justifyContent: 'center',
     alignItems: 'center',
@@ -12344,7 +12290,7 @@ const styles = StyleSheet.create({
   podcastZikrCard: {
     width: '100%',
     height: 200,
-    borderRadius: 20,
+    borderRadius: 5,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 6 },
@@ -12380,7 +12326,7 @@ const styles = StyleSheet.create({
   podcastMusicCard: {
     width: '100%',
     height: 200,
-    borderRadius: 20,
+    borderRadius: 5,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 6 },
@@ -12452,13 +12398,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
     backgroundColor: '#f5f5f5',
-    borderRadius: 25,
+    borderRadius: 9,
     padding: 4,
   },
   podcastsHeaderPill: {
     paddingHorizontal: 20,
     paddingVertical: 8,
-    borderRadius: 20,
+    borderRadius: 5,
   },
   podcastsHeaderPillActive: {
     backgroundColor: '#ffffff',
@@ -12487,7 +12433,7 @@ const styles = StyleSheet.create({
   podcastFaydaIcon: {
     width: 32,
     height: 32,
-    borderRadius: 16,
+    borderRadius: 1,
     backgroundColor: '#0F5132',
     justifyContent: 'center',
     alignItems: 'center',
@@ -12505,7 +12451,7 @@ const styles = StyleSheet.create({
   podcastThumbnailContainer: {
     width: '100%',
     height: 220,
-    borderRadius: 16,
+    borderRadius: 1,
     overflow: 'hidden',
     marginBottom: 12,
     position: 'relative',
@@ -12520,7 +12466,7 @@ const styles = StyleSheet.create({
     left: 12,
     width: 36,
     height: 36,
-    borderRadius: 18,
+    borderRadius: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -12573,7 +12519,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 8,
+    borderRadius: 5,
     gap: 6,
   },
   podcastThumbnailLogoAr: {
@@ -12738,7 +12684,7 @@ const styles = StyleSheet.create({
   zikrCard: {
     marginHorizontal: 20,
     marginBottom: 20,
-    borderRadius: 16,
+    borderRadius: 1,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -12853,7 +12799,7 @@ const styles = StyleSheet.create({
   musicHeaderIconContainer: {
     width: 50,
     height: 50,
-    borderRadius: 25,
+    borderRadius: 9,
     backgroundColor: 'rgba(15, 81, 50, 0.15)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -12886,7 +12832,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 18,
-    borderRadius: 18,
+    borderRadius: 1,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.12,
@@ -12903,7 +12849,7 @@ const styles = StyleSheet.create({
   musicIconNew: {
     width: 65,
     height: 65,
-    borderRadius: 32.5,
+    borderRadius: 19,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 15,
@@ -12957,7 +12903,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 10,
     paddingVertical: 5,
-    borderRadius: 12,
+    borderRadius: 5,
     gap: 5,
   },
   musicDurationIcon: {
@@ -12970,7 +12916,7 @@ const styles = StyleSheet.create({
   musicPlayButtonNew: {
     width: 50,
     height: 50,
-    borderRadius: 25,
+    borderRadius: 9,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -13030,8 +12976,8 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 300,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.3,
@@ -13079,8 +13025,8 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: '#ffffff',
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.2,
@@ -13113,7 +13059,7 @@ const styles = StyleSheet.create({
   zikrPlayerCard: {
     marginHorizontal: 20,
     marginBottom: 20,
-    borderRadius: 20,
+    borderRadius: 5,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -13185,7 +13131,7 @@ const styles = StyleSheet.create({
   zikrPlayerOptions: {
     width: 36,
     height: 36,
-    borderRadius: 8,
+    borderRadius: 5,
     backgroundColor: '#D4A574',
     justifyContent: 'center',
     alignItems: 'center',
@@ -13224,7 +13170,7 @@ const styles = StyleSheet.create({
   zikrPlayerSquareBtn: {
     width: 50,
     height: 50,
-    borderRadius: 8,
+    borderRadius: 5,
     backgroundColor: '#6B7A8F',
     justifyContent: 'center',
     alignItems: 'center',
@@ -13254,7 +13200,7 @@ const styles = StyleSheet.create({
   zikrPlayer30sCircle: {
     width: 60,
     height: 60,
-    borderRadius: 30,
+    borderRadius: 1,
     borderWidth: 2,
     borderColor: '#0F5132',
     justifyContent: 'center',
@@ -13269,7 +13215,7 @@ const styles = StyleSheet.create({
   zikrPlayerPlayBtn: {
     width: 80,
     height: 80,
-    borderRadius: 40,
+    borderRadius: 14,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -13279,7 +13225,7 @@ const styles = StyleSheet.create({
   zikrPlayerPlayBtnGradient: {
     width: '100%',
     height: '100%',
-    borderRadius: 40,
+    borderRadius: 14,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -13314,7 +13260,7 @@ const styles = StyleSheet.create({
   zikrPlayerBottomIcon: {
     width: 32,
     height: 32,
-    borderRadius: 16,
+    borderRadius: 1,
     backgroundColor: '#0F5132',
     justifyContent: 'center',
     alignItems: 'center',
@@ -13345,13 +13291,13 @@ const styles = StyleSheet.create({
   messageBubble: {
     maxWidth: '80%',
     padding: 12,
-    borderRadius: 16,
+    borderRadius: 1,
   },
   userMessageBubble: {
-    borderTopRightRadius: 4,
+    borderTopRightRadius: 2,
   },
   assistantMessageBubble: {
-    borderTopLeftRadius: 4,
+    borderTopLeftRadius: 2,
   },
   messageText: {
     fontSize: 15,
@@ -13381,7 +13327,7 @@ const styles = StyleSheet.create({
   suggestionChip: {
     paddingHorizontal: 16,
     paddingVertical: 8,
-    borderRadius: 20,
+    borderRadius: 5,
     marginRight: 8,
     borderWidth: 1,
     borderColor: '#e0e0e0',
@@ -13397,7 +13343,7 @@ const styles = StyleSheet.create({
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 24,
+    borderRadius: 14,
     paddingHorizontal: 4,
     paddingVertical: 4,
     borderWidth: 1,
@@ -13413,7 +13359,7 @@ const styles = StyleSheet.create({
   sendButton: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 8,
@@ -13437,7 +13383,7 @@ const styles = StyleSheet.create({
   essentialsBannerContainer: {
     marginHorizontal: 16,
     marginTop: 10,
-    borderRadius: 16,
+    borderRadius: 1,
     overflow: 'hidden',
     height: 200,
     shadowColor: '#000',
@@ -13521,7 +13467,7 @@ const styles = StyleSheet.create({
     width: 70,
     height: 35,
     backgroundColor: '#ffffff',
-    borderRadius: 35,
+    borderRadius: 5,
     opacity: 0.85,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -13535,7 +13481,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 30,
     backgroundColor: '#ffffff',
-    borderRadius: 30,
+    borderRadius: 1,
     opacity: 0.75,
   },
   essentialsMinaret: {
@@ -13545,7 +13491,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 90,
     backgroundColor: '#D4A574',
-    borderRadius: 12,
+    borderRadius: 5,
     borderWidth: 2,
     borderColor: '#B8956A',
     shadowColor: '#000',
@@ -13584,7 +13530,7 @@ const styles = StyleSheet.create({
   bookCardHome: {
     width: 140,
     marginRight: 12,
-    borderRadius: 12,
+    borderRadius: 5,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -13616,7 +13562,7 @@ const styles = StyleSheet.create({
   recentCardVertical: {
     width: 120,
     marginRight: 12,
-    borderRadius: 10,
+    borderRadius: 1,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -13631,7 +13577,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   recentCardImageStyle: {
-    borderRadius: 12,
+    borderRadius: 5,
     resizeMode: 'cover',
   },
   recentCardOverlay: {
@@ -13665,7 +13611,7 @@ const styles = StyleSheet.create({
   // Styles pour les cartes récentes carrées (2/5 largeur)
   recentCardSquare: {
     marginRight: 12,
-    borderRadius: 12,
+    borderRadius: 5,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -13680,7 +13626,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   recentCardImageStyleSquare: {
-    borderRadius: 12,
+    borderRadius: 5,
     resizeMode: 'cover',
   },
   recentCardOverlaySquare: {
@@ -13716,7 +13662,7 @@ const styles = StyleSheet.create({
     width: 180,
     height: 240,
     marginRight: 12,
-    borderRadius: 12,
+    borderRadius: 5,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -13730,13 +13676,13 @@ const styles = StyleSheet.create({
   podcastCardHomeFull: {
     width: width * 4 / 5,
     height: 200,
-    borderRadius: 12,
+    borderRadius: 5,
     overflow: 'hidden',
-    marginRight: 12,
-    marginLeft: 20,
+    marginRight: 10,
+    marginLeft: 10,
   },
   podcastCardHomeFullFirst: {
-    marginLeft: 0,
+    marginLeft: 20,
   },
   podcastCardImageHome: {
     width: '100%',
@@ -13744,14 +13690,14 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   podcastCardImageStyleHome: {
-    borderRadius: 12,
+    borderRadius: 5,
   },
   podcastCardOverlayHome: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0, 0, 0, 0.05)',
     justifyContent: 'flex-end',
     padding: 12,
-    borderRadius: 12,
+    borderRadius: 5,
   },
   podcastCardTitleHome: {
     fontSize: 14,
@@ -13768,7 +13714,7 @@ const styles = StyleSheet.create({
     width: 180,
     height: 240,
     marginRight: 12,
-    borderRadius: 12,
+    borderRadius: 5,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -13782,7 +13728,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   coranCardImageStyle: {
-    borderRadius: 12,
+    borderRadius: 5,
     resizeMode: 'cover',
   },
   coranCardOverlay: {
