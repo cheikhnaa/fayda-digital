@@ -10797,6 +10797,9 @@ const styles = StyleSheet.create({
   bookCoverImageStyle: {
     resizeMode: 'cover',
     borderRadius: 5,
+    ...(Platform.OS === 'web' && {
+      objectFit: 'cover' as any,
+    }),
   },
   bookCoverOverlay: {
     position: 'absolute',
@@ -11621,10 +11624,16 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     justifyContent: 'flex-end',
+    ...(Platform.OS === 'web' && {
+      minHeight: 200,
+    }),
   },
   bookModalImageStyle: {
     borderRadius: 1,
     resizeMode: 'cover',
+    ...(Platform.OS === 'web' && {
+      objectFit: 'cover' as any,
+    }),
   },
   bookModalImageOverlay: {
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
