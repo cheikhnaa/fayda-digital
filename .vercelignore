@@ -1,0 +1,9 @@
+# Exclure les fichiers volumineux qui ne sont pas nécessaires pour le build web
+assets/pdf/**/*.pdf
+node_modules/
+.git/
+.vercel/
+*.log
+.DS_Store
+https:/
+
