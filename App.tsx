@@ -748,7 +748,8 @@ const podcasts = [
 // Fonction helper pour obtenir le fichier audio d'un podcast
 const getPodcastFile = (fileName: string) => {
   const podcastFiles: { [key: string]: any } = {
-    'wakhtanu-thierno-assane-deme-tarbiya-ilalah.mp3': require('./assets/podcasts/wakhtanu-thierno-assane-deme-tarbiya-ilalah.mp3'),
+    'wakhtanu-thierno-assane-deme-tarbiya-ilalah.mp3': require('./assets/podcasts/wakhtanu_tarbiya.mp3'),
+    'wakhtanu_tarbiya.mp3': require('./assets/podcasts/wakhtanu_tarbiya.mp3'),
     'wazifa-arif-bilah-cheikh-assane-deme.mp3': require('./assets/podcasts/wazifa-arif-bilah-cheikh-assane-deme.mp3'),
     'waxtanou-cheikh-thierno-assane-deme-ra.mp3': require('./assets/podcasts/waxtanou-cheikh-thierno-assane-deme-ra.mp3'),
   };
