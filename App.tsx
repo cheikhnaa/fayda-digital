@@ -7080,17 +7080,17 @@ function AudioPlayerScreen({ route, navigation }: any) {
                 Animated.timing(fadeAnim, {
                   toValue: 0,
                   duration: 200,
-                  useNativeDriver: true,
+                  useNativeDriver: Platform.OS !== 'web',
                 }),
                 Animated.timing(slideAnim, {
                   toValue: -newPage * 20,
                   duration: 300,
-                  useNativeDriver: true,
+                  useNativeDriver: Platform.OS !== 'web',
                 }),
                 Animated.timing(fadeAnim, {
                   toValue: 1,
                   duration: 200,
-                  useNativeDriver: true,
+                  useNativeDriver: Platform.OS !== 'web',
                 }),
               ]).start();
               
@@ -7414,12 +7414,12 @@ function DonationBanner({ onPress }: { onPress: () => void }) {
       Animated.timing(translateY, {
         toValue: targetTranslateY,
         duration: 300,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== 'web',
       }),
       Animated.timing(opacity, {
         toValue: targetOpacity,
         duration: 300,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== 'web',
       }),
     ]).start();
   }, [shouldShow, isAssistantPage]);
@@ -8444,7 +8444,7 @@ function MainTabs() {
     Animated.timing(tabBarTranslateY, {
       toValue: targetValue, // Descendre légèrement de 10px
       duration: 300,
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== 'web',
     }).start();
   }, [showDonationBanner]);
 
@@ -8571,13 +8571,13 @@ function LoadingScreen() {
       Animated.timing(fadeAnim, {
         toValue: 1,
         duration: 1000,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== 'web',
       }),
       Animated.spring(scaleAnim, {
         toValue: 1,
         friction: 4,
         tension: 40,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== 'web',
       }),
     ]).start();
   }, []);
