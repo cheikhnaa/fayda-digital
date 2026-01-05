@@ -41,8 +41,8 @@ yarn-error.*
 /android
 
 # Large PDF files (over 10MB) - kept locally but not pushed to GitHub
-assets/pdf/Afakhou Shiria -- Cheikh Ibrahim Niass.pdf
-assets/pdf/arabe/Afakhou Shiria -- Cheikh Ibrahim Niass -- ( WeLib.org ).pdf
+# assets/pdf/Afakhou Shiria -- Cheikh Ibrahim Niass.pdf
+# assets/pdf/arabe/Afakhou Shiria -- Cheikh Ibrahim Niass -- ( WeLib.org ).pdf
 assets/pdf/arabe/kachf-al-hijab.pdf
 assets/pdf/arabe/boughiyat.pdf
 assets/pdf/arabe/miftaakhoul-woussoul.pdf
