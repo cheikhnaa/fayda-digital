@@ -2893,13 +2893,18 @@ function HomeScreen({ navigation }: any) {
 
 // Écran des livres
 function BooksScreen({ navigation }: any) {
-  const { language, darkMode, setCurrentPlayer, addToHistory, setShowDonationBanner, recentItems } = React.useContext(AppContext);
+  const { language, darkMode, setCurrentPlayer, addToHistory, setShowDonationBanner, recentItems, setLang, setDarkMode } = React.useContext(AppContext);
   const theme = darkMode ? darkTheme : lightTheme;
   const [selectedBook, setSelectedBook] = React.useState<any>(null);
   const [modalVisible, setModalVisible] = React.useState(false);
   const [expandedCategory, setExpandedCategory] = React.useState<string | null>(null);
   const [isBookmarked, setIsBookmarked] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState<'overview' | 'chapters'>('overview');
+  const [showSearch, setShowSearch] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [searchResults, setSearchResults] = React.useState<any[]>([]);
+  const [searchSuggestions, setSearchSuggestions] = React.useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = React.useState(false);
   const lastScrollY = React.useRef(0);
   const scrollTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -2982,20 +2987,265 @@ function BooksScreen({ navigation }: any) {
   // Obtenir les catégories filtrées selon la langue
   const bookCategories = getBookCategories(language);
 
+  const [showSettingsModal, setShowSettingsModal] = React.useState(false);
+
+  const handleSettingsPress = () => {
+    setShowSettingsModal(true);
+  };
+
+  const handleThemeChange = (newTheme: boolean) => {
+    setDarkMode(newTheme);
+  };
+
+  const handleLanguageChange = (newLang: Language | null) => {
+    setLang(newLang);
+  };
+
+  const handleSearchPress = () => {
+    setShowSearch(!showSearch);
+    if (showSearch) {
+      setSearchQuery('');
+      setSearchResults([]);
+      setSearchSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
+
+  const performSearchWithQuery = (queryText: string) => {
+    const query = queryText.toLowerCase().trim();
+    if (!query) {
+      setSearchResults([]);
+      return;
+    }
+
+    const results: any[] = [];
+    const bookCategories = getBookCategories(language);
+
+    // Rechercher dans les livres de la catégorie actuelle
+    bookCategories.forEach(category => {
+      category.books.forEach((book: any) => {
+        const matchTitle = book.title?.toLowerCase().includes(query);
+        const matchTitleAr = book.titleAr?.toLowerCase().includes(query);
+        const matchAuthor = book.author?.toLowerCase().includes(query);
+        const matchDescription = book.description?.toLowerCase().includes(query);
+        
+        if (matchTitle || matchTitleAr || matchAuthor || matchDescription) {
+          results.push({ ...book, searchType: 'pdf' });
+        }
+      });
+    });
+
+    setSearchResults(results);
+  };
+
+  const performSearch = () => {
+    performSearchWithQuery(searchQuery);
+    setShowSuggestions(false);
+  };
+
+  const generateSuggestions = (query: string) => {
+    if (!query.trim()) {
+      setSearchSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    const queryLower = query.toLowerCase().trim();
+    const suggestionsSet = new Set<string>();
+    const bookCategories = getBookCategories(language);
+
+    bookCategories.forEach(category => {
+      category.books.forEach((book: any) => {
+        if (book.title?.toLowerCase().includes(queryLower)) {
+          suggestionsSet.add(book.title);
+        }
+        if (book.titleAr?.toLowerCase().includes(queryLower)) {
+          suggestionsSet.add(book.titleAr);
+        }
+        if (book.author?.toLowerCase().includes(queryLower)) {
+          suggestionsSet.add(book.author);
+        }
+      });
+    });
+
+    const suggestions = Array.from(suggestionsSet).slice(0, 8);
+    setSearchSuggestions(suggestions);
+    setShowSuggestions(suggestions.length > 0);
+  };
+
+  const handleSearchQueryChange = (text: string) => {
+    setSearchQuery(text);
+    generateSuggestions(text);
+    performSearchWithQuery(text);
+  };
+
+  const handleSuggestionPress = (suggestion: string) => {
+    setSearchQuery(suggestion);
+    setShowSuggestions(false);
+    setSearchSuggestions([]);
+    performSearchWithQuery(suggestion);
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <StatusBar style={darkMode ? 'light' : 'dark'} />
       
       {/* Nouveau header avec barre de langue */}
       <View style={[styles.booksHeaderNew, { backgroundColor: theme.background }]}>
-        <TouchableOpacity style={styles.headerIconButton}>
-          <Text style={[styles.headerIcon, { color: theme.textSecondary }]}>⚙️</Text>
+        <TouchableOpacity 
+          style={styles.headerIconButton}
+          onPress={handleSettingsPress}
+        >
+          <Ionicons name="settings-outline" size={24} color={theme.text} />
         </TouchableOpacity>
         <LanguageSelectorBar />
-        <TouchableOpacity style={styles.headerIconButton}>
-          <Text style={[styles.headerIcon, { color: theme.textSecondary }]}>🔍</Text>
+        <TouchableOpacity 
+          style={styles.headerIconButton}
+          onPress={handleSearchPress}
+        >
+          <Ionicons name="search-outline" size={24} color={theme.text} />
         </TouchableOpacity>
       </View>
+
+      {/* Barre de recherche */}
+      {showSearch && (
+        <View style={[styles.searchContainer, { backgroundColor: theme.surface }]}>
+          <TextInput
+            style={[styles.searchInput, { color: theme.text, borderColor: theme.textSecondary }]}
+            placeholder="Rechercher un livre..."
+            placeholderTextColor={theme.textSecondary}
+            value={searchQuery}
+            onChangeText={handleSearchQueryChange}
+            autoFocus={true}
+            onSubmitEditing={performSearch}
+            returnKeyType="search"
+            onFocus={() => {
+              if (searchQuery.trim()) {
+                generateSuggestions(searchQuery);
+              }
+            }}
+            onBlur={() => {
+              setTimeout(() => setShowSuggestions(false), 200);
+            }}
+          />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity
+              style={styles.searchButton}
+              onPress={performSearch}
+            >
+              <Ionicons name="search" size={24} color={theme.primary} />
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity
+            style={styles.searchCloseButton}
+            onPress={handleSearchPress}
+          >
+            <Ionicons name="close" size={24} color={theme.text} />
+          </TouchableOpacity>
+        </View>
+      )}
+
+      {/* Suggestions d'autocomplétion */}
+      {showSearch && showSuggestions && searchSuggestions.length > 0 && (
+        <View style={[styles.searchSuggestionsContainer, { backgroundColor: theme.surface }]}>
+          {searchSuggestions.map((suggestion, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[styles.searchSuggestionItem, { borderBottomColor: theme.textSecondary + '20' }]}
+              onPress={() => handleSuggestionPress(suggestion)}
+            >
+              <Ionicons name="search-outline" size={18} color={theme.textSecondary} style={styles.searchSuggestionIcon} />
+              <Text style={[styles.searchSuggestionText, { color: theme.text }]} numberOfLines={1}>
+                {suggestion}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+
+      {/* Résultats de recherche */}
+      {showSearch && searchQuery.trim() && searchResults.length > 0 && (
+        <View style={styles.sectionModern}>
+          <View style={styles.sectionHeaderModern}>
+            <View style={styles.sectionTitleContainerModern}>
+              <View style={styles.sectionIconContainer}>
+                <Text style={styles.sectionIconModern}>🔍</Text>
+              </View>
+              <View>
+                <Text style={[styles.sectionTitleModern, { color: theme.text }]}>
+                  Résultats de recherche ({searchResults.length})
+                </Text>
+                <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>
+                  Pour: "{searchQuery}"
+                </Text>
+              </View>
+            </View>
+          </View>
+          <ScrollView 
+            style={styles.searchResultsContainer}
+            showsVerticalScrollIndicator={false}
+          >
+            {searchResults.map((item, index) => {
+              const isViewed = recentItems.some(ri => ri.id === item.id && ri.type === 'pdf');
+              return (
+                <TouchableOpacity
+                  key={`search-${item.id}-${index}`}
+                  style={[styles.searchResultItem, { backgroundColor: theme.surface }]}
+                  onPress={() => {
+                    const fullBook = allPdfFilesWithPages.find(b => b.id === item.id) ||
+                                     frenchPdfFilesWithPages.find(b => b.id === item.id) ||
+                                     englishPdfFilesWithPages.find(b => b.id === item.id) ||
+                                     arabicPdfFilesWithPages.find(b => b.id === item.id) ||
+                                     item;
+                    setSelectedBook(fullBook);
+                    setActiveTab('overview');
+                    setModalVisible(true);
+                  }}
+                >
+                  {item.image && (
+                    <Image
+                      source={item.image}
+                      style={styles.searchResultImage}
+                    />
+                  )}
+                  <View style={styles.searchResultContent}>
+                    <Text style={[styles.searchResultTitle, { color: theme.text }]} numberOfLines={2}>
+                      {item.title}
+                    </Text>
+                    {item.titleAr && (
+                      <Text style={[styles.searchResultTitleAr, { color: theme.textSecondary }]} numberOfLines={1}>
+                        {item.titleAr}
+                      </Text>
+                    )}
+                    {item.author && (
+                      <Text style={[styles.searchResultAuthor, { color: theme.textSecondary }]}>
+                        {item.author}
+                      </Text>
+                    )}
+                    <Text style={[styles.searchResultType, { color: theme.primary }]}>
+                      📚 Livre PDF
+                    </Text>
+                  </View>
+                  {isViewed && (
+                    <Image source={require('./assets/pdf/cover/icones/lun3.png')} style={styles.searchResultViewedIcon} />
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+      )}
+
+      {/* Message si aucun résultat */}
+      {showSearch && searchQuery.trim() && searchResults.length === 0 && (
+        <View style={styles.sectionModern}>
+          <View style={styles.noResultsContainer}>
+            <Text style={[styles.noResultsText, { color: theme.textSecondary }]}>
+              Aucun résultat trouvé pour "{searchQuery}"
+            </Text>
+          </View>
+        </View>
+      )}
 
       <ScrollView 
         style={styles.booksScrollModern} 
@@ -3021,7 +3271,7 @@ function BooksScreen({ navigation }: any) {
         }}
         scrollEventThrottle={16}
       >
-        {bookCategories.map(category => (
+        {!showSearch && bookCategories.map(category => (
           <View key={category.id} style={styles.categorySectionModern}>
             <View style={styles.categoryHeaderModern}>
               <View style={styles.categoryTitleContainerModern}>
@@ -3279,7 +3529,7 @@ function BooksScreen({ navigation }: any) {
                   >
                     <View style={styles.bookModalReadButtonGradient}>
                       <Text style={styles.bookModalReadIcon}>▶</Text>
-                      <Text style={styles.bookModalReadText}>Lire</Text>
+                      <Text style={styles.bookModalReadText}>Ouvrir</Text>
                     </View>
                   </TouchableOpacity>
                   <TouchableOpacity 
@@ -3387,6 +3637,90 @@ function BooksScreen({ navigation }: any) {
               </ScrollView>
             </>
           )}
+        </View>
+      </Modal>
+
+      {/* Modal des paramètres */}
+      <Modal
+        visible={showSettingsModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowSettingsModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.settingsModal, { backgroundColor: theme.surface }]}>
+            <View style={styles.settingsModalHeader}>
+              <Text style={[styles.settingsModalTitle, { color: theme.text }]}>Paramètres</Text>
+              <TouchableOpacity
+                onPress={() => setShowSettingsModal(false)}
+                style={styles.settingsModalCloseButton}
+              >
+                <Ionicons name="close" size={24} color={theme.text} />
+              </TouchableOpacity>
+            </View>
+
+            {/* Section Thème */}
+            <View style={styles.settingsSection}>
+              <Text style={[styles.settingsSectionTitle, { color: theme.text }]}>Thème</Text>
+              <View style={styles.settingsOptions}>
+                <TouchableOpacity
+                  style={[styles.settingsOption, !darkMode && styles.settingsOptionActive, { borderColor: !darkMode ? (darkMode ? '#ffffff' : '#0F5132') : '#e0e0e0' }]}
+                  onPress={() => handleThemeChange(false)}
+                >
+                  <Ionicons name="sunny" size={24} color={!darkMode ? '#0F5132' : theme.textSecondary} style={{ marginRight: 12 }} />
+                  <Text style={[styles.settingsOptionText, { color: theme.text }]}>Clair</Text>
+                  {!darkMode && <Ionicons name="checkmark-circle" size={24} color="#0F5132" />}
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.settingsOption, darkMode && styles.settingsOptionActive, { borderColor: darkMode ? (darkMode ? '#ffffff' : '#0F5132') : '#e0e0e0' }]}
+                  onPress={() => handleThemeChange(true)}
+                >
+                  <Ionicons name="moon" size={24} color={darkMode ? '#ffffff' : theme.textSecondary} style={{ marginRight: 12 }} />
+                  <Text style={[styles.settingsOptionText, { color: theme.text }]}>Sombre</Text>
+                  {darkMode && <Ionicons name="checkmark-circle" size={24} color="#ffffff" />}
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Section Langue */}
+            <View style={styles.settingsSection}>
+              <Text style={[styles.settingsSectionTitle, { color: theme.text }]}>Langue</Text>
+              <View style={styles.settingsOptions}>
+                <TouchableOpacity
+                  style={[styles.settingsOption, language === null && styles.settingsOptionActive, { borderColor: language === null ? (darkMode ? '#ffffff' : '#0F5132') : '#e0e0e0' }]}
+                  onPress={() => handleLanguageChange(null)}
+                >
+                  <Text style={styles.settingsOptionFlag}>🌍</Text>
+                  <Text style={[styles.settingsOptionText, { color: theme.text }]}>Tous</Text>
+                  {language === null && <Ionicons name="checkmark-circle" size={24} color={darkMode ? '#ffffff' : '#0F5132'} />}
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.settingsOption, language === 'fr' && styles.settingsOptionActive, { borderColor: language === 'fr' ? (darkMode ? '#ffffff' : '#0F5132') : '#e0e0e0' }]}
+                  onPress={() => handleLanguageChange('fr')}
+                >
+                  <Text style={styles.settingsOptionFlag}>🇫🇷</Text>
+                  <Text style={[styles.settingsOptionText, { color: theme.text }]}>Français</Text>
+                  {language === 'fr' && <Ionicons name="checkmark-circle" size={24} color={darkMode ? '#ffffff' : '#0F5132'} />}
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.settingsOption, language === 'en' && styles.settingsOptionActive, { borderColor: language === 'en' ? (darkMode ? '#ffffff' : '#0F5132') : '#e0e0e0' }]}
+                  onPress={() => handleLanguageChange('en')}
+                >
+                  <Text style={styles.settingsOptionFlag}>🇬🇧</Text>
+                  <Text style={[styles.settingsOptionText, { color: theme.text }]}>English</Text>
+                  {language === 'en' && <Ionicons name="checkmark-circle" size={24} color={darkMode ? '#ffffff' : '#0F5132'} />}
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.settingsOption, language === 'ar' && styles.settingsOptionActive, { borderColor: language === 'ar' ? (darkMode ? '#ffffff' : '#0F5132') : '#e0e0e0' }]}
+                  onPress={() => handleLanguageChange('ar')}
+                >
+                  <Text style={styles.settingsOptionFlag}>🇸🇦</Text>
+                  <Text style={[styles.settingsOptionText, { color: theme.text }]}>عربي</Text>
+                  {language === 'ar' && <Ionicons name="checkmark-circle" size={24} color={darkMode ? '#ffffff' : '#0F5132'} />}
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
         </View>
       </Modal>
     </View>
@@ -5203,7 +5537,7 @@ function GamouScreen({ navigation }: any) {
 
 // Écran de podcasts - Design amélioré
 function PodcastsScreen({ navigation, route }: any) {
-  const { language, darkMode, setCurrentPlayer, currentPlayer, addToHistory, setShowDonationBanner } = React.useContext(AppContext);
+  const { language, darkMode, setCurrentPlayer, currentPlayer, addToHistory, setShowDonationBanner, setLang, setDarkMode, recentItems } = React.useContext(AppContext);
   const theme = darkMode ? darkTheme : lightTheme;
   const [subscribedPodcasts, setSubscribedPodcasts] = React.useState<number[]>([]);
   const [isPlaying, setIsPlaying] = React.useState(false);
@@ -5213,6 +5547,9 @@ function PodcastsScreen({ navigation, route }: any) {
   const [modalVisible, setModalVisible] = React.useState(route.params?.selectedPodcast ? true : false);
   const [showSearch, setShowSearch] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState('');
+  const [searchResults, setSearchResults] = React.useState<any[]>([]);
+  const [searchSuggestions, setSearchSuggestions] = React.useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = React.useState(false);
   const lastScrollY = React.useRef(0);
   const scrollTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -5267,6 +5604,98 @@ function PodcastsScreen({ navigation, route }: any) {
   };
 
   const [selectedTab, setSelectedTab] = React.useState<'podcast' | 'knowledgecast'>('podcast');
+  const [showSettingsModal, setShowSettingsModal] = React.useState(false);
+
+  const handleSettingsPress = () => {
+    setShowSettingsModal(true);
+  };
+
+  const handleThemeChange = (newTheme: boolean) => {
+    setDarkMode(newTheme);
+  };
+
+  const handleLanguageChange = (newLang: Language | null) => {
+    setLang(newLang);
+  };
+
+  const handleSearchPress = () => {
+    setShowSearch(!showSearch);
+    if (showSearch) {
+      setSearchQuery('');
+      setSearchResults([]);
+      setSearchSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
+
+  const performSearchWithQuery = (queryText: string) => {
+    const query = queryText.toLowerCase().trim();
+    if (!query) {
+      setSearchResults([]);
+      return;
+    }
+
+    const results: any[] = [];
+
+    // Rechercher dans les podcasts
+    podcasts.forEach(podcast => {
+      const matchTitle = podcast.title?.toLowerCase().includes(query);
+      const matchTitleAr = podcast.titleAr?.toLowerCase().includes(query);
+      const matchSubtitle = podcast.subtitle?.toLowerCase().includes(query);
+      const matchDescription = podcast.description?.toLowerCase().includes(query);
+      
+      if (matchTitle || matchTitleAr || matchSubtitle || matchDescription) {
+        results.push({ ...podcast, searchType: 'podcast' });
+      }
+    });
+
+    setSearchResults(results);
+  };
+
+  const performSearch = () => {
+    performSearchWithQuery(searchQuery);
+    setShowSuggestions(false);
+  };
+
+  const generateSuggestions = (query: string) => {
+    if (!query.trim()) {
+      setSearchSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    const queryLower = query.toLowerCase().trim();
+    const suggestionsSet = new Set<string>();
+
+    podcasts.forEach(podcast => {
+      if (podcast.title?.toLowerCase().includes(queryLower)) {
+        suggestionsSet.add(podcast.title);
+      }
+      if (podcast.titleAr?.toLowerCase().includes(queryLower)) {
+        suggestionsSet.add(podcast.titleAr);
+      }
+      if (podcast.subtitle?.toLowerCase().includes(queryLower)) {
+        suggestionsSet.add(podcast.subtitle);
+      }
+    });
+
+    const suggestions = Array.from(suggestionsSet).slice(0, 8);
+    setSearchSuggestions(suggestions);
+    setShowSuggestions(suggestions.length > 0);
+  };
+
+  const handleSearchQueryChange = (text: string) => {
+    setSearchQuery(text);
+    generateSuggestions(text);
+    performSearchWithQuery(text);
+  };
+
+  const handleSuggestionPress = (suggestion: string) => {
+    setSearchQuery(suggestion);
+    setShowSuggestions(false);
+    setSearchSuggestions([]);
+    performSearchWithQuery(suggestion);
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -5276,11 +5705,9 @@ function PodcastsScreen({ navigation, route }: any) {
       <View style={[styles.podcastsHeaderNew, { backgroundColor: theme.surface }]}>
         <TouchableOpacity 
           style={styles.podcastsHeaderIconBtn}
-          onPress={() => {
-            Alert.alert('Paramètres', 'Options de paramètres des podcasts');
-          }}
+          onPress={handleSettingsPress}
         >
-          <Text style={[styles.podcastsHeaderIconNew, { color: theme.text }]}>⚙️</Text>
+          <Ionicons name="settings-outline" size={24} color={theme.text} />
         </TouchableOpacity>
         
         <View style={styles.podcastsHeaderPills}>
@@ -5316,11 +5743,145 @@ function PodcastsScreen({ navigation, route }: any) {
         
         <TouchableOpacity 
           style={styles.podcastsHeaderIconBtn}
-          onPress={() => setShowSearch(!showSearch)}
+          onPress={handleSearchPress}
         >
-          <Text style={[styles.podcastsHeaderIconNew, { color: theme.text }]}>🔍</Text>
+          <Ionicons name="search-outline" size={24} color={theme.text} />
         </TouchableOpacity>
       </View>
+
+      {/* Barre de recherche */}
+      {showSearch && (
+        <View style={[styles.searchContainer, { backgroundColor: theme.surface }]}>
+          <TextInput
+            style={[styles.searchInput, { color: theme.text, borderColor: theme.textSecondary }]}
+            placeholder="Rechercher un podcast..."
+            placeholderTextColor={theme.textSecondary}
+            value={searchQuery}
+            onChangeText={handleSearchQueryChange}
+            autoFocus={true}
+            onSubmitEditing={performSearch}
+            returnKeyType="search"
+            onFocus={() => {
+              if (searchQuery.trim()) {
+                generateSuggestions(searchQuery);
+              }
+            }}
+            onBlur={() => {
+              setTimeout(() => setShowSuggestions(false), 200);
+            }}
+          />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity
+              style={styles.searchButton}
+              onPress={performSearch}
+            >
+              <Ionicons name="search" size={24} color={theme.primary} />
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity
+            style={styles.searchCloseButton}
+            onPress={handleSearchPress}
+          >
+            <Ionicons name="close" size={24} color={theme.text} />
+          </TouchableOpacity>
+        </View>
+      )}
+
+      {/* Suggestions d'autocomplétion */}
+      {showSearch && showSuggestions && searchSuggestions.length > 0 && (
+        <View style={[styles.searchSuggestionsContainer, { backgroundColor: theme.surface }]}>
+          {searchSuggestions.map((suggestion, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[styles.searchSuggestionItem, { borderBottomColor: theme.textSecondary + '20' }]}
+              onPress={() => handleSuggestionPress(suggestion)}
+            >
+              <Ionicons name="search-outline" size={18} color={theme.textSecondary} style={styles.searchSuggestionIcon} />
+              <Text style={[styles.searchSuggestionText, { color: theme.text }]} numberOfLines={1}>
+                {suggestion}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+
+      {/* Résultats de recherche */}
+      {showSearch && searchQuery.trim() && searchResults.length > 0 && (
+        <View style={styles.sectionModern}>
+          <View style={styles.sectionHeaderModern}>
+            <View style={styles.sectionTitleContainerModern}>
+              <View style={styles.sectionIconContainer}>
+                <Text style={styles.sectionIconModern}>🔍</Text>
+              </View>
+              <View>
+                <Text style={[styles.sectionTitleModern, { color: theme.text }]}>
+                  Résultats de recherche ({searchResults.length})
+                </Text>
+                <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>
+                  Pour: "{searchQuery}"
+                </Text>
+              </View>
+            </View>
+          </View>
+          <ScrollView 
+            style={styles.searchResultsContainer}
+            showsVerticalScrollIndicator={false}
+          >
+            {searchResults.map((item, index) => {
+              const isViewed = recentItems.some(ri => ri.id === item.id && ri.type === 'audio');
+              return (
+                <TouchableOpacity
+                  key={`search-${item.id}-${index}`}
+                  style={[styles.searchResultItem, { backgroundColor: theme.surface }]}
+                  onPress={() => {
+                    addToHistory(item, 'audio');
+                    navigation.navigate('Podcasts', { selectedPodcast: item });
+                  }}
+                >
+                  {item.image && (
+                    <Image
+                      source={item.image}
+                      style={styles.searchResultImage}
+                    />
+                  )}
+                  <View style={styles.searchResultContent}>
+                    <Text style={[styles.searchResultTitle, { color: theme.text }]} numberOfLines={2}>
+                      {item.title}
+                    </Text>
+                    {item.titleAr && (
+                      <Text style={[styles.searchResultTitleAr, { color: theme.textSecondary }]} numberOfLines={1}>
+                        {item.titleAr}
+                      </Text>
+                    )}
+                    {item.subtitle && (
+                      <Text style={[styles.searchResultAuthor, { color: theme.textSecondary }]}>
+                        {item.subtitle}
+                      </Text>
+                    )}
+                    <Text style={[styles.searchResultType, { color: theme.primary }]}>
+                      🎙️ Podcast
+                    </Text>
+                  </View>
+                  {isViewed && (
+                    <Image source={require('./assets/pdf/cover/icones/pl3.png')} style={styles.searchResultViewedIcon} />
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+      )}
+
+      {/* Message si aucun résultat */}
+      {showSearch && searchQuery.trim() && searchResults.length === 0 && (
+        <View style={styles.sectionModern}>
+          <View style={styles.noResultsContainer}>
+            <Text style={[styles.noResultsText, { color: theme.textSecondary }]}>
+              Aucun résultat trouvé pour "{searchQuery}"
+            </Text>
+          </View>
+        </View>
+      )}
 
       <ScrollView 
         style={styles.podcastsScrollNew} 
@@ -5346,7 +5907,7 @@ function PodcastsScreen({ navigation, route }: any) {
         }}
         scrollEventThrottle={16}
       >
-        {podcasts.map((podcast) => (
+        {!showSearch && podcasts.map((podcast) => (
           <View key={podcast.id} style={styles.podcastCardNew}>
 
             {/* Thumbnail avec overlay */}
@@ -5528,6 +6089,90 @@ function PodcastsScreen({ navigation, route }: any) {
                   </ScrollView>
                 </>
               )}
+        </View>
+      </Modal>
+
+      {/* Modal des paramètres */}
+      <Modal
+        visible={showSettingsModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowSettingsModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.settingsModal, { backgroundColor: theme.surface }]}>
+            <View style={styles.settingsModalHeader}>
+              <Text style={[styles.settingsModalTitle, { color: theme.text }]}>Paramètres</Text>
+              <TouchableOpacity
+                onPress={() => setShowSettingsModal(false)}
+                style={styles.settingsModalCloseButton}
+              >
+                <Ionicons name="close" size={24} color={theme.text} />
+              </TouchableOpacity>
+            </View>
+
+            {/* Section Thème */}
+            <View style={styles.settingsSection}>
+              <Text style={[styles.settingsSectionTitle, { color: theme.text }]}>Thème</Text>
+              <View style={styles.settingsOptions}>
+                <TouchableOpacity
+                  style={[styles.settingsOption, !darkMode && styles.settingsOptionActive, { borderColor: !darkMode ? (darkMode ? '#ffffff' : '#0F5132') : '#e0e0e0' }]}
+                  onPress={() => handleThemeChange(false)}
+                >
+                  <Ionicons name="sunny" size={24} color={!darkMode ? '#0F5132' : theme.textSecondary} style={{ marginRight: 12 }} />
+                  <Text style={[styles.settingsOptionText, { color: theme.text }]}>Clair</Text>
+                  {!darkMode && <Ionicons name="checkmark-circle" size={24} color="#0F5132" />}
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.settingsOption, darkMode && styles.settingsOptionActive, { borderColor: darkMode ? (darkMode ? '#ffffff' : '#0F5132') : '#e0e0e0' }]}
+                  onPress={() => handleThemeChange(true)}
+                >
+                  <Ionicons name="moon" size={24} color={darkMode ? '#ffffff' : theme.textSecondary} style={{ marginRight: 12 }} />
+                  <Text style={[styles.settingsOptionText, { color: theme.text }]}>Sombre</Text>
+                  {darkMode && <Ionicons name="checkmark-circle" size={24} color="#ffffff" />}
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Section Langue */}
+            <View style={styles.settingsSection}>
+              <Text style={[styles.settingsSectionTitle, { color: theme.text }]}>Langue</Text>
+              <View style={styles.settingsOptions}>
+                <TouchableOpacity
+                  style={[styles.settingsOption, language === null && styles.settingsOptionActive, { borderColor: language === null ? (darkMode ? '#ffffff' : '#0F5132') : '#e0e0e0' }]}
+                  onPress={() => handleLanguageChange(null)}
+                >
+                  <Text style={styles.settingsOptionFlag}>🌍</Text>
+                  <Text style={[styles.settingsOptionText, { color: theme.text }]}>Tous</Text>
+                  {language === null && <Ionicons name="checkmark-circle" size={24} color={darkMode ? '#ffffff' : '#0F5132'} />}
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.settingsOption, language === 'fr' && styles.settingsOptionActive, { borderColor: language === 'fr' ? (darkMode ? '#ffffff' : '#0F5132') : '#e0e0e0' }]}
+                  onPress={() => handleLanguageChange('fr')}
+                >
+                  <Text style={styles.settingsOptionFlag}>🇫🇷</Text>
+                  <Text style={[styles.settingsOptionText, { color: theme.text }]}>Français</Text>
+                  {language === 'fr' && <Ionicons name="checkmark-circle" size={24} color={darkMode ? '#ffffff' : '#0F5132'} />}
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.settingsOption, language === 'en' && styles.settingsOptionActive, { borderColor: language === 'en' ? (darkMode ? '#ffffff' : '#0F5132') : '#e0e0e0' }]}
+                  onPress={() => handleLanguageChange('en')}
+                >
+                  <Text style={styles.settingsOptionFlag}>🇬🇧</Text>
+                  <Text style={[styles.settingsOptionText, { color: theme.text }]}>English</Text>
+                  {language === 'en' && <Ionicons name="checkmark-circle" size={24} color={darkMode ? '#ffffff' : '#0F5132'} />}
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.settingsOption, language === 'ar' && styles.settingsOptionActive, { borderColor: language === 'ar' ? (darkMode ? '#ffffff' : '#0F5132') : '#e0e0e0' }]}
+                  onPress={() => handleLanguageChange('ar')}
+                >
+                  <Text style={styles.settingsOptionFlag}>🇸🇦</Text>
+                  <Text style={[styles.settingsOptionText, { color: theme.text }]}>عربي</Text>
+                  {language === 'ar' && <Ionicons name="checkmark-circle" size={24} color={darkMode ? '#ffffff' : '#0F5132'} />}
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
         </View>
       </Modal>
     </View>
@@ -6865,8 +7510,8 @@ function DonationModal({ visible, onClose }: { visible: boolean; onClose: () => 
     }
 
     if (method === 'wave') {
-      // Pour Wave, utiliser le code USSD : #2171*1*773649050*montant#
-      const ussdCode = `#2171*1*773649050*${amount}#`;
+      // Pour Wave, utiliser le code USSD : #2171*1*783438249*montant#
+      const ussdCode = `#2171*1*783438249*${amount}#`;
       const telUrl = `tel:${ussdCode}`;
       
       Linking.openURL(telUrl)
@@ -6880,46 +7525,19 @@ function DonationModal({ visible, onClose }: { visible: boolean; onClose: () => 
           Alert.alert('Erreur', 'Impossible d\'effectuer l\'appel');
         });
     } else {
-      // Pour Orange Money, ouvrir l'application
-      const url = 'orange://';
+      // Pour Orange Money, utiliser le code USSD : #144*21*1*783438249*montant#
+      const ussdCode = `#144*21*1*783438249*${amount}#`;
+      const telUrl = `tel:${ussdCode}`;
       
-      Linking.canOpenURL(url)
-        .then(supported => {
-          if (supported) {
-            Linking.openURL(url);
-            Alert.alert(
-              t('donation.thankYou'),
-              `Ouverture d'Orange Money avec un montant de ${parseInt(amount).toLocaleString()} FCFA...`
-            );
-            // Fermer le modal
-            setTimeout(() => {
+      Linking.openURL(telUrl)
+        .then(() => {
+          // Fermer le modal directement sans afficher de popup
               setSelectedPayment(null);
               setSelectedAmount('');
               onClose();
-            }, 1000);
-          } else {
-            // Si le schéma ne fonctionne pas, essayer d'ouvrir via le store
-            const storeUrl = Platform.OS === 'ios'
-              ? 'https://apps.apple.com/app/orange-money/id1234567890'
-              : 'market://details?id=com.orange.money';
-            
-            Alert.alert(
-              'Application non installée',
-              'Voulez-vous installer Orange Money ?',
-              [
-                { text: 'Annuler', style: 'cancel' },
-                {
-                  text: 'Installer',
-                  onPress: () => Linking.openURL(storeUrl).catch(() => {
-                    Alert.alert('Erreur', 'Impossible d\'ouvrir le store');
-                  })
-                }
-              ]
-            );
-          }
         })
         .catch(err => {
-          Alert.alert('Erreur', 'Impossible d\'ouvrir l\'application');
+          Alert.alert('Erreur', 'Impossible d\'effectuer l\'appel');
         });
     }
   };
