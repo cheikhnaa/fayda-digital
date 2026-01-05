@@ -3907,6 +3907,7 @@ function MusicScreen({ navigation }: any) {
               source={require('./assets/pdf/cover/gamou.png')}
               style={styles.podcastZikrGradient}
               resizeMode="cover"
+              imageStyle={Platform.OS === 'web' ? { width: '100%', height: '100%', objectFit: 'cover' as any } : {}}
             >
               {/* L'image contient déjà les textes "GAMOU" et les textes arabes */}
             </ImageBackground>
@@ -6807,15 +6808,43 @@ function PDFReaderScreen({ route, navigation }: any) {
         } else if (book?.pdfFile) {
           // Charger le PDF normal
           setLoading(true);
-          const asset = Asset.fromModule(book.pdfFile);
-          await asset.downloadAsync();
           
-          if (asset.localUri) {
-            setPdfUri(asset.localUri);
-            setLoading(false);
+          if (Platform.OS === 'web') {
+            // Sur le web, les assets sont servis depuis /assets/
+            // On doit construire l'URL depuis le require
+            try {
+              // Pour le web, Asset.fromModule peut ne pas fonctionner correctement
+              // Utiliser une approche différente : convertir le module en URI
+              const asset = Asset.fromModule(book.pdfFile);
+              await asset.downloadAsync();
+              
+              if (asset.uri) {
+                setPdfUri(asset.uri);
+                setLoading(false);
+              } else if (asset.localUri) {
+                setPdfUri(asset.localUri);
+                setLoading(false);
+              } else {
+                setError('Impossible de charger le PDF');
+                setLoading(false);
+              }
+            } catch (err) {
+              console.error('Erreur chargement PDF web:', err);
+              setError('Impossible de charger le PDF');
+              setLoading(false);
+            }
           } else {
-            setError('Impossible de charger le PDF');
-            setLoading(false);
+            // Sur mobile, utiliser Asset.fromModule normalement
+            const asset = Asset.fromModule(book.pdfFile);
+            await asset.downloadAsync();
+            
+            if (asset.localUri) {
+              setPdfUri(asset.localUri);
+              setLoading(false);
+            } else {
+              setError('Impossible de charger le PDF');
+              setLoading(false);
+            }
           }
         } else {
           setError('Aucun fichier disponible');
@@ -8476,6 +8505,9 @@ function MainTabs() {
           tabBarStyle: {
             backgroundColor: darkMode ? darkTheme.surface : lightTheme.surface,
             borderTopColor: '#e0e0e0',
+            ...(Platform.OS === 'web' && {
+              height: 60,
+            }),
           },
         }}
       >
@@ -10105,7 +10137,7 @@ const styles = StyleSheet.create({
   },
   // Styles modernes - Header
   headerModern: {
-    paddingTop: 50,
+    paddingTop: Platform.OS === 'web' ? 12 : 50,
     paddingBottom: 12,
     paddingHorizontal: 20,
     marginBottom: 10,
@@ -10752,6 +10784,10 @@ const styles = StyleSheet.create({
     aspectRatio: 1, // Format carré pour les articles
     justifyContent: 'center',
     alignItems: 'center',
+    ...(Platform.OS === 'web' && {
+      minHeight: 0,
+      position: 'relative' as any,
+    }),
   },
   // Styles pour les cartes pleine largeur (Tariqa et Ma'rifa)
   bookCardFullWidth: {
