@@ -44,3 +44,4 @@ Puis entrez votre clé API lorsque demandé.
 ⚠️ **Important** : Ne commitez jamais votre clé API dans le dépôt Git. 
 La variable d'environnement doit être configurée uniquement sur Vercel.
 
+

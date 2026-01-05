@@ -1,22 +1,21 @@
+import { Ionicons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer, useNavigation, useFocusEffect } from '@react-navigation/native';
+import { NavigationContainer, useFocusEffect, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Asset } from 'expo-asset';
-import * as FileSystem from 'expo-file-system';
 import { useAudioPlayer } from 'expo-audio';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { StatusBar } from 'expo-status-bar';
 import { VideoView, useVideoPlayer } from 'expo-video';
-import { Ionicons } from '@expo/vector-icons';
 import * as React from 'react';
 import { ActivityIndicator, Alert, Animated, Dimensions, Image, ImageBackground, KeyboardAvoidingView, Linking, Modal, Platform, ScrollView, Share, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { WebView } from 'react-native-webview';
+import { pdfPages } from './pdfPages';
 import { Message, sendMessageToAI } from './services/aiService';
 import { Language, setLanguage, t } from './translations';
-import { pdfPages } from './pdfPages';
 
 const Stack = createNativeStackNavigator();
 const { width } = Dimensions.get('window');
@@ -1001,7 +1000,7 @@ const allPdfFiles = [
     author: 'Rüdiger Seesemann',
     pages: 400,
     cover: '📖',
-    pdfFile: require('./assets/pdf/The divine flood - Ibrāhīm Niasse and the roots of a -- Rüdiger Seesemann.pdf'),
+    pdfFile: require('./assets/pdf/the-divine-flood-ibrahim-niasse-and-the-roots-of-a-rudiger-seesemann.pdf'),
     image: require('./assets/pdf/cover/divineflood.png'),
     description: 'Étude académique sur Cheikh Ibrahim Niass.',
     category: 'Biographie',
@@ -1100,7 +1099,7 @@ const allPdfFiles = [
     author: 'Cheikh Ibrahim Niass',
     pages: 180,
     cover: '📖',
-    pdfFile: require('./assets/pdf/LETTRES_PRECIEUSES_DEFINITIF.pdf'),
+    pdfFile: require('./assets/pdf/lettres-precieuses-definitif.pdf'),
     image: require('./assets/pdf/cover/lettre1.jpeg'),
     description: 'Collection de lettres précieuses de Cheikh Ibrahim Niass.',
     category: 'Tariqa',
@@ -1114,7 +1113,7 @@ const allPdfFiles = [
     author: 'Cheikh Ibrahim Niass',
     pages: 50,
     cover: '📖',
-    pdfFile: require('./assets/pdf/LE DISCOURS DE KHARTOUM_230608_000728.pdf'),
+    pdfFile: require('./assets/pdf/le-discours-de-khartoum-230608-000728.pdf'),
     image: require('./assets/pdf/cover/congr.png'),
     description: 'Discours historique de Cheikh Ibrahim Niass.',
     category: 'Tariqa',
@@ -1128,7 +1127,7 @@ const allPdfFiles = [
     author: 'Cheikh Ibrahim Niass',
     pages: 100,
     cover: '📖',
-    pdfFile: require('./assets/pdf/Testament Shaykh Ibrahima Niasse.pdf'),
+    pdfFile: require('./assets/pdf/testament-shaykh-ibrahim-niasse.pdf'),
     image: require('./assets/pdf/cover/cheikh.jpeg'),
     description: 'Testament spirituel de Cheikh Ibrahim Niass.',
     category: 'Tariqa',
@@ -1287,7 +1286,7 @@ const frenchPdfFiles = [
     author: 'Cheikh Ibrahim Niass',
     pages: 180,
     cover: '📖',
-    pdfFile: require('./assets/pdf/francais/LETTRES_PRECIEUSES_DEFINITIF.pdf'),
+    pdfFile: require('./assets/pdf/francais/lettres-precieuses-definitif.pdf'),
     image: require('./assets/pdf/cover/lettre1.jpeg'),
     description: 'Collection de lettres précieuses de Cheikh Ibrahim Niass.',
     category: 'Tariqa',
@@ -1301,7 +1300,7 @@ const frenchPdfFiles = [
     author: 'Cheikh Ibrahim Niass',
     pages: 50,
     cover: '📖',
-    pdfFile: require('./assets/pdf/francais/LE DISCOURS DE KHARTOUM_230608_000728.pdf'),
+    pdfFile: require('./assets/pdf/francais/le-discours-de-khartoum-230608-000728.pdf'),
     image: require('./assets/pdf/cover/congr.png'),
     description: 'Discours historique de Cheikh Ibrahim Niass.',
     category: 'Tariqa',
@@ -1315,7 +1314,7 @@ const frenchPdfFiles = [
     author: 'Cheikh Ibrahim Niass',
     pages: 100,
     cover: '📖',
-    pdfFile: require('./assets/pdf/francais/Testament Shaykh Ibrahima Niasse.pdf'),
+    pdfFile: require('./assets/pdf/francais/testament-shaykh-ibrahim-niasse.pdf'),
     image: require('./assets/pdf/cover/cheikh.jpeg'),
     description: 'Testament spirituel de Cheikh Ibrahim Niass.',
     category: 'Tariqa',
@@ -1389,7 +1388,7 @@ const englishPdfFiles = [
     author: 'Rüdiger Seesemann',
     pages: 400,
     cover: '📖',
-    pdfFile: require('./assets/pdf/anglais/The divine flood - Ibrāhīm Niasse and the roots of a -- Rüdiger Seesemann -- ( WeLib.org ).pdf'),
+    pdfFile: require('./assets/pdf/anglais/the-divine-flood-ibrahim-niasse-and-the-roots-of-a-rudiger-seesemann-welib-org.pdf'),
     image: require('./assets/pdf/cover/divineflood.png'),
     description: 'Étude académique sur Cheikh Ibrahim Niass.',
     category: 'Biographie',
@@ -1561,7 +1560,7 @@ const arabicPdfFiles = [
     author: 'Cheikh Ibrahim Niass',
     pages: 50,
     cover: '📖',
-    pdfFile: require('./assets/pdf/arabe/LE DISCOURS DE KHARTOUM_230608_000728.pdf'),
+    pdfFile: require('./assets/pdf/arabe/le-discours-de-khartoum-230608-000728.pdf'),
     image: require('./assets/pdf/cover/congr.png'),
     description: 'Discours historique de Cheikh Ibrahim Niass.',
     category: 'Tariqa',
@@ -1575,7 +1574,7 @@ const arabicPdfFiles = [
     author: 'Cheikh Ibrahim Niass',
     pages: 100,
     cover: '📖',
-    pdfFile: require('./assets/pdf/arabe/Testament Shaykh Ibrahima Niasse.pdf'),
+    pdfFile: require('./assets/pdf/arabe/testament-shaykh-ibrahim-niasse.pdf'),
     image: require('./assets/pdf/cover/cheikh.jpeg'),
     description: 'Testament spirituel de Cheikh Ibrahim Niass.',
     category: 'Tariqa',
@@ -2500,7 +2499,7 @@ function HomeScreen({ navigation }: any) {
               {book.image ? (
                 <ImageBackground
                   source={book.image}
-                  style={[book.htmlFile ? styles.bookCoverArticle : styles.bookCoverHome, { height: 140 }]}
+                  style={[(book as any).htmlFile ? styles.bookCoverArticle : styles.bookCoverHome, { height: 140 }]}
                   imageStyle={styles.bookCoverImageStyle}
                 >
                   <View style={styles.bookCoverOverlay} />
@@ -2515,7 +2514,7 @@ function HomeScreen({ navigation }: any) {
                   colors={['#0F5132', '#0B3C5D', '#0F5132']}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
-                  style={[book.htmlFile ? styles.bookCoverArticle : styles.bookCoverHome, { height: 140 }]}
+                  style={[(book as any).htmlFile ? styles.bookCoverArticle : styles.bookCoverHome, { height: 140 }]}
                 >
                   <Text style={styles.bookCoverEmojiHome}>{book.cover || '📖'}</Text>
                   {isViewed && (
@@ -2695,7 +2694,7 @@ function HomeScreen({ navigation }: any) {
           {selectedBook && (
             <>
               {/* StatusBar et Header avec X et Bookmark */}
-              <StatusBar barStyle={darkMode ? 'light-content' : 'dark-content'} />
+              <StatusBar style={darkMode ? 'light' : 'dark'} />
               <View style={styles.bookModalHeader}>
                 <TouchableOpacity 
                   style={styles.bookModalCloseBtn}
@@ -3454,7 +3453,7 @@ function BooksScreen({ navigation }: any) {
               {selectedBook && (
                 <>
               {/* StatusBar et Header avec X et Bookmark */}
-              <StatusBar barStyle={darkMode ? 'light-content' : 'dark-content'} />
+              <StatusBar style={darkMode ? 'light' : 'dark'} />
               <View style={styles.bookModalHeader}>
                       <TouchableOpacity 
                   style={styles.bookModalCloseBtn}
@@ -10237,12 +10236,8 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 15,
   },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
   settingsModal: {
+    backgroundColor: '#ffffff',
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
     padding: 20,
@@ -10337,7 +10332,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   heroGradientModern: {
-    ...StyleSheet.absoluteFillObject,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -10619,38 +10618,6 @@ const styles = StyleSheet.create({
     marginTop: 20, // Espacement supplémentaire en haut
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
-  },
-  headerIconButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-  },
-  searchInput: {
-    flex: 1,
-    height: 40,
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 12,
-    fontSize: 16,
-  },
-  searchButton: {
-    marginLeft: 10,
-    padding: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  searchCloseButton: {
-    marginLeft: 10,
-    padding: 5,
   },
   headerIcon: {
     fontSize: 20,
@@ -14312,7 +14279,11 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   podcastCardOverlayHome: {
-    ...StyleSheet.absoluteFillObject,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
     backgroundColor: 'rgba(0, 0, 0, 0.05)',
     justifyContent: 'flex-end',
     padding: 12,
