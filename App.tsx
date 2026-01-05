@@ -2498,7 +2498,7 @@ function HomeScreen({ navigation }: any) {
             >
               {book.image ? (
                 <ImageBackground
-                  source={book.image}
+                  source={book.image || require('./assets/pdf/cover3.png')}
                   style={[(book as any).htmlFile ? styles.bookCoverArticle : styles.bookCoverHome, { height: 140 }]}
                   imageStyle={styles.bookCoverImageStyle}
                 >
