@@ -707,7 +707,7 @@ const podcasts = [
     description: 'Archive audio de Wakhtanu Thierno Assane Deme sur la Tarbiya Ilalah (Éducation divine).',
     locked: false,
     episodeType: 'Archive',
-    fileName: 'wakhtanu-thierno-assane-deme-tarbiya-ilalah.mp3',
+    fileName: 'wakhtanu_tarbiya.mp3',
   },
   { 
     id: 2, 
