@@ -25,14 +25,7 @@
     },
     "web": {
       "favicon": "./assets/pdf/cover/icones/chargement.png",
-      "bundler": "metro",
-      "build": {
-        "babel": {
-          "include": [
-            "react-native-reanimated/plugin"
-          ]
-        }
-      }
+      "bundler": "metro"
     }
   }
 }
