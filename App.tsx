@@ -7395,12 +7395,12 @@ function DonationBanner({ onPress }: { onPress: () => void }) {
         Animated.timing(translateY, {
           toValue: targetTranslateY,
           duration: 300,
-          useNativeDriver: true,
+          useNativeDriver: Platform.OS !== 'web',
         }),
         Animated.timing(opacity, {
           toValue: targetOpacity,
           duration: 300,
-          useNativeDriver: true,
+          useNativeDriver: Platform.OS !== 'web',
         }),
       ]).start();
       return;
