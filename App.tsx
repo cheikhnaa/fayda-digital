@@ -3855,6 +3855,7 @@ function MusicScreen({ navigation }: any) {
               source={require('./assets/pdf/cover/zikr.png')}
               style={styles.podcastZikrGradient}
               resizeMode="cover"
+              imageStyle={Platform.OS === 'web' ? { width: '100%', height: '100%', objectFit: 'cover' as any } : {}}
             >
               {/* L'image contient déjà les textes "Zikr" et "ذكر" */}
             </ImageBackground>
@@ -3881,6 +3882,7 @@ function MusicScreen({ navigation }: any) {
               source={require('./assets/pdf/cover/coran.png')}
               style={styles.podcastZikrGradient}
               resizeMode="cover"
+              imageStyle={Platform.OS === 'web' ? { width: '100%', height: '100%', objectFit: 'cover' as any } : {}}
             >
               {/* L'image contient déjà les textes "AL qur'ane" et "القرآن الكريم" */}
             </ImageBackground>
@@ -7462,7 +7464,7 @@ function DonationBanner({ onPress }: { onPress: () => void }) {
   return (
     <Animated.View style={{
       position: 'absolute',
-      bottom: 80, // Position au-dessus du menu (Tab.Navigator) - relevé de 20px
+      bottom: Platform.OS === 'web' ? 60 : 80, // Position au-dessus du menu (Tab.Navigator)
       left: 0,
       right: 0,
       height: 50, // Hauteur fixe pour garantir la visibilité
