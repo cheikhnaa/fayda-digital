@@ -746,20 +746,13 @@ const podcasts = [
 ];
 
 // Fonction helper pour obtenir le fichier audio d'un podcast
-// Note: Les fichiers audio des podcasts sont ignorés par Git pour réduire la taille du dépôt
-// Cette fonction retourne toujours le fallback audio.mp3 pour éviter les erreurs de build
 const getPodcastFile = (fileName: string) => {
-  // Pour le moment, retourner toujours le fallback car les fichiers sont dans .gitignore
-  // TODO: Si les fichiers audio sont ajoutés au dépôt, décommenter les lignes ci-dessous
-  /*
   const podcastFiles: { [key: string]: any } = {
     'wakhtanu-thierno-assane-deme-tarbiya-ilalah.mp3': require('./assets/podcasts/wakhtanu-thierno-assane-deme-tarbiya-ilalah.mp3'),
     'wazifa-arif-bilah-cheikh-assane-deme.mp3': require('./assets/podcasts/wazifa-arif-bilah-cheikh-assane-deme.mp3'),
     'waxtanou-cheikh-thierno-assane-deme-ra.mp3': require('./assets/podcasts/waxtanou-cheikh-thierno-assane-deme-ra.mp3'),
   };
   return podcastFiles[fileName] || require('./assets/audio/audio.mp3');
-  */
-  return require('./assets/audio/audio.mp3');
 };
 
 const courses = [

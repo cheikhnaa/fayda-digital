@@ -39,7 +39,6 @@ yarn-error.*
 # generated native folders
 /ios
 /android
-assets/podcasts/*.mp3
 
 # Large PDF files (over 10MB) - kept locally but not pushed to GitHub
 assets/pdf/Afakhou Shiria -- Cheikh Ibrahim Niass.pdf
@@ -48,3 +47,4 @@ assets/pdf/arabe/kachf-al-hijab.pdf
 assets/pdf/arabe/boughiyat.pdf
 assets/pdf/arabe/miftaakhoul-woussoul.pdf
 assets/pdf/miftaakhoul-woussoul.pdf
+.vercel
