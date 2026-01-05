@@ -25,7 +25,7 @@
     },
     "web": {
       "favicon": "./assets/pdf/cover/icones/chargement.png",
-      "bundler": "webpack"
+      "bundler": "metro"
     }
   }
 }
