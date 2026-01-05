@@ -1,5 +1,6 @@
 # Exclure les fichiers volumineux qui ne sont pas nécessaires pour le build web
-assets/pdf/**/*.pdf
+# Note: Les PDFs sont nécessaires pour le build, donc on ne les exclut plus
+# assets/pdf/**/*.pdf
 node_modules/
 .git/
 .vercel/
