@@ -973,7 +973,7 @@ const allPdfFiles = [
     author: 'Cheikh Ibrahim Niass',
     pages: 180,
     cover: '📖',
-    pdfFile: require('./assets/pdf/Afakhou Shiria  -  Cheikh Ibrahim Niass.pdf'),
+    pdfFile: require('./assets/pdf/Afakhou-Shiria.pdf'),
     image: require('./assets/pdf/cover/afakhou.png'),
     description: 'Ouvrage important de Cheikh Ibrahim Niass.',
     category: 'Tariqa',
