@@ -2604,7 +2604,7 @@ function HomeScreen({ navigation }: any) {
               <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>Célébrations spirituelles</Text>
             </View>
           </View>
-          <TouchableOpacity style={styles.seeAllButton} onPress={() => navigation.navigate('MainTabs', { screen: 'Gamou' })}>
+          <TouchableOpacity style={styles.seeAllButton} onPress={() => navigation.navigate('Gamou')}>
             <Text style={styles.seeAllModern}>Voir tout</Text>
             <Text style={styles.seeAllArrow}>→</Text>
           </TouchableOpacity>
@@ -2613,7 +2613,7 @@ function HomeScreen({ navigation }: any) {
           style={[styles.podcastZikrCard, { marginLeft: 0, marginRight: 10, width: '100%', alignSelf: 'stretch' }]}
           activeOpacity={0.9}
               onPress={() => {
-            navigation.navigate('MainTabs', { screen: 'Gamou' });
+            navigation.navigate('Gamou');
               }}
             >
               <ImageBackground
@@ -3957,7 +3957,7 @@ function MusicScreen({ navigation }: any) {
             style={styles.podcastZikrCard}
             activeOpacity={0.9}
             onPress={() => {
-              navigation.navigate('MainTabs', { screen: 'Gamou' });
+              navigation.navigate('Gamou');
             }}
           >
             <ImageBackground
@@ -4449,29 +4449,42 @@ function ZikrScreen({ navigation }: any) {
 
           {/* Contrôles de lecture - Design selon l'image */}
           <View style={styles.zikrPlayerControls}>
+            {/* Bouton Précédent */}
+            <TouchableOpacity 
+              style={styles.zikrPlayer30sBtn}
+              onPress={handlePrevious}
+              activeOpacity={0.7}
+            >
+              <Image 
+                source={require('./assets/pdf/cover/icones/precedant.png')}
+                style={{ width: 40, height: 40 }}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+            
             {/* 30s Rewind Circle */}
             <TouchableOpacity 
               style={styles.zikrPlayer30sBtn}
               onPress={handleRewind}
               activeOpacity={0.7}
             >
-              <View style={styles.zikrPlayer30sCircle}>
-                <Text style={styles.zikrPlayer30sText}>30s</Text>
-              </View>
+              <Image 
+                source={require('./assets/pdf/cover/icones/icone-left.png')}
+                style={{ width: 40, height: 40 }}
+                resizeMode="contain"
+              />
             </TouchableOpacity>
             
             {/* Play/Pause Button */}
             <TouchableOpacity 
-              style={styles.zikrPlayerPlayBtn}
               onPress={togglePlay}
               activeOpacity={0.9}
             >
-              <LinearGradient
-                colors={['#0F5132', '#0B3C5D']}
-                style={styles.zikrPlayerPlayBtnGradient}
-              >
-                <Text style={styles.zikrPlayerPlayIcon}>{isPlaying ? '⏸' : '▶'}</Text>
-              </LinearGradient>
+              <Image 
+                source={isPlaying ? require('./assets/pdf/cover/icones/icone-pause.png') : require('./assets/pdf/cover/icones/icone-play.png')}
+                style={{ width: 60, height: 60 }}
+                resizeMode="contain"
+              />
             </TouchableOpacity>
             
             {/* 30s Forward Circle */}
@@ -4480,9 +4493,24 @@ function ZikrScreen({ navigation }: any) {
               onPress={handleForward}
               activeOpacity={0.7}
             >
-              <View style={styles.zikrPlayer30sCircle}>
-                <Text style={styles.zikrPlayer30sText}>30s</Text>
-              </View>
+              <Image 
+                source={require('./assets/pdf/cover/icones/icone-right.png')}
+                style={{ width: 40, height: 40 }}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+            
+            {/* Bouton Suivant */}
+            <TouchableOpacity 
+              style={styles.zikrPlayer30sBtn}
+              onPress={handleNext}
+              activeOpacity={0.7}
+            >
+              <Image 
+                source={require('./assets/pdf/cover/icones/suivant.png')}
+                style={{ width: 40, height: 40 }}
+                resizeMode="contain"
+              />
             </TouchableOpacity>
           </View>
 
@@ -5013,29 +5041,42 @@ function CoranScreen({ navigation }: any) {
 
           {/* Contrôles de lecture - Design selon l'image */}
           <View style={styles.zikrPlayerControls}>
+            {/* Bouton Précédent */}
+            <TouchableOpacity 
+              style={styles.zikrPlayer30sBtn}
+              onPress={handlePrevious}
+              activeOpacity={0.7}
+            >
+              <Image 
+                source={require('./assets/pdf/cover/icones/precedant.png')}
+                style={{ width: 40, height: 40 }}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+            
             {/* 30s Rewind Circle */}
             <TouchableOpacity 
               style={styles.zikrPlayer30sBtn}
               onPress={handleRewind}
               activeOpacity={0.7}
             >
-              <View style={styles.zikrPlayer30sCircle}>
-                <Text style={styles.zikrPlayer30sText}>30s</Text>
-              </View>
+              <Image 
+                source={require('./assets/pdf/cover/icones/icone-left.png')}
+                style={{ width: 40, height: 40 }}
+                resizeMode="contain"
+              />
             </TouchableOpacity>
             
             {/* Play/Pause Button */}
             <TouchableOpacity 
-              style={styles.zikrPlayerPlayBtn}
               onPress={togglePlay}
               activeOpacity={0.9}
             >
-              <LinearGradient
-                colors={['#0F5132', '#0B3C5D']}
-                style={styles.zikrPlayerPlayBtnGradient}
-              >
-                <Text style={styles.zikrPlayerPlayIcon}>{isPlaying ? '⏸' : '▶'}</Text>
-              </LinearGradient>
+              <Image 
+                source={isPlaying ? require('./assets/pdf/cover/icones/icone-pause.png') : require('./assets/pdf/cover/icones/icone-play.png')}
+                style={{ width: 60, height: 60 }}
+                resizeMode="contain"
+              />
             </TouchableOpacity>
             
             {/* 30s Forward Circle */}
@@ -5044,9 +5085,24 @@ function CoranScreen({ navigation }: any) {
               onPress={handleForward}
               activeOpacity={0.7}
             >
-              <View style={styles.zikrPlayer30sCircle}>
-                <Text style={styles.zikrPlayer30sText}>30s</Text>
-              </View>
+              <Image 
+                source={require('./assets/pdf/cover/icones/icone-right.png')}
+                style={{ width: 40, height: 40 }}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+            
+            {/* Bouton Suivant */}
+            <TouchableOpacity 
+              style={styles.zikrPlayer30sBtn}
+              onPress={handleNext}
+              activeOpacity={0.7}
+            >
+              <Image 
+                source={require('./assets/pdf/cover/icones/suivant.png')}
+                style={{ width: 40, height: 40 }}
+                resizeMode="contain"
+              />
             </TouchableOpacity>
           </View>
 
@@ -6774,6 +6830,26 @@ function PodcastPlayerScreen({ route, navigation }: any) {
     }
   };
 
+  const handlePrevious = () => {
+    // Trouver l'index actuel dans la liste appropriée
+    const allItems = [...podcasts, ...gamouItems];
+    const currentIndex = allItems.findIndex(item => item.id === podcast?.id);
+    if (currentIndex > 0) {
+      const previousItem = allItems[currentIndex - 1];
+      navigation.replace('PodcastPlayer', { podcast: previousItem });
+    }
+  };
+
+  const handleNext = () => {
+    // Trouver l'index actuel dans la liste appropriée
+    const allItems = [...podcasts, ...gamouItems];
+    const currentIndex = allItems.findIndex(item => item.id === podcast?.id);
+    if (currentIndex < allItems.length - 1) {
+      const nextItem = allItems[currentIndex + 1];
+      navigation.replace('PodcastPlayer', { podcast: nextItem });
+    }
+  };
+
   const handleShare = async () => {
     try {
       await Share.share({
@@ -6869,7 +6945,7 @@ function PodcastPlayerScreen({ route, navigation }: any) {
         {/* Image principale avec overlay */}
         <View style={styles.podcastPlayerImageContainer}>
           <Image
-            source={podcast.image || require('./assets/thierno.png')}
+            source={(podcast as any).modalImage || podcast.image || require('./assets/thierno.png')}
             style={styles.podcastPlayerImageStyle}
             resizeMode="cover"
           />
@@ -6923,29 +6999,42 @@ function PodcastPlayerScreen({ route, navigation }: any) {
 
         {/* Contrôles de lecture */}
         <View style={styles.podcastPlayerControls}>
+          {/* Bouton Précédent */}
+          <TouchableOpacity 
+            style={styles.podcastPlayer30sBtn}
+            onPress={handlePrevious}
+            activeOpacity={0.7}
+          >
+            <Image 
+              source={require('./assets/pdf/cover/icones/precedant.png')}
+              style={{ width: 40, height: 40 }}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+          
           {/* 30s Rewind Circle */}
           <TouchableOpacity 
             style={styles.podcastPlayer30sBtn}
             onPress={handleRewind}
             activeOpacity={0.7}
           >
-            <View style={styles.podcastPlayer30sCircle}>
-              <Text style={styles.podcastPlayer30sText}>30s</Text>
-            </View>
+            <Image 
+              source={require('./assets/pdf/cover/icones/icone-left.png')}
+              style={{ width: 40, height: 40 }}
+              resizeMode="contain"
+            />
           </TouchableOpacity>
           
           {/* Play/Pause Button */}
           <TouchableOpacity 
-            style={styles.podcastPlayerPlayBtn}
             onPress={togglePlay}
             activeOpacity={0.9}
           >
-            <LinearGradient
-              colors={['#0F5132', '#0B3C5D']}
-              style={styles.podcastPlayerPlayBtnGradient}
-            >
-              <Text style={styles.podcastPlayerPlayIcon}>{isPlaying ? '⏸' : '▶'}</Text>
-            </LinearGradient>
+            <Image 
+              source={isPlaying ? require('./assets/pdf/cover/icones/icone-pause.png') : require('./assets/pdf/cover/icones/icone-play.png')}
+              style={{ width: 60, height: 60 }}
+              resizeMode="contain"
+            />
           </TouchableOpacity>
           
           {/* 30s Forward Circle */}
@@ -6954,9 +7043,24 @@ function PodcastPlayerScreen({ route, navigation }: any) {
             onPress={handleForward}
             activeOpacity={0.7}
           >
-            <View style={styles.podcastPlayer30sCircle}>
-              <Text style={styles.podcastPlayer30sText}>30s</Text>
-            </View>
+            <Image 
+              source={require('./assets/pdf/cover/icones/icone-right.png')}
+              style={{ width: 40, height: 40 }}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+          
+          {/* Bouton Suivant */}
+          <TouchableOpacity 
+            style={styles.podcastPlayer30sBtn}
+            onPress={handleNext}
+            activeOpacity={0.7}
+          >
+            <Image 
+              source={require('./assets/pdf/cover/icones/suivant.png')}
+              style={{ width: 40, height: 40 }}
+              resizeMode="contain"
+            />
           </TouchableOpacity>
         </View>
 
@@ -7712,47 +7816,53 @@ function AudioPlayerScreen({ route, navigation }: any) {
             style={styles.audioPlayerControlBtnNew}
             activeOpacity={0.7}
           >
-            <Ionicons name="play-skip-back" size={28} color="#333" />
+            <Image 
+              source={require('./assets/pdf/cover/icones/precedant.png')}
+              style={{ width: 40, height: 40 }}
+              resizeMode="contain"
+            />
           </TouchableOpacity>
           <TouchableOpacity 
             style={styles.audioPlayerRewindBtn}
             onPress={() => handleSeek(-30)}
             activeOpacity={0.7}
           >
-            <View style={styles.audioPlayer30sCircle}>
-              <Ionicons name="play-back" size={20} color="#333" />
-            </View>
-            <Text style={styles.audioPlayerRewindText}>30s</Text>
+            <Image 
+              source={require('./assets/pdf/cover/icones/icone-left.png')}
+              style={{ width: 40, height: 40 }}
+              resizeMode="contain"
+            />
           </TouchableOpacity>
           <TouchableOpacity 
-            style={styles.audioPlayerPlayButtonNew}
             onPress={togglePlay}
             activeOpacity={0.9}
           >
-            <View style={styles.audioPlayerPlayCircle}>
-              <Ionicons 
-                name={isPlaying ? "pause" : "play"} 
-                size={28} 
-                color="#fff" 
-                style={{ marginLeft: 3 }}
-              />
-            </View>
+            <Image 
+              source={isPlaying ? require('./assets/pdf/cover/icones/icone-pause.png') : require('./assets/pdf/cover/icones/icone-play.png')}
+              style={{ width: 60, height: 60 }}
+              resizeMode="contain"
+            />
           </TouchableOpacity>
           <TouchableOpacity 
             style={styles.audioPlayerForwardBtn}
             onPress={() => handleSeek(30)}
             activeOpacity={0.7}
           >
-            <View style={styles.audioPlayer30sCircle}>
-              <Ionicons name="play-forward" size={20} color="#333" />
-            </View>
-            <Text style={styles.audioPlayerForwardText}>30s</Text>
+            <Image 
+              source={require('./assets/pdf/cover/icones/icone-right.png')}
+              style={{ width: 40, height: 40 }}
+              resizeMode="contain"
+            />
           </TouchableOpacity>
           <TouchableOpacity 
             style={styles.audioPlayerControlBtnNew}
             activeOpacity={0.7}
           >
-            <Ionicons name="play-skip-forward" size={28} color="#333" />
+            <Image 
+              source={require('./assets/pdf/cover/icones/suivant.png')}
+              style={{ width: 40, height: 40 }}
+              resizeMode="contain"
+            />
           </TouchableOpacity>
         </View>
 
