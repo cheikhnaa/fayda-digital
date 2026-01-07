@@ -5565,17 +5565,14 @@ function GamouScreen({ navigation, route }: any) {
                   >
                     {/* Image */}
                     <View style={styles.podcastModalImageContainer}>
-            <ImageBackground
+                      <Image
                         source={(selectedGamou as any).modalImage || selectedGamou.image || require('./assets/thierno.png')}
-                        style={styles.podcastModalImage}
-                        imageStyle={styles.podcastModalImageStyle}
-                      >
-                        <View style={styles.podcastModalImageOverlay}>
-              </View>
-            </ImageBackground>
+                        style={styles.podcastModalImageStyle}
+                        resizeMode="cover"
+                      />
                     </View>
 
-                    {/* Informations du son sous l'image */}
+                    {/* Informations du son en bas de l'image */}
                     <View style={styles.podcastModalInfoSection}>
                       <Text style={[styles.podcastModalInfoTitle, { color: theme.text }]} numberOfLines={2}>
                         {selectedGamou.title}
@@ -6253,17 +6250,14 @@ function PodcastsScreen({ navigation, route }: any) {
                   >
                     {/* Image */}
                     <View style={styles.podcastModalImageContainer}>
-                      <ImageBackground
+                      <Image
                         source={(selectedPodcast as any).modalImage || selectedPodcast.image || require('./assets/thierno.png')}
-                        style={styles.podcastModalImage}
-                        imageStyle={styles.podcastModalImageStyle}
-                      >
-                        <View style={styles.podcastModalImageOverlay}>
-                        </View>
-                      </ImageBackground>
+                        style={styles.podcastModalImageStyle}
+                        resizeMode="cover"
+                      />
                     </View>
 
-                    {/* Informations du son sous l'image */}
+                    {/* Informations du son en bas de l'image */}
                     <View style={styles.podcastModalInfoSection}>
                       <Text style={[styles.podcastModalInfoTitle, { color: theme.text }]} numberOfLines={2}>
                         {selectedPodcast.title}
@@ -6874,15 +6868,26 @@ function PodcastPlayerScreen({ route, navigation }: any) {
       >
         {/* Image principale avec overlay */}
         <View style={styles.podcastPlayerImageContainer}>
-          <ImageBackground
+          <Image
             source={podcast.image || require('./assets/thierno.png')}
-            style={styles.podcastPlayerImage}
+            style={styles.podcastPlayerImageStyle}
             resizeMode="cover"
-            imageStyle={styles.podcastPlayerImageStyle}
-          >
-            <View style={styles.podcastPlayerImageOverlay}>
-            </View>
-          </ImageBackground>
+          />
+        </View>
+
+        {/* Informations du son en bas de l'image */}
+        <View style={styles.podcastModalInfoSection}>
+          <Text style={[styles.podcastModalInfoTitle, { color: theme.text }]} numberOfLines={2}>
+            {podcast.title}
+          </Text>
+          {podcast.description && (
+            <Text style={[styles.podcastModalInfoDescription, { color: theme.textSecondary }]} numberOfLines={3}>
+              {podcast.description}
+            </Text>
+          )}
+          <Text style={[styles.podcastModalInfoDate, { color: theme.textSecondary }]}>
+            {podcast.date} • {podcast.duration || '--:--'}
+          </Text>
         </View>
 
         {/* Barre de progression */}
@@ -12117,8 +12122,9 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   podcastModalImageStyle: {
+    width: '100%',
+    height: '100%',
     borderRadius: 1,
-    resizeMode: 'cover',
   },
   podcastModalImageOverlay: {
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -12128,10 +12134,10 @@ const styles = StyleSheet.create({
   podcastModalImageTitle: {
     fontSize: 20,
     fontWeight: '600',
-    fontStyle: 'italic',
     color: '#ffffff',
-    marginBottom: 4,
-    textAlign: 'center',
+    marginBottom: 8,
+    textAlign: 'left',
+    lineHeight: 28,
   },
   podcastModalImageSubtitle: {
     fontSize: 14,
@@ -12543,8 +12549,9 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   podcastPlayerImageStyle: {
+    width: '100%',
+    height: '100%',
     borderRadius: 1,
-    resizeMode: 'cover',
   },
   podcastPlayerImageOverlay: {
     backgroundColor: 'rgba(0, 0, 0, 0.05)',
