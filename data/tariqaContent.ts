@@ -1,0 +1,497 @@
+// Contenu HTML pour chaque article Tariqa séparément
+// Extracted from App.tsx (lines 24-519)
+export const getIntroductionTariqaHTML = () => `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction à la Tariqa Tijaniyya</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', 'Times New Roman', serif; line-height: 1.8; color: #2c3e50; background: linear-gradient(135deg, #f8f6f0 0%, #e8e5df 100%); padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border-radius: 10px; }
+        .header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 3px solid #0F5132; }
+        h1 { color: #0F5132; font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .article { margin-bottom: 50px; padding: 30px; background: #fafafa; border-left: 5px solid #0F5132; border-radius: 8px; }
+        .article h2 { color: #0F5132; font-size: 1.8em; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #C9A24D; }
+        .article p { margin-bottom: 15px; text-align: justify; font-size: 1.1em; }
+        .quote { background: linear-gradient(135deg, #0F5132 0%, #0B3C5D 100%); color: white; padding: 20px; border-radius: 8px; margin: 20px 0; font-style: italic; font-size: 1.15em; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .highlight { background: #fff9e6; padding: 2px 6px; border-radius: 4px; font-weight: bold; color: #0F5132; }
+        .footer { text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e0e0e0; color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Introduction à la Tariqa Tijaniyya</h1>
+        </div>
+        <div class="article">
+            <p>La <span class="highlight">Tariqa Tijaniyya</span> est une voie spirituelle soufie fondée par <span class="highlight">Cheikh Ahmed Tijani</span> (1737-1815) à Fès, au Maroc. Cette voie représente l'une des plus importantes confréries soufies du monde islamique, particulièrement influente en Afrique de l'Ouest.</p>
+            <div class="quote">"La Tariqa Tijaniyya est une voie de proximité avec Allah et Son Messager, une voie de purification du cœur et d'élévation de l'âme."</div>
+            <p>Le Cheikh Ahmed Tijani reçut ses enseignements directement du Prophète Muhammad (paix et bénédictions sur lui) dans un état d'éveil, ce qui confère à cette voie une particularité unique parmi les confréries soufies.</p>
+        </div>
+        <div class="footer">
+            <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
+            <p style="margin-top: 10px;">© Fayda Tidianiya - Sagesse & Spiritualité</p>
+        </div>
+    </div>
+</body>
+</html>`;
+
+export const getZikrTariqaHTML = () => `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Zikr dans la Voie Tijaniyya</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', 'Times New Roman', serif; line-height: 1.8; color: #2c3e50; background: linear-gradient(135deg, #f8f6f0 0%, #e8e5df 100%); padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border-radius: 10px; }
+        .header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 3px solid #0F5132; }
+        h1 { color: #0F5132; font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .article { margin-bottom: 50px; padding: 30px; background: #fafafa; border-left: 5px solid #0F5132; border-radius: 8px; }
+        .article h2 { color: #0F5132; font-size: 1.8em; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #C9A24D; }
+        .article p { margin-bottom: 15px; text-align: justify; font-size: 1.1em; }
+        .highlight { background: #fff9e6; padding: 2px 6px; border-radius: 4px; font-weight: bold; color: #0F5132; }
+        .arabic { direction: rtl; text-align: right; font-family: 'Arial', sans-serif; font-size: 1.2em; color: #0B3C5D; margin: 10px 0; }
+        .footer { text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e0e0e0; color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Le Zikr dans la Voie Tijaniyya</h1>
+        </div>
+        <div class="article">
+            <p>Le <span class="highlight">Zikr</span> occupe une place centrale dans la pratique de la Tariqa Tijaniyya. Il s'agit de la répétition des noms d'Allah et des invocations spécifiques qui purifient le cœur et rapprochent le disciple de son Seigneur.</p>
+            <div class="arabic">"واذكر ربك في نفسك تضرعا وخيفة ودون الجهر من القول"</div>
+            <p>"Et invoque ton Seigneur en toi-même, en humilité et crainte, à voix basse, le matin et le soir" (Coran 7:205).</p>
+        </div>
+        <div class="footer">
+            <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
+            <p style="margin-top: 10px;">© Fayda Tidianiya - Sagesse & Spiritualité</p>
+        </div>
+    </div>
+</body>
+</html>`;
+
+export const getSalatFatihHTML = () => `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Salat al-Fatih</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', 'Times New Roman', serif; line-height: 1.8; color: #2c3e50; background: linear-gradient(135deg, #f8f6f0 0%, #e8e5df 100%); padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border-radius: 10px; }
+        .header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 3px solid #0F5132; }
+        h1 { color: #0F5132; font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .article { margin-bottom: 50px; padding: 30px; background: #fafafa; border-left: 5px solid #0F5132; border-radius: 8px; }
+        .article h2 { color: #0F5132; font-size: 1.8em; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #C9A24D; }
+        .article p { margin-bottom: 15px; text-align: justify; font-size: 1.1em; }
+        .highlight { background: #fff9e6; padding: 2px 6px; border-radius: 4px; font-weight: bold; color: #0F5132; }
+        .footer { text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e0e0e0; color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>La Salat al-Fatih</h1>
+        </div>
+        <div class="article">
+            <p>La <span class="highlight">Salat al-Fatih</span> est une prière spéciale récitée dans la Tariqa Tijaniyya. Elle est considérée comme ayant une valeur spirituelle immense, équivalente à des milliers de récitations du Coran selon les enseignements du Cheikh.</p>
+        </div>
+        <div class="footer">
+            <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
+            <p style="margin-top: 10px;">© Fayda Tidianiya - Sagesse & Spiritualité</p>
+        </div>
+    </div>
+</body>
+</html>`;
+
+export const getAttachementPropheteHTML = () => `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L'Attachement au Prophète</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', 'Times New Roman', serif; line-height: 1.8; color: #2c3e50; background: linear-gradient(135deg, #f8f6f0 0%, #e8e5df 100%); padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border-radius: 10px; }
+        .header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 3px solid #0F5132; }
+        h1 { color: #0F5132; font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .article { margin-bottom: 50px; padding: 30px; background: #fafafa; border-left: 5px solid #0F5132; border-radius: 8px; }
+        .article h2 { color: #0F5132; font-size: 1.8em; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #C9A24D; }
+        .article p { margin-bottom: 15px; text-align: justify; font-size: 1.1em; }
+        .highlight { background: #fff9e6; padding: 2px 6px; border-radius: 4px; font-weight: bold; color: #0F5132; }
+        .footer { text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e0e0e0; color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>L'Attachement au Prophète</h1>
+        </div>
+        <div class="article">
+            <p>La Tariqa Tijaniyya met un accent particulier sur l'amour et l'attachement au Prophète Muhammad (paix et bénédictions sur lui). Cette relation spirituelle est considérée comme essentielle pour progresser sur la voie.</p>
+        </div>
+        <div class="footer">
+            <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
+            <p style="margin-top: 10px;">© Fayda Tidianiya - Sagesse & Spiritualité</p>
+        </div>
+    </div>
+</body>
+</html>`;
+
+export const getDouaWazifaHTML = () => `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doua Wazifa</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', 'Times New Roman', serif; line-height: 1.8; color: #2c3e50; background: linear-gradient(135deg, #f8f6f0 0%, #e8e5df 100%); padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border-radius: 10px; }
+        .header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 3px solid #0F5132; }
+        h1 { color: #0F5132; font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .article { margin-bottom: 50px; padding: 30px; background: #fafafa; border-left: 5px solid #0F5132; border-radius: 8px; }
+        .article h2 { color: #0F5132; font-size: 1.8em; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #C9A24D; }
+        .article p { margin-bottom: 15px; text-align: justify; font-size: 1.1em; }
+        .footer { text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e0e0e0; color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Doua Wazifa</h1>
+        </div>
+        <div class="article">
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Allahoumma antal awwalou falaÏssa khablaka chaÏ-oune<br>
+                Wa antal aakhirou falaÏssa bahdaka chaÏ-oune<br>
+                Wa antaz zaahirou falaïssa fawkhaka chaï-oune<br>
+                Wa antal baatinou falaïssa dounaka chaï-oune
+            </div>
+            <p><strong>Oh Dieu, Tu es le Premier et tu n'y trouvas rien. Tu es le Dernier, et tu n'y laisseras rien. Tu es l'Apparent et rien te voile. Tu es le tout le Caché</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Fakoune lanaa yaa awwalou yaa aakhirou yaa zaahirou yaa<br>
+                Baatinou waliyane wanaciirane anta waliyounaa wa mawlaanaa<br>
+                Fanihmal mawlaa wa nihman nacirou
+            </div>
+            <p><strong>Sois pour nous, Oh Toi le Premier, le Dernier, l'Apparent, le Caché, un Ami et un Secours. Tu es notre Seigneur, et quel meilleur Seigneur, quel meilleur Secours!</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Allahoumma innaa nas-alouka bifaatihiyatil faatihi alfat –ha<br>
+                Ataama wabi khaatimiyatil khaatimi housnal khitaam
+            </div>
+            <p><strong>Oh Dieu, nous te demandons, par la clé de l'Ouverture (Mouhammad, psl), la grande ouverture; et par le caractère fermé de la fermeture (Mouhammad), une beau devenir et une belle fin.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Allahoumma innaa nas-alouka minal khaïri koullihii handjilihii wa hadjilihii maa<br>
+                halimnaa minehou wamaa lame nahlame ;<br>
+                Wanahounzou bika mina charri koullihii handjilihii wa hadjilihii maa halimnaa minehou<br>
+                wamaa lame nahlame
+            </div>
+            <p><strong>Oh Dieu, Nous te demandons des tous tes bienfaits, à nous connus ou inconnus. Nous nous protégeons en toi contres tous les maux, à nous connus ou inconnus.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Allahoumma innaa nas-aloukal diannata wamaa kharraba ilaïhaa mine khawline wa<br>
+                hamaline Wanahouzou bika minan naari wamaa kharraba ilaïhaa mine khawline wa<br>
+                hamaline
+            </div>
+            <p><strong>Oh Dieu, nous Te demandons le paradis ainsi que les actes et les paroles qui en rapprochent. Nous nous protégeons en Toi contre l'enfer ainsi que des actes et paroles qui en rapprochent.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Allahoumma innaa nas-aloukal hafwa wal haafiyata wal mouhaafata<br>
+                Addaa-imata fid diini wad dounyaa wal aakhirati
+            </div>
+            <p><strong>Oh Dieu, nous Te demandons le pardon, la santé et la protection, dans la religion, dans ce bas monde et dans l'au-delà.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Allahoumma inna nas-alouka ridaaka wa ridaa nabiyyika Seydina Muhammadin çalla<br>
+                llahu aleyhi wa sallama wa ridal ach-yaakhi wa ridal waalidaïni
+            </div>
+            <p><strong>Oh Dieu, nous te demandons Ton agrément, celui des maîtres et des parents.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Allahoumma idjhal maa nouhibbou fiimaa touhibbou watardaa<br>
+                Allahoumma idjhal fikh tiyaarika ikhtiyaaranaa walaa tadjhal illaa ilaîka idtiraaranaa
+            </div>
+            <p><strong>Oh Dieu, fais que nous aimions ce que Tu aimes. Mets ton choix dans le nôtre. Fais que nous n'ayons besoin que de Toi.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Yaa rabbanaa yaa khaalikhal hawaalimi ; houl baïnanaa wabaïna koulli zaalimi.<br>
+                Wadjzi likoulli mane ilaïnaa ahsanaa ; wa diaaziihi hannaal diazaa al ahsanaa
+            </div>
+            <p><strong>Oh Dieu, Toi qui a crée les mondes, interpose- Toi entre nous et tout Prédicateur. Récompense celui qui nous fait du bien, de la meilleure façon.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Allahoumma irfah hannal diahda wal diouhan wal hourya wakchif hannaa i minal<br>
+                balaa– i maalaa yakchifouhou khaïrouka
+            </div>
+            <p><strong>Oh Dieu, éloigne nous des dures conditions de vie, de la faim et de la nudité. Eloigne de nous les épreuves, dont Tu es le seul à pouvoir alléger.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Allahoumma faridje hane oummati sayyidinaa mouhammadine. (s.a.w) 3 fois
+            </div>
+            <p><strong>Oh Seigneur, répand ta grâce et ta paix sur la communauté de notre Maitre Muhammad. (SAS) 3 fois</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Rabbana atina fid dounya hassanatan wafil aakhirati hassanatane wakhinaa hazaaban<br>
+                naari
+            </div>
+            <p><strong>(C.2.201) Seigneur donne-nous une belle part ici-bas, une belle part aussi dans l'au-delà; et garde nous du châtiment de l'enfer.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Rabbanaa laa tou - aakhiznaa ine naciynaa aw akhtahnaa. Rabbanaa walaa tahmil<br>
+                halaïnaa israne kamaa hamaltahou halal laziina mine khablinaa<br>
+                Rabbanaa walaa touhammilnaa maa laataakhata lanaa bihii wahfou hannaa wakhfir<br>
+                lanaa warham naa anta mawlaanaa fansournaa halal khawmil kaafiriina
+            </div>
+            <p><strong>(C.2.286) Seigneur, ne T'en prends pas à nous s'il nous arrive d'oublier, ou de commettre l'erreur. Seigneur! Ne nous charge pas d'un fardeau lourd comme Tu as chargé ceux qui furent avant nous. Seigneur! Et ne nous impose pas ce pour quoi nous n'avons point de force. Et donne-nous absolution et donne-nous pardon et aie pour nous miséricorde. Tu es notre patron : donne-nous donc secours contre le peuple mécréant.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Rabbanaa laa touzikh khouloubanaa bahda iz hadaïtanaa wa hab lanaa mine ladounka<br>
+                rahmatane innaka antal wah haabou
+            </div>
+            <p><strong>Seigneur, ne fais pas dévier nos cœurs après que Tu nous as guidés; et donne nous miséricorde de Ta part. Tu es, Toi, le grand donateur.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Rabbanaa innanaa samihnaa mounaadiyane younaadii lil iimaani an aaminou<br>
+                birabbikoume fa aamannaa.<br>
+                Rabbanaa fakhfir lanaa zounoubanaa wakaffir hannaa seyyi – aatinaa watawaf fanaa<br>
+                mahal abraari
+            </div>
+            <p><strong>(C3.193) Seigneur ! Oui, nous avons entendu un héraut appeler ainsi à la foi : "Croyez en votre Seigneur!" Et nous avons cru. Seigneur pardonne nous donc nos péchés, efface de nous nos méfaits, et fais-nous achever la vie en compagnie de charitables.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Rabbanaa wa aatinaa maa wahattanaa halaa roussoulika walaa toukhziinaa yawmal<br>
+                khiyaamati innaka laa toukhlifoul miihaad
+            </div>
+            <p><strong>(C3.194) Seigneur! Et donne-nous ce que Tu as promis par Tes messagers; et ne nous couvre pas d'ignominie au jour de la Résurrection. En vérité, Tu ne manques pas au rendez-vous.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Rabbanaa zalamnaa anfousanaa wa – ine lame takhfirlanaa watarhamnaa<br>
+                lanakounanna minal khaciriina
+            </div>
+            <p><strong>(C7.23) Ô Seigneur, nous nous sommes manqué à nous mêmes. Et si Tu ne nous pardonne pas et ne nous fais pas miséricorde, alors nous serons très certainement du nombre des perdants.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Rabbanaa aatinaa mine ladounka rahmatane wa hayyih lanaa mine amrinaa rach<br>
+                chadane
+            </div>
+            <p><strong>(C18.10) Seigneur, apporte-nous de Ta part une miséricorde; et arrange-nous une bonne conduite de notre affaire.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Rabbanaa hablanaa mine azwaadjinaa wazouriya tinaa khourrata ah – younine<br>
+                wadjhalnaa lilmouttakhiina imaamane
+            </div>
+            <p><strong>(C25.74) Seigneur, donne-nous, en nos épouses et nos descendants, fraîcheur des yeux, et assigne-nous pour dirigeants aux pieux.</strong></p>
+            
+            <div style="margin-top: 20px; margin-bottom: 15px; font-style: italic; font-size: 1.1em; color: #0B3C5D;">
+                Allahoumma ikhfir lihayyinaa wa mayyitinaa wa kabiirinaa wa sakhiirinaa wa zakarinaa<br>
+                wa ounsaanaa wa haadirinaa wa khaa- ibinaa wa hourrinaa wa habdinaa wa taahi-i-naa<br>
+                wa hansinaa. (SALATOUL FATIHA)
+            </div>
+            <p><strong>Oh Dieu, pardonne à nos frères et sœurs, vivants ou nos morts, âgées ou jeunes, hommes ou femmes, présents ou absents, obéissants ou non. (SALATOUL FATIHA)</strong></p>
+        </div>
+        <div class="footer">
+            <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
+            <p style="margin-top: 10px;">© Fayda Tidianiya - Sagesse & Spiritualité</p>
+        </div>
+    </div>
+</body>
+</html>`;
+
+// Contenu HTML pour chaque article Ma'arifa séparément
+export const getConnaissanceSpirituelleHTML = () => `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Connaissance Spirituelle</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', 'Times New Roman', serif; line-height: 1.8; color: #2c3e50; background: linear-gradient(135deg, #f8f6f0 0%, #e8e5df 100%); padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border-radius: 10px; }
+        .header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 3px solid #0B3C5D; }
+        h1 { color: #0B3C5D; font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .article { margin-bottom: 50px; padding: 30px; background: #fafafa; border-left: 5px solid #0B3C5D; border-radius: 8px; }
+        .article h2 { color: #0B3C5D; font-size: 1.8em; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #C9A24D; }
+        .article p { margin-bottom: 15px; text-align: justify; font-size: 1.1em; }
+        .quote { background: linear-gradient(135deg, #0B3C5D 0%, #0F5132 100%); color: white; padding: 20px; border-radius: 8px; margin: 20px 0; font-style: italic; font-size: 1.15em; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .highlight { background: #e6f3ff; padding: 2px 6px; border-radius: 4px; font-weight: bold; color: #0B3C5D; }
+        .footer { text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e0e0e0; color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>La Connaissance Spirituelle</h1>
+        </div>
+        <div class="article">
+            <h2>Qu'est-ce que la Ma'arifa ?</h2>
+            <p>La <span class="highlight">Ma'arifa</span> (المعرفة) désigne la connaissance spirituelle directe, la gnose divine qui transcende la simple compréhension intellectuelle. C'est une connaissance du cœur, une illumination qui vient d'Allah.</p>
+            <div class="quote">"La connaissance véritable n'est pas celle que l'on acquiert par l'étude, mais celle qu'Allah dépose dans le cœur de Ses serviteurs."</div>
+            <p>Dans la tradition soufie, la Ma'arifa est considérée comme le sommet de la connaissance spirituelle, accessible uniquement à ceux qui ont purifié leur cœur et se sont rapprochés d'Allah.</p>
+        </div>
+        <div class="footer">
+            <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
+            <p style="margin-top: 10px;">© Fayda Tidianiya - Sagesse & Spiritualité</p>
+        </div>
+    </div>
+</body>
+</html>`;
+
+export const getDegresConnaissanceHTML = () => `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les Degrés de la Connaissance</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', 'Times New Roman', serif; line-height: 1.8; color: #2c3e50; background: linear-gradient(135deg, #f8f6f0 0%, #e8e5df 100%); padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border-radius: 10px; }
+        .header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 3px solid #0B3C5D; }
+        h1 { color: #0B3C5D; font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .article { margin-bottom: 50px; padding: 30px; background: #fafafa; border-left: 5px solid #0B3C5D; border-radius: 8px; }
+        .article h2 { color: #0B3C5D; font-size: 1.8em; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #C9A24D; }
+        .article h3 { color: #0F5132; font-size: 1.3em; margin-top: 20px; margin-bottom: 10px; }
+        .article p { margin-bottom: 15px; text-align: justify; font-size: 1.1em; }
+        .highlight { background: #e6f3ff; padding: 2px 6px; border-radius: 4px; font-weight: bold; color: #0B3C5D; }
+        .arabic { direction: rtl; text-align: right; font-family: 'Arial', sans-serif; font-size: 1.2em; color: #0F5132; margin: 10px 0; }
+        .footer { text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e0e0e0; color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Les Degrés de la Connaissance</h1>
+        </div>
+        <div class="article">
+            <h2>Les Degrés de la Connaissance</h2>
+            <h3>1. 'Ilm (La Science)</h3>
+            <p>Le premier degré est la <span class="highlight">science</span> ('ilm), qui est la connaissance acquise par l'étude et l'apprentissage. C'est la base nécessaire, mais insuffisante à elle seule.</p>
+            <h3>2. Fahm (La Compréhension)</h3>
+            <p>Le second degré est la <span class="highlight">compréhension</span> (fahm), qui va au-delà de la simple mémorisation. C'est la capacité à saisir le sens profond des enseignements.</p>
+            <h3>3. Ma'arifa (La Gnose)</h3>
+            <p>Le troisième degré est la <span class="highlight">Ma'arifa</span> elle-même, la connaissance directe et intuitive qui vient d'Allah. Cette connaissance ne s'acquiert pas par l'effort, mais est un don divin.</p>
+            <div class="arabic">"وَعَلَّمَ آدَمَ الأَسْمَاء كُلَّهَا"</div>
+            <p>"Et Il apprit à Adam tous les noms" (Coran 2:31). Cette connaissance directe est celle qu'Allah accorde à Ses serviteurs privilégiés.</p>
+        </div>
+        <div class="footer">
+            <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
+            <p style="margin-top: 10px;">© Fayda Tidianiya - Sagesse & Spiritualité</p>
+        </div>
+    </div>
+</body>
+</html>`;
+
+export const getMaarifaTariqaHTML = () => `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Ma'arifa dans la Tariqa Tijaniyya</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', 'Times New Roman', serif; line-height: 1.8; color: #2c3e50; background: linear-gradient(135deg, #f8f6f0 0%, #e8e5df 100%); padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border-radius: 10px; }
+        .header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 3px solid #0B3C5D; }
+        h1 { color: #0B3C5D; font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .article { margin-bottom: 50px; padding: 30px; background: #fafafa; border-left: 5px solid #0B3C5D; border-radius: 8px; }
+        .article h2 { color: #0B3C5D; font-size: 1.8em; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #C9A24D; }
+        .article p { margin-bottom: 15px; text-align: justify; font-size: 1.1em; }
+        .highlight { background: #e6f3ff; padding: 2px 6px; border-radius: 4px; font-weight: bold; color: #0B3C5D; }
+        ul { margin-left: 30px; margin-top: 15px; }
+        li { margin-bottom: 10px; }
+        .footer { text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e0e0e0; color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>La Ma'arifa dans la Tariqa Tijaniyya</h1>
+        </div>
+        <div class="article">
+            <h2>La Ma'arifa dans la Tariqa Tijaniyya</h2>
+            <p>Dans la <span class="highlight">Tariqa Tijaniyya</span>, la Ma'arifa est particulièrement valorisée. Le Cheikh Ahmed Tijani enseignait que la vraie connaissance spirituelle vient de la proximité avec le Prophète Muhammad (paix et bénédictions sur lui).</p>
+            <p>Les disciples de la voie cherchent cette connaissance à travers :</p>
+            <ul>
+                <li>Le Zikr constant et assidu</li>
+                <li>L'amour et l'attachement au Prophète</li>
+                <li>La purification du cœur</li>
+                <li>L'obéissance au guide spirituel</li>
+                <li>La méditation et la contemplation</li>
+            </ul>
+        </div>
+        <div class="footer">
+            <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
+            <p style="margin-top: 10px;">© Fayda Tidianiya - Sagesse & Spiritualité</p>
+        </div>
+    </div>
+</body>
+</html>`;
+
+export const getCheminGnoseHTML = () => `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Chemin vers la Gnose</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', 'Times New Roman', serif; line-height: 1.8; color: #2c3e50; background: linear-gradient(135deg, #f8f6f0 0%, #e8e5df 100%); padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border-radius: 10px; }
+        .header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 3px solid #0B3C5D; }
+        h1 { color: #0B3C5D; font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .article { margin-bottom: 50px; padding: 30px; background: #fafafa; border-left: 5px solid #0B3C5D; border-radius: 8px; }
+        .article h2 { color: #0B3C5D; font-size: 1.8em; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #C9A24D; }
+        .article h3 { color: #0F5132; font-size: 1.3em; margin-top: 20px; margin-bottom: 10px; }
+        .article p { margin-bottom: 15px; text-align: justify; font-size: 1.1em; }
+        .highlight { background: #e6f3ff; padding: 2px 6px; border-radius: 4px; font-weight: bold; color: #0B3C5D; }
+        .quote { background: linear-gradient(135deg, #0B3C5D 0%, #0F5132 100%); color: white; padding: 20px; border-radius: 8px; margin: 20px 0; font-style: italic; font-size: 1.15em; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .footer { text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e0e0e0; color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Le Chemin vers la Gnose</h1>
+        </div>
+        <div class="article">
+            <p>Le chemin vers la <span class="highlight">Ma'arifa</span> (la gnose) est un voyage spirituel profond qui nécessite persévérance, sincérité et guidance. Ce cheminement vers la connaissance divine requiert plusieurs étapes et qualités essentielles.</p>
+            
+            <h3>1. La Sincérité (Ikhlas)</h3>
+            <p>La première étape est la <span class="highlight">sincérité</span> dans l'intention. Toute recherche spirituelle doit être motivée uniquement par le désir de se rapprocher d'Allah, sans recherche de renommée ou de reconnaissance.</p>
+            
+            <h3>2. La Purification du Cœur (Tazkiya an-Nafs)</h3>
+            <p>Le cœur doit être purifié des mauvaises qualités comme l'orgueil, l'envie, la colère et l'attachement excessif aux biens matériels. Cette purification se fait à travers le Zikr, la repentance et l'obéissance.</p>
+            
+            <h3>3. L'Attachement au Guide Spirituel</h3>
+            <p>Un guide spirituel authentique est essentiel pour progresser sur ce chemin. Il transmet la baraka (bénédiction) et guide le disciple à travers les différentes stations spirituelles.</p>
+            
+            <h3>4. La Pratique Assidue du Zikr</h3>
+            <p>Le Zikr constant purifie le cœur et ouvre les portes de la connaissance spirituelle. C'est par la répétition des noms d'Allah que le cœur s'illumine.</p>
+            
+            <h3>5. L'Amour du Prophète</h3>
+            <p>L'amour et l'attachement au Prophète Muhammad (paix et bénédictions sur lui) sont fondamentaux. C'est par lui que la lumière de la connaissance divine se répand sur les cœurs.</p>
+            
+            <div class="quote">"Celui qui suit un chemin sans guide, son guide est Satan. Celui qui suit un chemin avec un guide, son guide est le Prophète."</div>
+            
+            <p>Le chemin vers la gnose est une grâce d'Allah qui se mérite par la sincérité, l'effort spirituel et l'amour du Prophète. C'est un don divin accordé à ceux qui purifient leur cœur et suivent la voie avec persévérance.</p>
+        </div>
+        <div class="footer">
+            <p>Que la paix et les bénédictions d'Allah soient sur notre maître Muhammad, sa famille et ses compagnons.</p>
+            <p style="margin-top: 10px;">© Fayda Tidianiya - Sagesse & Spiritualité</p>
+        </div>
+    </div>
+</body>
+</html>`;
+

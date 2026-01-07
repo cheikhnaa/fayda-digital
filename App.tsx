@@ -5,9 +5,11 @@ import { NavigationContainer, useFocusEffect, useNavigation } from '@react-navig
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Asset } from 'expo-asset';
 import { useAudioPlayer } from 'expo-audio';
+import { Audio } from 'expo-av';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
+import * as Speech from 'expo-speech';
 import { StatusBar } from 'expo-status-bar';
 import { VideoView, useVideoPlayer } from 'expo-video';
 import * as React from 'react';
@@ -15,6 +17,7 @@ import { ActivityIndicator, Alert, Animated, Dimensions, Image, ImageBackground,
 import { WebView } from 'react-native-webview';
 import { pdfPages } from './pdfPages';
 import { Message, sendMessageToAI } from './services/aiService';
+import { transcribeAudio } from './services/audioService';
 import { Language, setLanguage, t } from './translations';
 
 const Stack = createNativeStackNavigator();
@@ -703,6 +706,7 @@ const podcasts = [
     duration: '00:00',
     date: new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }),
     image: require('./assets/pdf/cover/pod1.png'),
+    modalImage: require('./assets/pdf/cover/coverpod1.png'),
     description: 'Archive audio de Wakhtanu Thierno Assane Deme sur la Tarbiya Ilalah (Éducation divine).',
     locked: false,
     episodeType: 'Archive',
@@ -720,6 +724,7 @@ const podcasts = [
     duration: '00:00',
     date: new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }),
     image: require('./assets/pdf/cover/pod2.png'),
+    modalImage: require('./assets/pdf/cover/coverpod2.png'),
     description: 'Explication de la wazifa d\'un Arif Bilah (Celui qui connaît Allah) par Cheikh Assane Dème.',
     locked: false,
     episodeType: 'Enseignement',
@@ -737,6 +742,7 @@ const podcasts = [
     duration: '00:00',
     date: new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }),
     image: require('./assets/pdf/cover/pod3.png'),
+    modalImage: require('./assets/pdf/cover/coverpod3.png'),
     description: 'Paroles et enseignements du Cheikh Thierno Assane Dème.',
     locked: false,
     episodeType: 'Enseignement',
@@ -753,6 +759,55 @@ const getPodcastFile = (fileName: string) => {
     'waxtanou-cheikh-thierno-assane-deme-ra.mp3': require('./assets/podcasts/waxtanou-cheikh-thierno-assane-deme-ra.mp3'),
   };
   return podcastFiles[fileName] || require('./assets/audio/audio.mp3');
+};
+
+// Gamou items - Basé uniquement sur les fichiers du dossier assets/gamou
+const gamouItems = [
+  { 
+    id: 1001, 
+    title: 'Gamou Cheikh Ibrahima Niass 1966', 
+    titleAr: 'المولد الشيخ إبراهيم نياس 1966',
+    subtitle: 'Célébration Gamou',
+    host: 'Cheikh Ibrahima Niass', 
+    episodes: 1, 
+    subscribers: 0, 
+    subscribed: false,
+    duration: '00:00',
+    date: '1966',
+    image: require('./assets/pdf/cover/g1966.png'),
+    modalImage: require('./assets/pdf/cover/covg1.png'),
+    description: 'Archive audio historique du Gamou de 1966 avec Cheikh Ibrahima Niass.',
+    locked: false,
+    episodeType: 'Archive historique',
+    fileName: 'Gamou-cheikh-ibrahima-niass-1966.mp3',
+  },
+  { 
+    id: 1002, 
+    title: 'Gamou Cheikh Ibrahima Niass 1968', 
+    titleAr: 'المولد الشيخ إبراهيم نياس 1968',
+    subtitle: 'Célébration Gamou',
+    host: 'Cheikh Ibrahima Niass', 
+    episodes: 1, 
+    subscribers: 0, 
+    subscribed: false,
+    duration: '00:00',
+    date: '1968',
+    image: require('./assets/pdf/cover/g1968.png'),
+    modalImage: require('./assets/pdf/cover/covg2.png'),
+    description: 'Archive audio historique du Gamou de 1968 avec Cheikh Ibrahima Niass.',
+    locked: false,
+    episodeType: 'Archive historique',
+    fileName: 'Gamou-cheikh-ibrahima-niass-1968.mp3',
+  },
+];
+
+// Fonction helper pour obtenir le fichier audio d'un gamou (uniquement depuis assets/gamou)
+const getGamouFile = (fileName: string) => {
+  const gamouFiles: { [key: string]: any } = {
+    'Gamou-cheikh-ibrahima-niass-1966.mp3': require('./assets/gamou/Gamou-cheikh-ibrahima-niass-1966.mp3'),
+    'Gamou-cheikh-ibrahima-niass-1968.mp3': require('./assets/gamou/Gamou-cheikh-ibrahima-niass-1968.mp3'),
+  };
+  return gamouFiles[fileName] || require('./assets/audio/audio.mp3');
 };
 
 const courses = [
@@ -2549,7 +2604,7 @@ function HomeScreen({ navigation }: any) {
               <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>Célébrations spirituelles</Text>
             </View>
           </View>
-          <TouchableOpacity style={styles.seeAllButton} onPress={() => navigation.navigate('Gamou')}>
+          <TouchableOpacity style={styles.seeAllButton} onPress={() => navigation.navigate('MainTabs', { screen: 'Gamou' })}>
             <Text style={styles.seeAllModern}>Voir tout</Text>
             <Text style={styles.seeAllArrow}>→</Text>
           </TouchableOpacity>
@@ -2558,7 +2613,7 @@ function HomeScreen({ navigation }: any) {
           style={[styles.podcastZikrCard, { marginLeft: 0, marginRight: 10, width: '100%', alignSelf: 'stretch' }]}
           activeOpacity={0.9}
               onPress={() => {
-            navigation.navigate('Gamou');
+            navigation.navigate('MainTabs', { screen: 'Gamou' });
               }}
             >
               <ImageBackground
@@ -3902,7 +3957,7 @@ function MusicScreen({ navigation }: any) {
             style={styles.podcastZikrCard}
             activeOpacity={0.9}
             onPress={() => {
-              navigation.navigate('Gamou');
+              navigation.navigate('MainTabs', { screen: 'Gamou' });
             }}
           >
             <ImageBackground
@@ -5021,519 +5076,690 @@ function CoranScreen({ navigation }: any) {
   );
 }
 
-// Écran Gamou - Design similaire à ZikrScreen
-function GamouScreen({ navigation }: any) {
-  const { language, darkMode, setCurrentPlayer, currentPlayer, addToHistory, recentItems } = React.useContext(AppContext);
+// Écran Gamou - Design identique à PodcastsScreen
+function GamouScreen({ navigation, route }: any) {
+  const { language, darkMode, setCurrentPlayer, currentPlayer, addToHistory, setShowDonationBanner, setLang, setDarkMode, recentItems } = React.useContext(AppContext);
   const theme = darkMode ? darkTheme : lightTheme;
+  const [subscribedGamou, setSubscribedGamou] = React.useState<number[]>([]);
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [position, setPosition] = React.useState(0);
   const [duration, setDuration] = React.useState(0);
-  const [showInfo, setShowInfo] = React.useState(false);
-  const [showCarMode, setShowCarMode] = React.useState(false);
-  const [playbackSpeed, setPlaybackSpeed] = React.useState(1.0);
-  const [showMenu, setShowMenu] = React.useState(false);
-  const [showSleepTimer, setShowSleepTimer] = React.useState(false);
+  const [selectedGamou, setSelectedGamou] = React.useState<any>(route.params?.selectedGamou || null);
+  const [modalVisible, setModalVisible] = React.useState(route.params?.selectedGamou ? true : false);
+  const [showSearch, setShowSearch] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [searchResults, setSearchResults] = React.useState<any[]>([]);
+  const [searchSuggestions, setSearchSuggestions] = React.useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = React.useState(false);
+  const [donationModalVisible, setDonationModalVisible] = React.useState(false);
+  const lastScrollY = React.useRef(0);
+  const scrollTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Filtrer les fichiers Gamou
-  const gamouFiles = zikrFiles.filter(zikr => zikr.title.toLowerCase().includes('gamou'));
-
-  // Utiliser expo-audio pour la lecture
-  const getAudioSource = () => {
-    if (currentPlayer?.type === 'zikr' && currentPlayer.item) {
-      if (currentPlayer.item.file) {
-        return currentPlayer.item.file;
-      }
-      return require('./assets/audio/audio.mp3');
-    }
-    return require('./assets/audio/audio.mp3');
-  };
-
-  const player = useAudioPlayer(getAudioSource());
-
+  // S'assurer que la bande est visible quand on arrive sur la page
   React.useEffect(() => {
-    if (player && currentPlayer?.type === 'zikr' && gamouFiles.some(f => f.id === currentPlayer.item?.id)) {
-      setPosition(0);
-      setDuration(0);
-      
-      // Démarrer automatiquement la lecture
-      const startPlayback = async () => {
-        try {
-          if (player && !player.playing) {
-            await player.play();
-            setIsPlaying(true);
-          }
-        } catch (error) {
-          console.log('Erreur démarrage automatique:', error);
-        }
-      };
-      
-      startPlayback();
-      
-      const updateStatus = () => {
-        try {
-          if (player) {
-            setIsPlaying(player.playing || false);
-            setPosition((player.currentTime || 0) * 1000);
-            const dur = (player.duration || 0) * 1000;
-            if (dur > 0) {
-              setDuration(dur);
-            }
-          }
-        } catch (error) {
-          console.log('Erreur mise à jour audio:', error);
-        }
-      };
-      const interval = setInterval(updateStatus, 500);
-      return () => clearInterval(interval);
-    } else {
-      setIsPlaying(false);
-      setPosition(0);
-      setDuration(0);
-    }
-  }, [player, currentPlayer]);
+    setShowDonationBanner(true);
+  }, [setShowDonationBanner]);
 
-  // Appliquer la vitesse de lecture quand elle change
+  // Nettoyer le timer au démontage
   React.useEffect(() => {
-    if (player && currentPlayer?.type === 'zikr') {
-      try {
-        if ('rate' in player) {
-          (player as any).rate = playbackSpeed;
-        }
-      } catch (error) {
-        console.log('Erreur application vitesse:', error);
+    return () => {
+      if (scrollTimer.current) {
+        clearTimeout(scrollTimer.current);
       }
-    }
-  }, [playbackSpeed, player, currentPlayer]);
+    };
+  }, []);
 
-  const togglePlay = async () => {
-    try {
-      if (player) {
-        if (player.playing) {
-          await player.pause();
-          setIsPlaying(false);
-        } else {
-          await player.play();
-          setIsPlaying(true);
-          if (duration === 0) {
-            setTimeout(() => {
-              if (player.duration) {
-                setDuration(player.duration * 1000);
-              }
-            }, 500);
-          }
-        }
-      }
-    } catch (error) {
-      console.log('Erreur toggle play:', error);
-      setIsPlaying(!isPlaying);
-      if (!isPlaying && duration === 0) {
-        setDuration(180000);
-      }
+  // Ouvrir automatiquement le modal si un gamou est passé en paramètre
+  React.useEffect(() => {
+    if (route.params?.selectedGamou) {
+      setSelectedGamou(route.params.selectedGamou);
+      setModalVisible(true);
+    }
+  }, [route.params?.selectedGamou]);
+
+  const handleGamouPress = (gamou: any) => {
+    setSelectedGamou(gamou);
+    setModalVisible(true);
+  };
+
+  const handlePlayGamou = () => {
+    if (selectedGamou) {
+      addToHistory(selectedGamou, 'audio');
+      // Utiliser getGamouFile pour obtenir le fichier audio
+      const audioFile = getGamouFile(selectedGamou.fileName);
+      const gamouWithFile = { ...selectedGamou, file: audioFile };
+      setCurrentPlayer({ item: gamouWithFile, type: 'podcast' });
+      setModalVisible(false);
+      // Naviguer vers le lecteur plein écran
+      navigation.navigate('PodcastPlayer', { podcast: gamouWithFile });
     }
   };
 
-  const formatTime = (ms: number) => {
-    const totalSeconds = Math.floor(ms / 1000);
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  };
-
-  const formatRemainingTime = (current: number, total: number) => {
-    const remaining = total - current;
-    const totalSeconds = Math.floor(remaining / 1000);
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `-${minutes}:${seconds.toString().padStart(2, '0')}`;
-  };
-
-  const handleRewind = async () => {
-    try {
-      if (player) {
-        const currentTime = player.currentTime || 0;
-        const newTime = Math.max(0, currentTime - 30);
-        setPosition(newTime * 1000);
-        if (player.playing) {
-          await player.pause();
-          await player.play();
-        }
-      }
-    } catch (error) {
-      console.log('Erreur rewind:', error);
-    }
-  };
-
-  const handleForward = async () => {
-    try {
-      if (player) {
-        const currentTime = player.currentTime || 0;
-        const maxTime = player.duration || 0;
-        const newTime = Math.min(maxTime, currentTime + 30);
-        setPosition(newTime * 1000);
-        if (player.playing) {
-          await player.pause();
-          await player.play();
-        }
-      }
-    } catch (error) {
-      console.log('Erreur forward:', error);
-    }
-  };
-
-  const handleShare = async () => {
-    if (currentPlayer?.item) {
-      try {
-        await Share.share({
-          message: `Écoutez "${currentPlayer.item.title}" - ${currentPlayer.item.titleAr} sur Fayda Tidianiya`,
-          title: currentPlayer.item.title,
-        });
-      } catch (error) {
-        console.error('Erreur partage:', error);
-      }
-    }
-  };
-
-  const handleClosePlayer = () => {
-    setCurrentPlayer(null);
-    if (player) {
-      player.pause();
-    }
-  };
-
-  const handleSpeedChange = async () => {
-    const speeds = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
-    const currentIndex = speeds.indexOf(playbackSpeed);
-    const nextIndex = (currentIndex + 1) % speeds.length;
-    const newSpeed = speeds[nextIndex];
-    setPlaybackSpeed(newSpeed);
-    
-    try {
-      if (player && 'rate' in player) {
-        (player as any).rate = newSpeed;
-      }
-    } catch (error) {
-      console.log('Erreur changement vitesse:', error);
-    }
-  };
-
-  const handleMenuPress = () => {
-    setShowMenu(!showMenu);
-    Alert.alert(
-      'Options',
-      'Choisissez une option',
-      [
-        { text: 'Ajouter à la playlist', onPress: () => {} },
-        { text: 'Télécharger', onPress: () => {} },
-        { text: 'Supprimer', onPress: () => {}, style: 'destructive' },
-        { text: 'Annuler', style: 'cancel' },
-      ]
+  const handleSubscribe = (id: number) => {
+    setSubscribedGamou(prev => 
+      prev.includes(id) ? prev.filter(p => p !== id) : [...prev, id]
     );
   };
 
-  const handleSleepTimer = () => {
-    setShowSleepTimer(!showSleepTimer);
-    Alert.alert(
-      'Minuteur de sommeil',
-      'Choisissez la durée',
-      [
-        { text: '5 minutes', onPress: () => {} },
-        { text: '10 minutes', onPress: () => {} },
-        { text: '15 minutes', onPress: () => {} },
-        { text: '30 minutes', onPress: () => {} },
-        { text: 'Désactiver', onPress: () => setShowSleepTimer(false) },
-        { text: 'Annuler', style: 'cancel' },
-      ]
-    );
+  const [showSettingsModal, setShowSettingsModal] = React.useState(false);
+
+  const handleSettingsPress = () => {
+    setShowSettingsModal(true);
+  };
+
+  const handleThemeChange = (newTheme: boolean) => {
+    setDarkMode(newTheme);
+  };
+
+  const handleLanguageChange = (newLang: Language | null) => {
+    setLang(newLang);
+  };
+
+  const handleSearchPress = () => {
+    setShowSearch(!showSearch);
+    if (showSearch) {
+      setSearchQuery('');
+      setSearchResults([]);
+      setSearchSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
+
+  const performSearchWithQuery = (queryText: string) => {
+    const query = queryText.toLowerCase().trim();
+    if (!query) {
+      setSearchResults([]);
+      return;
+    }
+
+    const results: any[] = [];
+
+    // Rechercher dans les gamou
+    gamouItems.forEach(gamou => {
+      const matchTitle = gamou.title?.toLowerCase().includes(query);
+      const matchTitleAr = gamou.titleAr?.toLowerCase().includes(query);
+      const matchSubtitle = gamou.subtitle?.toLowerCase().includes(query);
+      const matchDescription = gamou.description?.toLowerCase().includes(query);
+      
+      if (matchTitle || matchTitleAr || matchSubtitle || matchDescription) {
+        results.push({ ...gamou, searchType: 'gamou' });
+      }
+    });
+
+    setSearchResults(results);
+  };
+
+  const performSearch = () => {
+    performSearchWithQuery(searchQuery);
+    setShowSuggestions(false);
+  };
+
+  const generateSuggestions = (query: string) => {
+    if (!query.trim()) {
+      setSearchSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    const queryLower = query.toLowerCase().trim();
+    const suggestionsSet = new Set<string>();
+
+    gamouItems.forEach(gamou => {
+      if (gamou.title?.toLowerCase().includes(queryLower)) {
+        suggestionsSet.add(gamou.title);
+      }
+      if (gamou.titleAr?.toLowerCase().includes(queryLower)) {
+        suggestionsSet.add(gamou.titleAr);
+      }
+      if (gamou.subtitle?.toLowerCase().includes(queryLower)) {
+        suggestionsSet.add(gamou.subtitle);
+      }
+    });
+
+    const suggestions = Array.from(suggestionsSet).slice(0, 8);
+    setSearchSuggestions(suggestions);
+    setShowSuggestions(suggestions.length > 0);
+  };
+
+  const handleSearchQueryChange = (text: string) => {
+    setSearchQuery(text);
+    generateSuggestions(text);
+    performSearchWithQuery(text);
+  };
+
+  const handleSuggestionPress = (suggestion: string) => {
+    setSearchQuery(suggestion);
+    setShowSuggestions(false);
+    setSearchSuggestions([]);
+    performSearchWithQuery(suggestion);
   };
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <StatusBar style={darkMode ? 'light' : 'dark'} />
       
-      {/* Header avec bouton retour */}
-      <View style={[styles.zikrHeader, { backgroundColor: theme.surface }]}>
+      {/* Header avec pills et icônes */}
+      <View style={[styles.podcastsHeaderNew, { backgroundColor: theme.surface }]}>
         <TouchableOpacity 
-          onPress={() => navigation.goBack()}
-          style={styles.zikrBackButton}
+          style={styles.podcastsHeaderIconBtn}
+          onPress={handleSettingsPress}
         >
-          <Text style={[styles.zikrBackIcon, { color: theme.text }]}>←</Text>
+          <Ionicons name="settings-outline" size={24} color={theme.text} />
         </TouchableOpacity>
-        <Text style={[styles.zikrHeaderTitle, { color: '#0F5132' }]}>Gamou</Text>
-        <View style={styles.zikrHeaderSpacer} />
+        
+        <View style={styles.podcastsHeaderPills}>
+          <TouchableOpacity
+            style={styles.podcastsHeaderPill}
+            onPress={() => {
+              // Naviguer vers MainTabs et sélectionner l'onglet Podcasts
+              navigation.navigate('MainTabs', {
+                screen: 'Podcasts',
+              });
+            }}
+          >
+            <Text style={styles.podcastsHeaderPillText}>
+              Podcast
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.podcastsHeaderPill, styles.podcastsHeaderPillActive]}
+            disabled={true}
+          >
+            <Text style={styles.podcastsHeaderPillTextActive}>
+              Gamou
+            </Text>
+          </TouchableOpacity>
       </View>
 
-      <ScrollView 
-        style={styles.zikrScrollView} 
-        contentContainerStyle={[styles.zikrScrollContent, currentPlayer?.type === 'zikr' && gamouFiles.some(f => f.id === currentPlayer.item?.id) && { paddingBottom: 220 }]}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Banner Gamou en haut */}
-        <View style={styles.zikrBannerContainer}>
-          <ImageBackground
-            source={require('./assets/pdf/cover/gamou.png')}
-            style={styles.zikrBannerGradient}
-            resizeMode="cover"
+        <TouchableOpacity 
+          style={styles.podcastsHeaderIconBtn}
+          onPress={handleSearchPress}
+        >
+          <Ionicons name="search-outline" size={24} color={theme.text} />
+        </TouchableOpacity>
+      </View>
+
+      {/* Barre de recherche */}
+      {showSearch && (
+        <View style={[styles.searchContainer, { backgroundColor: theme.surface }]}>
+          <TextInput
+            style={[styles.searchInput, { color: theme.text, borderColor: theme.textSecondary }]}
+            placeholder="Rechercher un gamou..."
+            placeholderTextColor={theme.textSecondary}
+            value={searchQuery}
+            onChangeText={handleSearchQueryChange}
+            autoFocus={true}
+            onSubmitEditing={performSearch}
+            returnKeyType="search"
+            onFocus={() => {
+              if (searchQuery.trim()) {
+                generateSuggestions(searchQuery);
+              }
+            }}
+            onBlur={() => {
+              setTimeout(() => setShowSuggestions(false), 200);
+            }}
+          />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity
+              style={styles.searchButton}
+              onPress={performSearch}
+            >
+              <Ionicons name="search" size={24} color={theme.primary} />
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity
+            style={styles.searchCloseButton}
+            onPress={handleSearchPress}
           >
-            {/* L'image contient déjà les textes "GAMOU" et les textes arabes */}
-          </ImageBackground>
+            <Ionicons name="close" size={24} color={theme.text} />
+          </TouchableOpacity>
         </View>
+      )}
 
-        {/* Section Header */}
-        <View style={styles.zikrSectionHeader}>
-          <Text style={[styles.zikrSectionTitle, { color: theme.text }]}>Gamou</Text>
-          <Text style={[styles.zikrSectionSubtitle, { color: theme.textSecondary }]}>
-            {gamouFiles.length} tracks
+      {/* Suggestions d'autocomplétion */}
+      {showSearch && showSuggestions && searchSuggestions.length > 0 && (
+        <View style={[styles.searchSuggestionsContainer, { backgroundColor: theme.surface }]}>
+          {searchSuggestions.map((suggestion, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[styles.searchSuggestionItem, { borderBottomColor: theme.textSecondary + '20' }]}
+              onPress={() => handleSuggestionPress(suggestion)}
+            >
+              <Ionicons name="search-outline" size={18} color={theme.textSecondary} style={styles.searchSuggestionIcon} />
+              <Text style={[styles.searchSuggestionText, { color: theme.text }]} numberOfLines={1}>
+                {suggestion}
           </Text>
+            </TouchableOpacity>
+          ))}
         </View>
+      )}
 
-        {/* Liste des fichiers Gamou */}
-        {gamouFiles.map((gamou) => {
-          const isPlaying = currentPlayer?.type === 'zikr' && currentPlayer.item?.id === gamou.id;
-          const isViewed = recentItems.some(item => item.id === gamou.id && item.type === 'audio');
-          
+      {/* Résultats de recherche */}
+      {showSearch && searchQuery.trim() && searchResults.length > 0 && (
+        <View style={styles.sectionModern}>
+          <View style={styles.sectionHeaderModern}>
+            <View style={styles.sectionTitleContainerModern}>
+              <View style={styles.sectionIconContainer}>
+                <Text style={styles.sectionIconModern}>🔍</Text>
+              </View>
+              <View>
+                <Text style={[styles.sectionTitleModern, { color: theme.text }]}>
+                  Résultats de recherche ({searchResults.length})
+                </Text>
+                <Text style={[styles.sectionSubtitle, { color: theme.textSecondary }]}>
+                  Pour: "{searchQuery}"
+                </Text>
+              </View>
+            </View>
+          </View>
+          <ScrollView 
+            style={styles.searchResultsContainer}
+            showsVerticalScrollIndicator={false}
+          >
+            {searchResults.map((item, index) => {
+              const isViewed = recentItems.some(ri => ri.id === item.id && ri.type === 'audio');
           return (
             <TouchableOpacity
-              key={gamou.id}
-              style={[styles.zikrCard, { backgroundColor: theme.surface }]}
-              activeOpacity={0.9}
+                  key={`search-${item.id}-${index}`}
+                  style={[styles.searchResultItem, { backgroundColor: theme.surface }]}
               onPress={() => {
-                addToHistory(gamou, 'audio');
-                setCurrentPlayer({ item: gamou, type: 'zikr' });
+                    addToHistory(item, 'audio');
+                    navigation.navigate('Gamou', { selectedGamou: item });
               }}
             >
-              {/* Thumbnail avec overlay */}
-              <View style={styles.zikrThumbnailContainer}>
+                  {item.image && (
                 <Image 
-                  source={gamou.image || require('./assets/thierno.png')} 
-                  style={styles.zikrThumbnail}
-                  resizeMode="cover"
-                />
-                <View style={styles.zikrThumbnailOverlay}>
-                  <Text style={styles.zikrThumbnailOverlayText}>
-                    {gamou.subtitle?.toUpperCase() || gamou.title.toUpperCase()}
+                      source={item.image}
+                      style={styles.searchResultImage}
+                    />
+                  )}
+                  <View style={styles.searchResultContent}>
+                    <Text style={[styles.searchResultTitle, { color: theme.text }]} numberOfLines={2}>
+                      {item.title}
+                    </Text>
+                    {item.titleAr && (
+                      <Text style={[styles.searchResultTitleAr, { color: theme.textSecondary }]} numberOfLines={1}>
+                        {item.titleAr}
+                      </Text>
+                    )}
+                    {item.subtitle && (
+                      <Text style={[styles.searchResultAuthor, { color: theme.textSecondary }]}>
+                        {item.subtitle}
+                      </Text>
+                    )}
+                    <Text style={[styles.searchResultType, { color: theme.primary }]}>
+                      🎉 Gamou
                   </Text>
                 </View>
                 {isViewed && (
-                  <View style={styles.viewedIconContainerAudio}>
-                    <Image source={require('./assets/pdf/cover/icones/pl3.png')} style={styles.viewedIconImageAudio} />
-                  </View>
+                    <Image source={require('./assets/pdf/cover/icones/pl3.png')} style={styles.searchResultViewedIcon} />
                 )}
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
               </View>
+      )}
 
-              {/* Contenu de la carte */}
-              <View style={styles.zikrCardContent}>
-                <Text style={[styles.zikrCardTitleAr, { color: theme.text }]} numberOfLines={1}>
-                  {gamou.titleAr}
+      {/* Message si aucun résultat */}
+      {showSearch && searchQuery.trim() && searchResults.length === 0 && (
+        <View style={styles.sectionModern}>
+          <View style={styles.noResultsContainer}>
+            <Text style={[styles.noResultsText, { color: theme.textSecondary }]}>
+              Aucun résultat trouvé pour "{searchQuery}"
                 </Text>
-                <Text style={[styles.zikrCardTitle, { color: theme.text }]} numberOfLines={2}>
-                  {gamou.title}
-                </Text>
-                {gamou.subtitle && (
-                  <Text style={[styles.zikrCardSubtitle, { color: theme.textSecondary }]} numberOfLines={1}>
-                    {gamou.subtitle}
-                  </Text>
-                )}
-                <Text style={[styles.zikrCardDescription, { color: theme.textSecondary }]} numberOfLines={2}>
-                  {gamou.description}
-                </Text>
-                
-                {/* Métadonnées */}
-                <View style={styles.zikrCardFooter}>
-                  <View style={styles.zikrCardFooterLeft}>
-                    <Text style={styles.zikrCardFooterIcon}>🎧</Text>
-                    <Text style={[styles.zikrCardFooterText, { color: theme.textSecondary }]}>
-                      {gamou.duration || gamou.tracks || '--:--'}
-                    </Text>
-                  </View>
-                  <View style={styles.zikrCardFooterRight}>
-                    <TouchableOpacity style={styles.zikrCardFooterButton}>
-                      <Text style={styles.zikrCardFooterButtonIcon}>🔖</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity 
-                      style={styles.zikrCardFooterButton}
-                      onPress={() => setShowInfo(!showInfo)}
-                    >
-                      <Text style={styles.zikrCardFooterButtonIcon}>ℹ️</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </View>
-            </TouchableOpacity>
-          );
-        })}
-      </ScrollView>
-
-      {/* Lecteur audio selon l'image - Design complet */}
-      {currentPlayer?.type === 'zikr' && currentPlayer.item && gamouFiles.some(f => f.id === currentPlayer.item?.id) && (
-        <View style={styles.zikrPlayerContainer}>
-          {/* Header avec icônes */}
-          <View style={styles.zikrPlayerHeader}>
-            <TouchableOpacity 
-              onPress={handleClosePlayer}
-              style={styles.zikrPlayerHeaderIcon}
-            >
-              <Text style={styles.zikrPlayerHeaderIconText}>←</Text>
-            </TouchableOpacity>
-            <View style={styles.zikrPlayerHeaderIcons}>
-              <TouchableOpacity 
-                style={[styles.zikrPlayerHeaderIcon, showCarMode && { backgroundColor: '#0F5132', borderRadius: 12 }]}
-                onPress={() => setShowCarMode(!showCarMode)}
-              >
-                <Text style={styles.zikrPlayerHeaderIconText}>🚗</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={styles.zikrPlayerHeaderIcon}
-                onPress={handleShare}
-              >
-                <Text style={styles.zikrPlayerHeaderIconText}>📤</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={styles.zikrPlayerHeaderIcon}
-                onPress={() => {
-                  setShowInfo(!showInfo);
-                  if (currentPlayer?.item) {
-                    Alert.alert(
-                      currentPlayer.item.title,
-                      currentPlayer.item.description || 'Informations sur cette piste',
-                      [{ text: 'OK' }]
-                    );
-                  }
-                }}
-              >
-                <Text style={styles.zikrPlayerHeaderIconText}>ℹ️</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Carte principale avec image */}
-          <View style={styles.zikrPlayerCard}>
-            <ImageBackground
-              source={currentPlayer.item.image || require('./assets/thierno.png')}
-              style={styles.zikrPlayerImage}
-              resizeMode="cover"
-              imageStyle={styles.zikrPlayerImageStyle}
-            >
-              {/* Overlay avec texte doré */}
-              <View style={styles.zikrPlayerOverlay}>
-                <Text style={styles.zikrPlayerOverlayText}>GAMOU</Text>
-                <Text style={[styles.zikrPlayerOverlayText, { fontFamily: 'Traditional Arabic' }]}>المولد النبوي</Text>
-              </View>
-            </ImageBackground>
-            
-            {/* Section turquoise avec motif */}
-            <LinearGradient
-              colors={['#20B2AA', '#17A2B8', '#20B2AA']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.zikrPlayerTealSection}
-            >
-              <View style={styles.zikrPlayerLogos}>
-                <View style={styles.zikrPlayerFaydaLogo}>
-                  <Text style={styles.zikrPlayerFaydaLogoAr}>فيضة</Text>
-                  <Text style={styles.zikrPlayerFaydaLogoText}>FAYDA TIDIANIYA</Text>
-                </View>
-              </View>
-            </LinearGradient>
-          </View>
-
-          {/* Titre de la piste */}
-          <View style={styles.zikrPlayerTrackInfo}>
-            <Text style={[styles.zikrPlayerTrackTitle, { color: theme.text }]} numberOfLines={1}>
-              {currentPlayer.item.titleAr} {currentPlayer.item.title}
-            </Text>
-            <TouchableOpacity 
-              style={styles.zikrPlayerOptions}
-              onPress={handleMenuPress}
-            >
-              <Text style={styles.zikrPlayerOptionsIcon}>☰</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Barre de progression */}
-          <View style={styles.zikrPlayerProgressContainer}>
-            <Slider
-              style={styles.zikrPlayerSlider}
-              value={position}
-              maximumValue={duration || 100}
-              minimumValue={0}
-              onValueChange={(value) => {
-                setPosition(value);
-              }}
-              minimumTrackTintColor="#0F5132"
-              maximumTrackTintColor="#e0e0e0"
-              thumbTintColor="#0F5132"
-            />
-            <View style={styles.zikrPlayerTimeContainer}>
-              <Text style={[styles.zikrPlayerTimeText, { color: theme.text }]}>
-                {formatTime(position)}
-              </Text>
-              <Text style={[styles.zikrPlayerTimeText, { color: theme.text }]}>
-                {duration > 0 ? formatRemainingTime(position, duration) : '--:--'}
-              </Text>
-            </View>
-          </View>
-
-          {/* Contrôles de lecture - Design selon l'image */}
-          <View style={styles.zikrPlayerControls}>
-            {/* 30s Rewind Circle */}
-            <TouchableOpacity 
-              style={styles.zikrPlayer30sBtn}
-              onPress={handleRewind}
-              activeOpacity={0.7}
-            >
-              <View style={styles.zikrPlayer30sCircle}>
-                <Text style={styles.zikrPlayer30sText}>30s</Text>
-              </View>
-            </TouchableOpacity>
-            
-            {/* Play/Pause Button */}
-            <TouchableOpacity 
-              style={styles.zikrPlayerPlayBtn}
-              onPress={togglePlay}
-              activeOpacity={0.9}
-            >
-              <LinearGradient
-                colors={['#0F5132', '#0B3C5D']}
-                style={styles.zikrPlayerPlayBtnGradient}
-              >
-                <Text style={styles.zikrPlayerPlayIcon}>{isPlaying ? '⏸' : '▶'}</Text>
-              </LinearGradient>
-            </TouchableOpacity>
-            
-            {/* 30s Forward Circle */}
-            <TouchableOpacity 
-              style={styles.zikrPlayer30sBtn}
-              onPress={handleForward}
-              activeOpacity={0.7}
-            >
-              <View style={styles.zikrPlayer30sCircle}>
-                <Text style={styles.zikrPlayer30sText}>30s</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-
-          {/* Contrôles supplémentaires */}
-          <View style={styles.zikrPlayerBottomControls}>
-            <TouchableOpacity 
-              style={styles.zikrPlayerSpeedControl}
-              onPress={handleSpeedChange}
-            >
-              <Text style={styles.zikrPlayerSpeedIcon}>⏱</Text>
-              <Text style={[styles.zikrPlayerSpeedText, { color: theme.text }]}>
-                {playbackSpeed.toFixed(1)}x
-              </Text>
-            </TouchableOpacity>
-            <View style={styles.zikrPlayerBottomIcons}>
-              <TouchableOpacity 
-                style={[styles.zikrPlayerBottomIcon, showSleepTimer && { backgroundColor: '#C9A24D' }]}
-                onPress={handleSleepTimer}
-              >
-                <Text style={styles.zikrPlayerBottomIconText}>Z</Text>
-              </TouchableOpacity>
-            </View>
           </View>
         </View>
       )}
+
+      <ScrollView 
+        style={styles.podcastsScrollNew} 
+        contentContainerStyle={[styles.podcastsScrollContentNew, currentPlayer?.type === 'podcast' && { paddingBottom: 220 }]}
+        showsVerticalScrollIndicator={false}
+        onScroll={(event) => {
+          const currentScrollY = event.nativeEvent.contentOffset.y;
+          
+          // Cacher la bande dès qu'on scrolle
+          setShowDonationBanner(false);
+          
+          // Annuler le timer précédent
+          if (scrollTimer.current) {
+            clearTimeout(scrollTimer.current);
+          }
+          
+          // Créer un nouveau timer pour réafficher la bande après 500ms d'inactivité
+          scrollTimer.current = setTimeout(() => {
+            setShowDonationBanner(true);
+          }, 500);
+          
+          lastScrollY.current = currentScrollY;
+        }}
+        scrollEventThrottle={16}
+      >
+        {!showSearch && gamouItems.map((gamou) => (
+          <View key={gamou.id} style={styles.podcastCardNew}>
+
+            {/* Thumbnail avec overlay */}
+            <TouchableOpacity
+              style={styles.podcastThumbnailContainer}
+              activeOpacity={0.9}
+              onPress={() => handleGamouPress(gamou)}
+            >
+              <Image 
+                source={gamou.image || require('./assets/thierno.png')} 
+                style={styles.podcastThumbnail}
+                resizeMode="cover"
+              />
+              
+              {/* Icône de cadenas si verrouillé */}
+              {gamou.locked && (
+                <View style={styles.podcastLockIcon}>
+                  <Text style={styles.podcastLockIconText}>🔒</Text>
+                </View>
+              )}
+              
+              {/* Overlay vide - logo retiré */}
+              <View style={styles.podcastThumbnailOverlay}>
+              </View>
+            </TouchableOpacity>
+
+            {/* Informations en bas de la carte */}
+            <View style={styles.podcastCardInfoContainer}>
+              {/* Titre */}
+            <Text style={[styles.podcastCardTitleNew, { color: theme.text }]} numberOfLines={2}>
+                  {gamou.title}
+                </Text>
+            
+              {/* Sous-titre / Hôte */}
+                {gamou.subtitle && (
+                <Text style={[styles.podcastCardSubtitleNew, { color: theme.textSecondary }]} numberOfLines={1}>
+                    {gamou.subtitle}
+                  </Text>
+                )}
+              
+              {/* Hôte */}
+              {gamou.host && (
+                <Text style={[styles.podcastCardHost, { color: theme.textSecondary }]} numberOfLines={1}>
+                  Par {gamou.host}
+                </Text>
+              )}
+              
+              {/* Description */}
+            {gamou.description && (
+              <Text style={[styles.podcastCardDescription, { color: theme.textSecondary }]} numberOfLines={2}>
+                  {gamou.description}
+                </Text>
+            )}
+              
+              {/* Date et type */}
+              <View style={styles.podcastCardMetadata}>
+                <Text style={[styles.podcastCardDate, { color: theme.textSecondary }]}>
+                  {gamou.date}
+                    </Text>
+                {gamou.episodeType && (
+                  <Text style={[styles.podcastCardEpisodeType, { color: theme.textSecondary }]}>
+                    • {gamou.episodeType}
+                  </Text>
+                )}
+                  </View>
+            </View>
+
+            {/* Infos avec icônes */}
+            <View style={styles.podcastCardFooterNew}>
+              <View style={styles.podcastCardFooterLeft}>
+                <Text style={styles.podcastCardFooterIcon}>🎧</Text>
+                <Text style={[styles.podcastCardFooterText, { color: theme.textSecondary }]}>
+                  {gamou.duration}
+                </Text>
+              </View>
+              <View style={styles.podcastCardFooterRight}>
+                <TouchableOpacity style={styles.podcastCardFooterButton}>
+                  <Text style={styles.podcastCardFooterIcon}>🔖</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                  style={styles.podcastCardFooterButton}
+                  onPress={() => {
+                    Alert.alert(
+                      gamou.title,
+                      gamou.description || 'Gamou spirituel de grande valeur.',
+                      [{ text: 'OK' }]
+                    );
+                  }}
+                >
+                  <Text style={styles.podcastCardFooterIcon}>ℹ️</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+        ))}
+      </ScrollView>
+
+      {/* Modal de détail du gamou */}
+      <Modal
+        visible={modalVisible}
+        transparent={false}
+        animationType="slide"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={[styles.podcastModalContainer, { backgroundColor: theme.surface }]}>
+              {selectedGamou && (
+                <>
+                  {/* Header avec X et Bookmark */}
+                  <View style={styles.podcastModalHeader}>
+              <TouchableOpacity 
+                      style={styles.podcastModalCloseBtn}
+                      onPress={() => setModalVisible(false)}
+              >
+                      <Text style={[styles.podcastModalCloseIcon, { color: theme.text }]}>✕</Text>
+              </TouchableOpacity>
+                    <TouchableOpacity style={styles.podcastModalBookmarkBtn}>
+                      <Text style={[styles.podcastModalBookmarkIcon, { color: theme.text }]}>🔖</Text>
+              </TouchableOpacity>
+          </View>
+
+                  <ScrollView
+                    style={styles.podcastModalScroll}
+                    contentContainerStyle={styles.podcastModalContent}
+                    showsVerticalScrollIndicator={false}
+                  >
+                    {/* Image */}
+                    <View style={styles.podcastModalImageContainer}>
+            <ImageBackground
+                        source={(selectedGamou as any).modalImage || selectedGamou.image || require('./assets/thierno.png')}
+                        style={styles.podcastModalImage}
+                        imageStyle={styles.podcastModalImageStyle}
+                      >
+                        <View style={styles.podcastModalImageOverlay}>
+              </View>
+            </ImageBackground>
+                    </View>
+
+                    {/* Informations du son sous l'image */}
+                    <View style={styles.podcastModalInfoSection}>
+                      <Text style={[styles.podcastModalInfoTitle, { color: theme.text }]} numberOfLines={2}>
+                        {selectedGamou.title}
+                      </Text>
+                      {selectedGamou.description && (
+                        <Text style={[styles.podcastModalInfoDescription, { color: theme.textSecondary }]} numberOfLines={3}>
+                          {selectedGamou.description}
+                        </Text>
+                      )}
+                      <Text style={[styles.podcastModalInfoDate, { color: theme.textSecondary }]}>
+                        {selectedGamou.date} • {selectedGamou.duration || '--:--'}
+                      </Text>
+                    </View>
+
+                    {/* Boutons de contrôle */}
+                    <View style={styles.podcastModalControls}>
+                      <TouchableOpacity 
+                        style={styles.podcastModalPlayButton}
+                        onPress={handlePlayGamou}
+                        activeOpacity={0.9}
+                      >
+            <LinearGradient
+                          colors={['#0F5132', '#0B3C5D']}
+                          style={styles.podcastModalPlayButtonGradient}
+                        >
+                          <Text style={styles.podcastModalPlayIcon}>▶</Text>
+                          <Text style={styles.podcastModalPlayText}>Play</Text>
+            </LinearGradient>
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.podcastModalMenuButton}>
+                        <Text style={styles.podcastModalMenuIcon}>⋯</Text>
+                      </TouchableOpacity>
+                </View>
+
+
+                    {/* Section Tags */}
+                    <View style={styles.podcastModalTagsSection}>
+                      <Text style={[styles.podcastModalSectionTitle, { color: theme.text }]}>Tags</Text>
+                      <View style={styles.podcastModalTagsContainer}>
+                        <TouchableOpacity style={styles.podcastModalTagButton}>
+                          <Text style={styles.podcastModalTagText}>Gamou</Text>
+                          <Text style={styles.podcastModalTagIcon}>▶</Text>
+            </TouchableOpacity>
+              </View>
+          </View>
+                  </ScrollView>
+                </>
+              )}
+          </View>
+      </Modal>
+
+      {/* Modal des paramètres */}
+      <Modal
+        visible={showSettingsModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowSettingsModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.settingsModal, { backgroundColor: theme.surface }]}>
+            <View style={styles.settingsModalHeader}>
+              <Text style={[styles.settingsModalTitle, { color: theme.text }]}>Paramètres</Text>
+            <TouchableOpacity 
+                onPress={() => setShowSettingsModal(false)}
+                style={styles.settingsModalCloseButton}
+            >
+                <Ionicons name="close" size={24} color={theme.text} />
+            </TouchableOpacity>
+          </View>
+
+            {/* Section Thème */}
+            <View style={styles.settingsSection}>
+              <Text style={[styles.settingsSectionTitle, { color: theme.text }]}>Thème</Text>
+              <View style={styles.settingsOptions}>
+            <TouchableOpacity 
+                  style={[styles.settingsOption, !darkMode && styles.settingsOptionActive, { borderColor: !darkMode ? (darkMode ? '#ffffff' : '#0F5132') : '#e0e0e0' }]}
+                  onPress={() => handleThemeChange(false)}
+                >
+                  <Ionicons name="sunny" size={24} color={!darkMode ? '#0F5132' : theme.textSecondary} style={{ marginRight: 12 }} />
+                  <Text style={[styles.settingsOptionText, { color: theme.text }]}>Clair</Text>
+                  {!darkMode && <Ionicons name="checkmark-circle" size={24} color="#0F5132" />}
+            </TouchableOpacity>
+            <TouchableOpacity 
+                  style={[styles.settingsOption, darkMode && styles.settingsOptionActive, { borderColor: darkMode ? (darkMode ? '#ffffff' : '#0F5132') : '#e0e0e0' }]}
+                  onPress={() => handleThemeChange(true)}
+                >
+                  <Ionicons name="moon" size={24} color={darkMode ? '#ffffff' : theme.textSecondary} style={{ marginRight: 12 }} />
+                  <Text style={[styles.settingsOptionText, { color: theme.text }]}>Sombre</Text>
+                  {darkMode && <Ionicons name="checkmark-circle" size={24} color="#ffffff" />}
+            </TouchableOpacity>
+            </View>
+          </View>
+
+            {/* Section Langue */}
+            <View style={styles.settingsSection}>
+              <Text style={[styles.settingsSectionTitle, { color: theme.text }]}>Langue</Text>
+              <View style={styles.settingsOptions}>
+            <TouchableOpacity 
+                  style={[styles.settingsOption, language === null && styles.settingsOptionActive, { borderColor: language === null ? (darkMode ? '#ffffff' : '#0F5132') : '#e0e0e0' }]}
+                  onPress={() => handleLanguageChange(null)}
+                >
+                  <Text style={styles.settingsOptionFlag}>🌍</Text>
+                  <Text style={[styles.settingsOptionText, { color: theme.text }]}>Tous</Text>
+                  {language === null && <Ionicons name="checkmark-circle" size={24} color={darkMode ? '#ffffff' : '#0F5132'} />}
+            </TouchableOpacity>
+            <TouchableOpacity 
+                  style={[styles.settingsOption, language === 'fr' && styles.settingsOptionActive, { borderColor: language === 'fr' ? (darkMode ? '#ffffff' : '#0F5132') : '#e0e0e0' }]}
+                  onPress={() => handleLanguageChange('fr')}
+                >
+                  <Text style={styles.settingsOptionFlag}>🇫🇷</Text>
+                  <Text style={[styles.settingsOptionText, { color: theme.text }]}>Français</Text>
+                  {language === 'fr' && <Ionicons name="checkmark-circle" size={24} color={darkMode ? '#ffffff' : '#0F5132'} />}
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.settingsOption, language === 'en' && styles.settingsOptionActive, { borderColor: language === 'en' ? (darkMode ? '#ffffff' : '#0F5132') : '#e0e0e0' }]}
+                  onPress={() => handleLanguageChange('en')}
+                >
+                  <Text style={styles.settingsOptionFlag}>🇬🇧</Text>
+                  <Text style={[styles.settingsOptionText, { color: theme.text }]}>English</Text>
+                  {language === 'en' && <Ionicons name="checkmark-circle" size={24} color={darkMode ? '#ffffff' : '#0F5132'} />}
+            </TouchableOpacity>
+            <TouchableOpacity 
+                  style={[styles.settingsOption, language === 'ar' && styles.settingsOptionActive, { borderColor: language === 'ar' ? (darkMode ? '#ffffff' : '#0F5132') : '#e0e0e0' }]}
+                  onPress={() => handleLanguageChange('ar')}
+                >
+                  <Text style={styles.settingsOptionFlag}>🇸🇦</Text>
+                  <Text style={[styles.settingsOptionText, { color: theme.text }]}>عربي</Text>
+                  {language === 'ar' && <Ionicons name="checkmark-circle" size={24} color={darkMode ? '#ffffff' : '#0F5132'} />}
+            </TouchableOpacity>
+          </View>
+          </View>
+        </View>
+        </View>
+      </Modal>
+
+      {/* Menu du bas personnalisé */}
+      <View style={[styles.customTabBar, { 
+        backgroundColor: darkMode ? darkTheme.surface : lightTheme.surface,
+        borderTopColor: '#e0e0e0',
+      }]}>
+            <TouchableOpacity 
+          style={styles.customTabItem}
+          onPress={() => navigation.navigate('MainTabs', { screen: 'Home' })}
+        >
+          <Ionicons name="home-outline" size={24} color="#999" />
+          <Text style={[styles.customTabLabel, { color: '#999' }]}>{t('nav.home')}</Text>
+            </TouchableOpacity>
+              <TouchableOpacity 
+          style={styles.customTabItem}
+          onPress={() => navigation.navigate('MainTabs', { screen: 'Books' })}
+        >
+          <Ionicons name="library-outline" size={24} color="#999" />
+          <Text style={[styles.customTabLabel, { color: '#999' }]}>{t('nav.books')}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.customTabItem}
+          onPress={() => navigation.navigate('MainTabs', { screen: 'Music' })}
+        >
+          <Ionicons name="musical-notes-outline" size={24} color="#999" />
+          <Text style={[styles.customTabLabel, { color: '#999' }]}>{t('nav.music')}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.customTabItem}
+          onPress={() => navigation.navigate('MainTabs', { screen: 'Podcasts' })}
+        >
+          <Ionicons name="mic-outline" size={24} color="#999" />
+          <Text style={[styles.customTabLabel, { color: '#999' }]}>{t('nav.podcasts')}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.customTabItem}
+          onPress={() => navigation.navigate('MainTabs', { screen: 'Assistant' })}
+        >
+          <Ionicons name="chatbubbles-outline" size={24} color="#999" />
+          <Text style={[styles.customTabLabel, { color: '#999' }]}>{t('assistant.title')}</Text>
+              </TouchableOpacity>
+            </View>
+
+      {/* Bande de don */}
+      <DonationBanner onPress={() => setDonationModalVisible(true)} />
+      <MiniPlayerModal navigation={navigation} />
+      <DonationModal 
+        visible={donationModalVisible} 
+        onClose={() => setDonationModalVisible(false)} 
+      />
     </View>
   );
 }
@@ -5606,7 +5832,6 @@ function PodcastsScreen({ navigation, route }: any) {
     return colors[(id - 1) % colors.length];
   };
 
-  const [selectedTab, setSelectedTab] = React.useState<'podcast' | 'knowledgecast'>('podcast');
   const [showSettingsModal, setShowSettingsModal] = React.useState(false);
 
   const handleSettingsPress = () => {
@@ -5717,28 +5942,18 @@ function PodcastsScreen({ navigation, route }: any) {
           <TouchableOpacity
             style={[
               styles.podcastsHeaderPill,
-              selectedTab === 'podcast' && styles.podcastsHeaderPillActive
+              styles.podcastsHeaderPillActive
             ]}
-            onPress={() => setSelectedTab('podcast')}
           >
-            <Text style={[
-              styles.podcastsHeaderPillText,
-              selectedTab === 'podcast' && styles.podcastsHeaderPillTextActive
-            ]}>
+            <Text style={styles.podcastsHeaderPillTextActive}>
               Podcast
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[
-              styles.podcastsHeaderPill,
-              selectedTab === 'knowledgecast' && styles.podcastsHeaderPillActive
-            ]}
+            style={styles.podcastsHeaderPill}
             onPress={() => navigation.navigate('Gamou')}
           >
-            <Text style={[
-              styles.podcastsHeaderPillText,
-              selectedTab === 'knowledgecast' && styles.podcastsHeaderPillTextActive
-            ]}>
+            <Text style={styles.podcastsHeaderPillText}>
               Gamou
             </Text>
           </TouchableOpacity>
@@ -6036,10 +6251,10 @@ function PodcastsScreen({ navigation, route }: any) {
                     contentContainerStyle={styles.podcastModalContent}
                     showsVerticalScrollIndicator={false}
                   >
-                    {/* Image avec texte superposé */}
+                    {/* Image */}
                     <View style={styles.podcastModalImageContainer}>
                       <ImageBackground
-                        source={selectedPodcast.image || require('./assets/thierno.png')}
+                        source={(selectedPodcast as any).modalImage || selectedPodcast.image || require('./assets/thierno.png')}
                         style={styles.podcastModalImage}
                         imageStyle={styles.podcastModalImageStyle}
                       >
@@ -6048,14 +6263,19 @@ function PodcastsScreen({ navigation, route }: any) {
                       </ImageBackground>
                     </View>
 
-                    {/* Métadonnées */}
-                    <View style={styles.podcastModalMetadata}>
-                      <Text style={[styles.podcastModalMetadataText, { color: theme.textSecondary }]}>
-                        {selectedPodcast.duration || '--:--'} • {selectedPodcast.date}
+                    {/* Informations du son sous l'image */}
+                    <View style={styles.podcastModalInfoSection}>
+                      <Text style={[styles.podcastModalInfoTitle, { color: theme.text }]} numberOfLines={2}>
+                        {selectedPodcast.title}
                       </Text>
-                      {selectedPodcast.locked && (
-                        <Text style={styles.podcastModalLockIcon}>🔒</Text>
+                      {selectedPodcast.description && (
+                        <Text style={[styles.podcastModalInfoDescription, { color: theme.textSecondary }]} numberOfLines={3}>
+                          {selectedPodcast.description}
+                        </Text>
                       )}
+                      <Text style={[styles.podcastModalInfoDate, { color: theme.textSecondary }]}>
+                        {selectedPodcast.date} • {selectedPodcast.duration || '--:--'}
+                      </Text>
                     </View>
 
                     {/* Boutons de contrôle */}
@@ -6771,6 +6991,8 @@ function PDFReaderScreen({ route, navigation }: any) {
   const [htmlContent, setHtmlContent] = React.useState<string | null>(null);
   const webViewRef = React.useRef<WebView>(null);
   const [zoomLevel, setZoomLevel] = React.useState(1.0);
+  const [showControls, setShowControls] = React.useState(true);
+  const fadeAnim = React.useRef(new Animated.Value(1)).current;
 
   React.useEffect(() => {
     const loadContent = async () => {
@@ -6837,15 +7059,15 @@ function PDFReaderScreen({ route, navigation }: any) {
             }
           } else {
             // Sur mobile, utiliser Asset.fromModule normalement
-            const asset = Asset.fromModule(book.pdfFile);
-            await asset.downloadAsync();
-            
-            if (asset.localUri) {
-              setPdfUri(asset.localUri);
-              setLoading(false);
-            } else {
-              setError('Impossible de charger le PDF');
-              setLoading(false);
+          const asset = Asset.fromModule(book.pdfFile);
+          await asset.downloadAsync();
+          
+          if (asset.localUri) {
+            setPdfUri(asset.localUri);
+            setLoading(false);
+          } else {
+            setError('Impossible de charger le PDF');
+            setLoading(false);
             }
           }
         } else {
@@ -6862,53 +7084,80 @@ function PDFReaderScreen({ route, navigation }: any) {
     loadContent();
   }, [book]);
 
-  // Fonction pour zoomer
-  const handleZoomIn = () => {
-    const newZoom = Math.min(zoomLevel + 0.25, 3.0);
-    setZoomLevel(newZoom);
-    // Utiliser une approche différente pour le zoom avec WebView
-    webViewRef.current?.injectJavaScript(`
+  // Fonction pour zoomer - Version améliorée
+  const applyZoom = (zoom: number) => {
+    if (!webViewRef.current) return;
+    
+    const zoomScript = `
       (function() {
-        var viewport = document.querySelector('meta[name=viewport]');
-        if (!viewport) {
-          viewport = document.createElement('meta');
-          viewport.name = 'viewport';
-          document.head.appendChild(viewport);
-        }
-        viewport.content = 'width=device-width, initial-scale=' + ${newZoom} + ', maximum-scale=3.0, user-scalable=yes';
+        try {
+          var zoom = ${zoom};
         var body = document.body;
+          var html = document.documentElement;
+          
+          // Méthode 1: zoom CSS (pour les navigateurs qui le supportent)
         if (body) {
-          body.style.transform = 'scale(' + ${newZoom} + ')';
+            body.style.zoom = zoom;
+          }
+          if (html) {
+            html.style.zoom = zoom;
+          }
+          
+          // Méthode 2: transform scale (fallback)
+          if (body && !body.style.zoom) {
+            body.style.transform = 'scale(' + zoom + ')';
           body.style.transformOrigin = 'top left';
-          body.style.width = (100 / ${newZoom}) + '%';
+            body.style.width = (100 / zoom) + '%';
+          }
+          
+          // Pour les PDFs dans iframes
+          var iframes = document.querySelectorAll('iframe, embed, object');
+          for (var i = 0; i < iframes.length; i++) {
+            try {
+              var iframe = iframes[i];
+              if (iframe.contentDocument && iframe.contentDocument.body) {
+                iframe.contentDocument.body.style.zoom = zoom;
+              }
+              if (iframe.contentWindow) {
+                iframe.style.transform = 'scale(' + zoom + ')';
+                iframe.style.transformOrigin = 'top left';
+              }
+            } catch(e) {
+              // Cross-origin, ignorer
+            }
+          }
+          
+          // Pour les PDFs embed
+          var embeds = document.querySelectorAll('embed');
+          for (var j = 0; j < embeds.length; j++) {
+            embeds[j].style.width = (100 * zoom) + '%';
+            embeds[j].style.height = (100 * zoom) + '%';
+          }
+          
+          window.ReactNativeWebView.postMessage(JSON.stringify({type: 'zoom', value: zoom}));
+        } catch(e) {
+          console.error('Zoom error:', e);
         }
         true;
       })();
-    `);
+    `;
+    
+    // Utiliser injectJavaScript avec un délai pour s'assurer que le contenu est chargé
+    setTimeout(() => {
+      webViewRef.current?.injectJavaScript(zoomScript);
+    }, 100);
+  };
+
+  const handleZoomIn = () => {
+    const newZoom = Math.min(zoomLevel + 0.25, 3.0);
+    setZoomLevel(newZoom);
+    applyZoom(newZoom);
   };
 
   const handleZoomOut = () => {
     const newZoom = Math.max(zoomLevel - 0.25, 0.5);
     setZoomLevel(newZoom);
-    // Utiliser une approche différente pour le zoom avec WebView
-    webViewRef.current?.injectJavaScript(`
-      (function() {
-        var viewport = document.querySelector('meta[name=viewport]');
-        if (!viewport) {
-          viewport = document.createElement('meta');
-          viewport.name = 'viewport';
-          document.head.appendChild(viewport);
-        }
-        viewport.content = 'width=device-width, initial-scale=' + ${newZoom} + ', maximum-scale=3.0, user-scalable=yes';
-        var body = document.body;
-        if (body) {
-          body.style.transform = 'scale(' + ${newZoom} + ')';
-          body.style.transformOrigin = 'top left';
-          body.style.width = (100 / ${newZoom}) + '%';
-        }
-        true;
-      })();
-    `);
+    applyZoom(newZoom);
   };
 
   // Fonction pour partager
@@ -6934,87 +7183,209 @@ function PDFReaderScreen({ route, navigation }: any) {
   // Fonction pour imprimer
   const handlePrint = async () => {
     try {
-      if (pdfUri) {
+      if (pdfUri && Platform.OS !== 'web') {
         await Print.printAsync({
           uri: pdfUri,
         });
+      } else {
+        Alert.alert('Information', 'L\'impression n\'est pas disponible sur cette plateforme');
       }
-    } catch (err) {
-      Alert.alert('Erreur', 'Impossible d\'imprimer le PDF');
+    } catch (err: any) {
+      // Ne pas afficher d'alerte si l'utilisateur a simplement annulé
+      const errorMessage = err?.message || err?.toString() || '';
+      if (!errorMessage.toLowerCase().includes('cancelled') && 
+          !errorMessage.toLowerCase().includes('canceled') &&
+          !errorMessage.toLowerCase().includes('did not complete')) {
       console.error('Erreur impression:', err);
+        // Ne pas afficher d'alerte pour éviter de gêner l'utilisateur
+      }
     }
+  };
+
+  const toggleControls = () => {
+    Animated.timing(fadeAnim, {
+      toValue: showControls ? 0 : 1,
+      duration: 300,
+      useNativeDriver: Platform.OS !== 'web',
+    }).start();
+    setShowControls(!showControls);
+  };
+
+  const reloadContent = () => {
+    setError(null);
+    setLoading(true);
+    // Le useEffect se déclenchera automatiquement si on change book
+    // Mais pour un vrai rechargement, il faudrait forcer le re-render
+    const loadContent = async () => {
+      try {
+        if (book?.htmlFile) {
+          let htmlContent = '';
+          if (book.htmlFile === 'tariqa-articles.html') {
+            if (book.id === 20) htmlContent = getIntroductionTariqaHTML();
+            else if (book.id === 21) htmlContent = getZikrTariqaHTML();
+            else if (book.id === 22) htmlContent = getSalatFatihHTML();
+            else if (book.id === 23) htmlContent = getAttachementPropheteHTML();
+            else if (book.id === 24) htmlContent = getDouaWazifaHTML();
+          } else if (book.htmlFile === 'maarifa-articles.html') {
+            if (book.id === 30) htmlContent = getConnaissanceSpirituelleHTML();
+            else if (book.id === 31) htmlContent = getDegresConnaissanceHTML();
+            else if (book.id === 32) htmlContent = getMaarifaTariqaHTML();
+            else if (book.id === 33) htmlContent = getCheminGnoseHTML();
+          }
+          setHtmlContent(htmlContent);
+          setLoading(false);
+        } else if (book?.pdfFile) {
+          const asset = Asset.fromModule(book.pdfFile);
+          await asset.downloadAsync();
+          if (Platform.OS === 'web') {
+            setPdfUri(asset.uri || asset.localUri || null);
+          } else {
+            setPdfUri(asset.localUri || null);
+          }
+          setLoading(false);
+        }
+      } catch (err) {
+        setError('Erreur lors du chargement');
+        setLoading(false);
+      }
+    };
+    loadContent();
   };
 
   return (
     <View style={[styles.pdfReaderScreen, { backgroundColor: theme.background }]}>
       <StatusBar style={darkMode ? 'light' : 'dark'} />
-      <View style={[styles.pdfReaderHeader, { backgroundColor: theme.surface }]}>
-        <View style={{width: 40}} />
-        <Text style={[styles.pdfReaderTitle, { color: theme.text }]} numberOfLines={1}>
+      
+      {/* Header moderne avec gradient */}
+      <Animated.View style={{ opacity: fadeAnim }}>
+        <LinearGradient
+          colors={darkMode ? ['#0B3C5D', '#0F5132'] : ['#F8F9F6', '#ffffff']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.pdfReaderHeaderModern}
+        >
+          <TouchableOpacity 
+            onPress={() => navigation.goBack()}
+            style={styles.pdfReaderBackButton}
+          >
+            <Ionicons name="arrow-back" size={24} color={theme.text} />
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={styles.pdfReaderHeaderContent}
+            onPress={showControls ? undefined : toggleControls}
+            activeOpacity={showControls ? 1 : 0.7}
+          >
+            <Text style={[styles.pdfReaderTitleModern, { color: theme.text }]} numberOfLines={1}>
           {book?.title || 'Livre'}
         </Text>
-        <View style={{width: 40}} />
-      </View>
-
-      {/* Barre de contrôles PDF */}
-      <View style={[styles.pdfControlsBar, { backgroundColor: theme.surface }]}>
+            {book?.author && (
+              <Text style={[styles.pdfReaderAuthorModern, { color: theme.textSecondary }]} numberOfLines={1}>
+                {book.author}
+              </Text>
+            )}
+          </TouchableOpacity>
+          
         <TouchableOpacity 
-          style={[styles.pdfControlButton, { backgroundColor: theme.background }]}
-          onPress={handleZoomOut}
+            onPress={toggleControls}
+            style={styles.pdfReaderMenuButton}
+          >
+            <Ionicons name={showControls ? "eye-off" : "eye"} size={24} color={theme.text} />
+          </TouchableOpacity>
+        </LinearGradient>
+      </Animated.View>
+      
+      {/* Bouton flottant pour réafficher les contrôles */}
+      {!showControls && (
+        <TouchableOpacity 
+          style={[styles.pdfControlsToggleButton, { backgroundColor: theme.primary }]}
+          onPress={toggleControls}
+          activeOpacity={0.8}
         >
-          <Text style={[styles.pdfControlIcon, { color: theme.text }]}>🔍-</Text>
+          <Ionicons name="eye" size={24} color="#fff" />
+        </TouchableOpacity>
+      )}
+
+      {/* Barre de contrôles moderne */}
+      {showControls && (
+        <Animated.View style={[styles.pdfControlsBarModern, { opacity: fadeAnim, backgroundColor: theme.surface }]}>
+          <View style={styles.pdfControlsGroup}>
+            <TouchableOpacity 
+              style={[styles.pdfControlButtonModern, { backgroundColor: theme.background }]}
+          onPress={handleZoomOut}
+              activeOpacity={0.7}
+        >
+              <Ionicons name="remove-outline" size={20} color={theme.primary} />
         </TouchableOpacity>
         
-        <Text style={[styles.pdfZoomText, { color: theme.text }]}>
+            <View style={[styles.pdfZoomIndicator, { backgroundColor: theme.background }]}>
+              <Text style={[styles.pdfZoomTextModern, { color: theme.text }]}>
           {Math.round(zoomLevel * 100)}%
         </Text>
+            </View>
         
         <TouchableOpacity 
-          style={[styles.pdfControlButton, { backgroundColor: theme.background }]}
+              style={[styles.pdfControlButtonModern, { backgroundColor: theme.background }]}
           onPress={handleZoomIn}
+              activeOpacity={0.7}
         >
-          <Text style={[styles.pdfControlIcon, { color: theme.text }]}>🔍+</Text>
+              <Ionicons name="add-outline" size={20} color={theme.primary} />
         </TouchableOpacity>
+          </View>
         
-        <View style={styles.pdfControlsSeparator} />
+          <View style={[styles.pdfControlsSeparatorModern, { backgroundColor: theme.textSecondary, opacity: 0.2 }]} />
         
+          <View style={styles.pdfControlsGroup}>
         <TouchableOpacity 
-          style={[styles.pdfControlButton, { backgroundColor: theme.background }]}
+              style={[styles.pdfControlButtonModern, { backgroundColor: theme.background }]}
           onPress={handleShare}
+              activeOpacity={0.7}
         >
-          <Text style={[styles.pdfControlIcon, { color: theme.text }]}>📤</Text>
+              <Ionicons name="share-outline" size={20} color={theme.primary} />
         </TouchableOpacity>
         
         <TouchableOpacity 
-          style={[styles.pdfControlButton, { backgroundColor: theme.background }]}
+              style={[styles.pdfControlButtonModern, { backgroundColor: theme.background }]}
           onPress={handlePrint}
-        >
-          <Text style={[styles.pdfControlIcon, { color: theme.text }]}>🖨️</Text>
-        </TouchableOpacity>
-        
-        <View style={styles.pdfControlsSeparator} />
-        
-        <TouchableOpacity 
-          style={[styles.pdfControlButton, { backgroundColor: '#0F5132' }]}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={[styles.pdfControlIcon, { color: '#fff' }]}>✕</Text>
+              activeOpacity={0.7}
+            >
+              <Ionicons name="print-outline" size={20} color={theme.primary} />
         </TouchableOpacity>
       </View>
+        </Animated.View>
+      )}
       
       {loading ? (
-        <View style={styles.pdfContainer}>
+        <View style={styles.pdfContainerModern}>
+          <LinearGradient
+            colors={darkMode ? ['#0B3C5D', '#0F5132'] : ['#F8F9F6', '#ffffff']}
+            style={styles.pdfLoadingGradient}
+          >
+            <View style={styles.pdfLoadingContent}>
           <ActivityIndicator size="large" color="#0F5132" />
-          <Text style={[styles.pdfLoadingText, { color: theme.textSecondary, marginTop: 20 }]}>
+              <Text style={[styles.pdfLoadingTextModern, { color: theme.text, marginTop: 20 }]}>
             Chargement du PDF...
           </Text>
+              <Text style={[styles.pdfLoadingSubtext, { color: theme.textSecondary, marginTop: 8 }]}>
+                {book?.title || 'Préparation en cours'}
+          </Text>
+            </View>
+          </LinearGradient>
         </View>
       ) : error ? (
-        <View style={styles.pdfContainer}>
-          <Text style={styles.pdfIcon}>⚠️</Text>
-          <Text style={[styles.pdfTitle, { color: theme.text }]}>
+        <View style={styles.pdfContainerModern}>
+          <View style={styles.pdfErrorContainer}>
+            <Ionicons name="alert-circle-outline" size={80} color={theme.textSecondary} />
+            <Text style={[styles.pdfErrorTitle, { color: theme.text }]}>
             {error}
           </Text>
+            <TouchableOpacity 
+              style={[styles.pdfRetryButton, { backgroundColor: theme.primary }]}
+              onPress={reloadContent}
+            >
+              <Text style={styles.pdfRetryButtonText}>Réessayer</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       ) : (pdfUri || htmlContent) ? (
         <View style={{ flex: 1 }}>
@@ -7027,9 +7398,9 @@ function PDFReaderScreen({ route, navigation }: any) {
             style={{ flex: 1 }}
             startInLoadingState={true}
             renderLoading={() => (
-              <View style={styles.pdfContainer}>
+              <View style={styles.pdfContainerModern}>
                 <ActivityIndicator size="large" color="#0F5132" />
-                <Text style={[styles.pdfLoadingText, { color: theme.textSecondary, marginTop: 20 }]}>
+                <Text style={[styles.pdfLoadingTextModern, { color: theme.textSecondary, marginTop: 20 }]}>
                   {book?.htmlFile ? 'Chargement de l\'article...' : 'Chargement du PDF...'}
                 </Text>
               </View>
@@ -7045,11 +7416,21 @@ function PDFReaderScreen({ route, navigation }: any) {
                 // Pour les fichiers HTML, pas besoin de zoom initial
                 return;
               }
-              // Initialiser le zoom pour les PDFs
-              webViewRef.current?.injectJavaScript(`
-                document.body.style.zoom = ${zoomLevel};
-                true;
-              `);
+              // Initialiser le zoom pour les PDFs après un court délai
+              setTimeout(() => {
+                applyZoom(zoomLevel);
+              }, 800);
+            }}
+            onMessage={(event) => {
+              try {
+                const data = JSON.parse(event.nativeEvent.data);
+                if (data.type === 'zoom') {
+                  // Confirmation que le zoom a été appliqué
+                  console.log('Zoom applied:', data.value);
+                }
+              } catch (e) {
+                // Ignorer les messages non-JSON
+              }
             }}
             javaScriptEnabled={true}
             scalesPageToFit={!book?.htmlFile}
@@ -7214,21 +7595,21 @@ function AudioPlayerScreen({ route, navigation }: any) {
       
       {/* Header avec icônes */}
       <View style={styles.audioPlayerHeaderNew}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.audioPlayerHeaderIconBtn}>
-          <Text style={styles.audioPlayerHeaderIconNew}>⌄</Text>
+        <TouchableOpacity 
+          onPress={() => navigation.goBack()} 
+          style={styles.audioPlayerHeaderIconBtn}
+        >
+          <Ionicons name="chevron-down" size={24} color="#333" />
         </TouchableOpacity>
         <View style={styles.audioPlayerHeaderRight}>
           <TouchableOpacity 
             onPress={() => setCarMode(!carMode)} 
-            style={[styles.audioPlayerHeaderIconBtn, carMode && styles.audioPlayerHeaderIconBtnActive]}
+            style={styles.audioPlayerHeaderIconBtn}
           >
-            <Text style={styles.audioPlayerHeaderIconNew}>🚗</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleShare} style={styles.audioPlayerHeaderIconBtn}>
-            <Text style={styles.audioPlayerHeaderIconNew}>📤</Text>
+            <Ionicons name="car" size={20} color="#333" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.audioPlayerHeaderIconBtn}>
-            <Text style={styles.audioPlayerHeaderIconNew}>ℹ️</Text>
+            <Ionicons name="information-circle" size={20} color="#333" />
           </TouchableOpacity>
         </View>
       </View>
@@ -7238,86 +7619,59 @@ function AudioPlayerScreen({ route, navigation }: any) {
         style={styles.audioPlayerContentNew} 
         contentContainerStyle={styles.audioPlayerContentContainerNew}
         showsVerticalScrollIndicator={false}
-        scrollEventThrottle={16}
       >
-        {/* Contenu texte synchronisé avec la lecture */}
-        <Animated.View 
-          style={[
-            styles.audioPlayerContentText,
-            {
-              opacity: fadeAnim,
-              transform: [{ translateY: slideAnim }],
-            }
-          ]}
-        >
-          {contentPages.map((pageContent, index) => (
-            <View 
-              key={index} 
-              style={[
-                styles.audioPlayerPage,
-                index === currentPage && styles.audioPlayerPageActive
-              ]}
-            >
-              <Text style={[styles.audioPlayerPageText, { color: theme.text }]}>
-                {pageContent}
-              </Text>
-            </View>
-          ))}
-        </Animated.View>
-
-        {/* Grande carte centrale avec motif islamique */}
+        {/* Carte verte principale avec motif islamique */}
         <View style={styles.audioPlayerCardNew}>
-          <View style={styles.audioPlayerCardInner}>
-            {/* Bordure dorée avec motif */}
-            <View style={styles.audioPlayerCardBorder}>
-              {/* Image portrait */}
-              <View style={styles.audioPlayerCardImageContainer}>
+          <ImageBackground
+            source={track?.image || require('./assets/thierno.png')}
+            style={styles.audioPlayerCardImageBackground}
+            resizeMode="cover"
+          >
+            <LinearGradient
+              colors={['rgba(15, 81, 50, 0.85)', 'rgba(11, 60, 93, 0.85)']}
+              style={styles.audioPlayerCardGradient}
+            >
+              {/* Titre en blanc (latin) */}
+              <Text style={styles.audioPlayerCardTitleWhite} numberOfLines={2}>
+                {track?.title || 'Karatuttuka Da Lekcuci Na Shiek Ibrahim Mansur Imam Kaduna'}
+              </Text>
+              
+              {/* Image portrait au centre */}
+              <View style={styles.audioPlayerCardPortraitContainer}>
                 <Image 
-                  source={require('./assets/thierno.png')} 
-                  style={styles.audioPlayerCardImage}
+                  source={track?.image || require('./assets/thierno.png')} 
+                  style={styles.audioPlayerCardPortrait}
                   resizeMode="cover"
                 />
               </View>
               
-              {/* Texte en or */}
-              <View style={styles.audioPlayerCardTextContainer}>
-                <Text style={styles.audioPlayerCardTitle}>ATLANTA MAWLID</Text>
-                <View style={styles.audioPlayerCardTitleRow}>
-                  <Text style={styles.audioPlayerCardTitle2}>RASULULLAH 2007</Text>
-                  <Text style={styles.audioPlayerCardTitleAr}>رسول الله</Text>
-                </View>
-                <Text style={styles.audioPlayerCardSubtitle}>KEYNOTE SPEACH:</Text>
-                <Text style={styles.audioPlayerCardSpeaker}>SHAYKH HASSAN CISSE</Text>
+              {/* Titre en blanc (arabe) */}
+              <Text style={styles.audioPlayerCardTitleArabic} numberOfLines={2}>
+                {track?.titleAr || 'كراتوتوکا دا لکچوچي نا شيخ إبراهيم منصور إمام كدونا'}
+              </Text>
+              
+              {/* Footer avec logo et casque */}
+              <View style={styles.audioPlayerCardFooterNew}>
+                <Text style={styles.audioPlayerCardLogoWhite}>FAYDA DIGITAL</Text>
+                <Ionicons name="headset" size={24} color="#fff" />
               </View>
-            </View>
-
-            {/* Footer de la carte */}
-            <View style={styles.audioPlayerCardFooter}>
-              <View style={styles.audioPlayerCardFooterLeft}>
-                <Text style={styles.audioPlayerCardFooterLabel}>EXECUTIVE DIRECTOR:</Text>
-                <Text style={styles.audioPlayerCardFooterText}>KABA MUHAMMAD ABDUL-FATTAAH</Text>
-              </View>
-              <View style={styles.audioPlayerCardFooterCenter}>
-                <Text style={styles.audioPlayerCardLogo}>FAYDA TIDIANIYA</Text>
-                <Text style={styles.audioPlayerCardLogoAr}>فيضة</Text>
-              </View>
-              <View style={styles.audioPlayerCardFooterRight}>
-                <Text style={styles.audioPlayerCardHeadphone}>🎧</Text>
-                <Text style={styles.audioPlayerCardStoreText}>Available on the{'\n'}App Store</Text>
-                <Text style={styles.audioPlayerCardStoreText}>GET IT ON{'\n'}Google Play</Text>
-              </View>
-            </View>
-          </View>
+            </LinearGradient>
+          </ImageBackground>
         </View>
 
-        {/* Titre de la piste */}
+        {/* Info piste avec menu */}
         <View style={styles.audioPlayerTrackInfoNew}>
+          <View style={styles.audioPlayerTrackInfoLeft}>
+            <Text style={styles.audioPlayerTrackArtistNew} numberOfLines={1}>
+              {track?.artist || track?.speaker || track?.host || 'Shaykh al-Islam al-Hajj Ibrahim Niasse'}
+            </Text>
           <Text style={styles.audioPlayerTrackTitleNew} numberOfLines={1}>
-            {track.artist || track.speaker || track.host || 'Shaykh Hassan Cisse'}
+              {track?.title || 'Risalat al-Muntaqim: Wasika'}
           </Text>
-          <Text style={styles.audioPlayerTrackSubtitleNew} numberOfLines={1}>
-            {track.title || 'd Nabi Shaykh Hassan Cisse Keynot'}
-          </Text>
+          </View>
+          <TouchableOpacity style={styles.audioPlayerTrackMenuBtn}>
+            <Ionicons name="ellipsis-horizontal" size={24} color="#8B4513" />
+          </TouchableOpacity>
         </View>
 
         {/* Barre de progression */}
@@ -7349,15 +7703,20 @@ function AudioPlayerScreen({ route, navigation }: any) {
 
         {/* Contrôles principaux */}
         <View style={styles.audioPlayerMainControlsNew}>
-          <TouchableOpacity style={styles.audioPlayerControlBtnNew} activeOpacity={0.7}>
-            <Text style={styles.audioPlayerControlIconNew}>⏮</Text>
+          <TouchableOpacity 
+            style={styles.audioPlayerControlBtnNew}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="play-skip-back" size={28} color="#333" />
           </TouchableOpacity>
           <TouchableOpacity 
             style={styles.audioPlayerRewindBtn}
             onPress={() => handleSeek(-30)}
             activeOpacity={0.7}
           >
-            <Text style={styles.audioPlayerRewindIcon}>⏪</Text>
+            <View style={styles.audioPlayer30sCircle}>
+              <Ionicons name="play-back" size={20} color="#333" />
+            </View>
             <Text style={styles.audioPlayerRewindText}>30s</Text>
           </TouchableOpacity>
           <TouchableOpacity 
@@ -7365,32 +7724,53 @@ function AudioPlayerScreen({ route, navigation }: any) {
             onPress={togglePlay}
             activeOpacity={0.9}
           >
-            <Text style={styles.audioPlayerPlayIconNew}>{isPlaying ? '⏸' : '▶'}</Text>
+            <View style={styles.audioPlayerPlayCircle}>
+              <Ionicons 
+                name={isPlaying ? "pause" : "play"} 
+                size={28} 
+                color="#fff" 
+                style={{ marginLeft: 3 }}
+              />
+            </View>
           </TouchableOpacity>
           <TouchableOpacity 
             style={styles.audioPlayerForwardBtn}
             onPress={() => handleSeek(30)}
             activeOpacity={0.7}
           >
-            <Text style={styles.audioPlayerForwardIcon}>⏩</Text>
+            <View style={styles.audioPlayer30sCircle}>
+              <Ionicons name="play-forward" size={20} color="#333" />
+            </View>
             <Text style={styles.audioPlayerForwardText}>30s</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.audioPlayerControlBtnNew} activeOpacity={0.7}>
-            <Text style={styles.audioPlayerControlIconNew}>⏭</Text>
+          <TouchableOpacity 
+            style={styles.audioPlayerControlBtnNew}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="play-skip-forward" size={28} color="#333" />
           </TouchableOpacity>
         </View>
 
         {/* Contrôles supplémentaires */}
         <View style={styles.audioPlayerExtraControlsNew}>
-          <TouchableOpacity style={styles.audioPlayerExtraBtn} activeOpacity={0.7}>
-            <Text style={styles.audioPlayerExtraIcon}>🕐</Text>
-            <Text style={styles.audioPlayerExtraText}>{playbackSpeed.toFixed(1)}x</Text>
+          <TouchableOpacity 
+            style={styles.audioPlayerExtraBtn}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="time-outline" size={20} color="#333" />
+            <Text style={styles.audioPlayerExtraText}>{playbackSpeed.toFixed(1).replace('.', ',')}x</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.audioPlayerExtraBtn} activeOpacity={0.7}>
-            <Text style={styles.audioPlayerExtraIcon}>@</Text>
+          <TouchableOpacity 
+            style={styles.audioPlayerExtraBtn}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="radio" size={20} color="#333" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.audioPlayerExtraBtn} activeOpacity={0.7}>
-            <Text style={styles.audioPlayerExtraIcon}>Zz</Text>
+          <TouchableOpacity 
+            style={styles.audioPlayerExtraBtn}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="moon-outline" size={20} color="#333" />
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -8091,6 +8471,9 @@ function AIScreen({ navigation }: any) {
   ]);
   const [inputText, setInputText] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isRecording, setIsRecording] = React.useState(false);
+  const [recording, setRecording] = React.useState<Audio.Recording | null>(null);
+  const [isSpeaking, setIsSpeaking] = React.useState(false);
   const scrollViewRef = React.useRef<ScrollView>(null);
   const lastScrollY = React.useRef(0);
   const scrollTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -8164,6 +8547,110 @@ function AIScreen({ navigation }: any) {
     setMessages([{ role: 'assistant', content: t('assistant.welcome') }]);
   };
 
+  // Fonction pour démarrer l'enregistrement vocal
+  const startRecording = async () => {
+    try {
+      const permission = await Audio.requestPermissionsAsync();
+      if (permission.status !== 'granted') {
+        Alert.alert(
+          'Permission microphone',
+          'L\'accès au microphone est nécessaire pour l\'enregistrement vocal'
+        );
+        return;
+      }
+
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      });
+
+      const { recording } = await Audio.Recording.createAsync(
+        Audio.RecordingOptionsPresets.HIGH_QUALITY
+      );
+      setRecording(recording);
+      setIsRecording(true);
+    } catch (error) {
+      console.error('Erreur démarrage enregistrement:', error);
+      Alert.alert('Erreur', 'Impossible de démarrer l\'enregistrement');
+    }
+  };
+
+  // Fonction pour arrêter l'enregistrement et transcrire
+  const stopRecording = async () => {
+    if (!recording) return;
+    
+    setIsRecording(false);
+    setIsLoading(true);
+    
+    try {
+      await recording.stopAndUnloadAsync();
+      await Audio.setAudioModeAsync({ allowsRecordingIOS: false });
+      
+      const uri = recording.getURI();
+      if (uri) {
+        try {
+          const transcribedText = await transcribeAudio(uri, language || 'fr');
+          if (transcribedText.trim()) {
+            setInputText(transcribedText);
+            // Optionnel : envoyer automatiquement
+            // await sendMessage(transcribedText);
+          }
+        } catch (error: any) {
+          console.error('Erreur transcription:', error);
+          Alert.alert(
+            'Erreur de transcription',
+            error.message || 'Impossible de transcrire l\'audio. Veuillez réessayer.'
+          );
+        }
+      }
+    } catch (error) {
+      console.error('Erreur arrêt enregistrement:', error);
+    } finally {
+      setRecording(null);
+      setIsLoading(false);
+    }
+  };
+
+  // Fonction pour lire une réponse vocale
+  const speakText = async (text: string) => {
+    try {
+      setIsSpeaking(true);
+      
+      // Utiliser expo-speech (plus simple, voix système)
+      await Speech.speak(text, {
+        language: language === 'ar' ? 'ar' : language === 'fr' ? 'fr-FR' : 'en-US',
+        pitch: 1.0,
+        rate: 0.9,
+      });
+      
+      // Note: Pour utiliser Groq TTS, décommentez le code ci-dessous
+      // et commentez expo-speech ci-dessus
+      // const audioBase64 = await synthesizeSpeech(text, language || 'fr');
+      // const sound = new Audio.Sound();
+      // await sound.loadAsync({ uri: audioBase64 });
+      // await sound.playAsync();
+      // sound.setOnPlaybackStatusUpdate((status) => {
+      //   if (status.isLoaded && status.didJustFinish) {
+      //     setIsSpeaking(false);
+      //     sound.unloadAsync();
+      //   }
+      // });
+      
+    } catch (error) {
+      console.error('Erreur lecture vocale:', error);
+    } finally {
+      // Pour expo-speech, on peut arrêter immédiatement
+      // Pour Groq TTS, attendre la fin de la lecture
+      setTimeout(() => setIsSpeaking(false), 100);
+    }
+  };
+
+  // Arrêter la lecture vocale
+  const stopSpeaking = () => {
+    Speech.stop();
+    setIsSpeaking(false);
+  };
+
   React.useEffect(() => {
     // Scroll vers le bas quand de nouveaux messages arrivent
     setTimeout(() => {
@@ -8234,6 +8721,7 @@ function AIScreen({ navigation }: any) {
                 message.role === 'user' ? styles.userMessageBubble : styles.assistantMessageBubble,
               ]}
             >
+              <View style={styles.messageHeader}>
               <Text
                 style={[
                   styles.messageText,
@@ -8245,6 +8733,20 @@ function AIScreen({ navigation }: any) {
               >
                 {message.content}
               </Text>
+                
+                {message.role === 'assistant' && (
+                  <TouchableOpacity
+                    onPress={() => isSpeaking ? stopSpeaking() : speakText(message.content)}
+                    style={styles.speakButton}
+                  >
+                    <Ionicons 
+                      name={isSpeaking ? "volume-high" : "volume-high-outline"} 
+                      size={18} 
+                      color={theme.textSecondary} 
+                    />
+                  </TouchableOpacity>
+                )}
+              </View>
             </LinearGradient>
           </View>
         ))}
@@ -8284,6 +8786,22 @@ function AIScreen({ navigation }: any) {
       {/* Input */}
       <View style={[styles.inputContainer, { backgroundColor: theme.surface }]}>
         <View style={[styles.inputWrapper, { backgroundColor: theme.background }]}>
+          {/* Bouton microphone */}
+          <TouchableOpacity
+            onPress={isRecording ? stopRecording : startRecording}
+            style={[
+              styles.micButton,
+              isRecording && styles.micButtonRecording,
+            ]}
+            disabled={isLoading}
+          >
+            <Ionicons 
+              name={isRecording ? "mic" : "mic-outline"} 
+              size={24} 
+              color={isRecording ? "#fff" : theme.textSecondary} 
+            />
+          </TouchableOpacity>
+
           <TextInput
             style={[styles.textInput, { color: theme.text }]}
             placeholder={t('assistant.placeholder')}
@@ -8301,6 +8819,7 @@ function AIScreen({ navigation }: any) {
             returnKeyType="send"
             blurOnSubmit={false}
           />
+          
           <TouchableOpacity
             style={[
               styles.sendButton,
@@ -8703,17 +9222,64 @@ export default function App() {
       setShowDonationBanner,
     }}>
       <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Onboarding">
-          <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-          <Stack.Screen name="MainTabs" component={MainTabs} />
-          <Stack.Screen name="AudioPlayer" component={AudioPlayerScreen} />
-          <Stack.Screen name="PDFReader" component={PDFReaderScreen} />
-          <Stack.Screen name="VideoPlayer" component={VideoPlayerScreen} />
-          <Stack.Screen name="Zikr" component={ZikrScreen} />
-          <Stack.Screen name="Coran" component={CoranScreen} />
-          <Stack.Screen name="Gamou" component={GamouScreen} />
-          <Stack.Screen name="PodcastPlayer" component={PodcastPlayerScreen} />
-          <Stack.Screen name="Assistant" component={AIScreen} />
+        <Stack.Navigator 
+          screenOptions={{ 
+            headerShown: false,
+            animation: 'fade', // Transition fade pour plus de fluidité
+            animationDuration: 150, // Animation plus rapide pour transition fluide
+          }} 
+          initialRouteName="Onboarding"
+        >
+          <Stack.Screen 
+            name="Onboarding" 
+            component={OnboardingScreen}
+            options={{ animation: 'fade' }}
+          />
+          <Stack.Screen 
+            name="MainTabs" 
+            component={MainTabs}
+            options={{ animation: 'fade' }}
+          />
+          <Stack.Screen 
+            name="AudioPlayer" 
+            component={AudioPlayerScreen}
+            options={{ animation: 'fade' }}
+          />
+          <Stack.Screen 
+            name="PDFReader" 
+            component={PDFReaderScreen}
+            options={{ animation: 'fade' }}
+          />
+          <Stack.Screen 
+            name="VideoPlayer" 
+            component={VideoPlayerScreen}
+            options={{ animation: 'fade' }}
+          />
+          <Stack.Screen 
+            name="Zikr" 
+            component={ZikrScreen}
+            options={{ animation: 'fade' }}
+          />
+          <Stack.Screen 
+            name="Coran" 
+            component={CoranScreen}
+            options={{ animation: 'fade' }}
+          />
+          <Stack.Screen 
+            name="Gamou" 
+            component={GamouScreen}
+            options={{ animation: 'fade' }}
+          />
+          <Stack.Screen 
+            name="PodcastPlayer" 
+            component={PodcastPlayerScreen}
+            options={{ animation: 'fade' }}
+          />
+          <Stack.Screen 
+            name="Assistant" 
+            component={AIScreen}
+            options={{ animation: 'fade' }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
       {/* Note: PdfPageCounter est désactivé car react-native-pdf nécessite un développement build
@@ -9680,85 +10246,162 @@ const styles = StyleSheet.create({
   },
   pdfReaderScreen: {
     flex: 1,
-    backgroundColor: '#fff',
   },
-  pdfReaderHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 15,
-    paddingTop: 50,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-  },
-  pdfReaderClose: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#000',
-  },
-  pdfReaderTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    flex: 1,
-    textAlign: 'center',
-  },
-  pdfContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  pdfIcon: {
-    fontSize: 80,
-    marginBottom: 20,
-  },
-  pdfTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 10,
-  },
-  pdfLoadingText: {
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  pdfControlsBar: {
+  pdfReaderHeaderModern: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
+    paddingHorizontal: 20,
+    paddingTop: Platform.OS === 'web' ? 12 : 50,
+    paddingBottom: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-    gap: 10,
-  },
-  pdfControlButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 13,
-    justifyContent: 'center',
-    alignItems: 'center',
+    borderBottomColor: 'rgba(0,0,0,0.1)',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
-  pdfControlIcon: {
-    fontSize: 20,
+  pdfReaderBackButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+    backgroundColor: 'rgba(0,0,0,0.05)',
   },
-  pdfZoomText: {
-    fontSize: 14,
-    fontWeight: '600',
-    minWidth: 50,
+  pdfReaderHeaderContent: {
+    flex: 1,
+    marginHorizontal: 15,
+    alignItems: 'center',
+    paddingVertical: 5,
+  },
+  pdfReaderTitleModern: {
+    fontSize: 18,
+    fontWeight: 'bold',
     textAlign: 'center',
   },
-  pdfControlsSeparator: {
+  pdfReaderAuthorModern: {
+    fontSize: 12,
+    marginTop: 4,
+    textAlign: 'center',
+  },
+  pdfReaderMenuButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+    backgroundColor: 'rgba(0,0,0,0.05)',
+  },
+  pdfContainerModern: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  pdfLoadingGradient: {
+    flex: 1,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  pdfLoadingContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  pdfLoadingTextModern: {
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  pdfLoadingSubtext: {
+    fontSize: 14,
+    textAlign: 'center',
+    marginTop: 8,
+  },
+  pdfErrorContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 30,
+  },
+  pdfErrorTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginTop: 20,
+    textAlign: 'center',
+  },
+  pdfRetryButton: {
+    marginTop: 20,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 25,
+  },
+  pdfRetryButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  pdfControlsToggleButton: {
+    position: 'absolute',
+    top: Platform.OS === 'web' ? 80 : 120,
+    right: 20,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+    zIndex: 1000,
+  },
+  pdfControlsBarModern: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0,0,0,0.1)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  pdfControlsGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  pdfControlButtonModern: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  pdfZoomIndicator: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 15,
+    minWidth: 60,
+    alignItems: 'center',
+  },
+  pdfZoomTextModern: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  pdfControlsSeparatorModern: {
     width: 1,
     height: 30,
-    backgroundColor: '#e0e0e0',
-    marginHorizontal: 5,
+    marginHorizontal: 10,
   },
   audioPlayer: {
     position: 'absolute',
@@ -11496,6 +12139,48 @@ const styles = StyleSheet.create({
     opacity: 0.9,
     textAlign: 'center',
   },
+  podcastModalImageInfo: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    padding: 16,
+    paddingBottom: 20,
+  },
+  podcastModalImageDescription: {
+    fontSize: 14,
+    color: 'rgba(255,255,255,0.9)',
+    marginTop: 8,
+    marginBottom: 8,
+    textAlign: 'left',
+    lineHeight: 20,
+  },
+  podcastModalImageDate: {
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.8)',
+    marginTop: 4,
+    textAlign: 'left',
+  },
+  podcastModalInfoSection: {
+    marginBottom: 20,
+    paddingHorizontal: 0,
+  },
+  podcastModalInfoTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    marginBottom: 12,
+    lineHeight: 28,
+  },
+  podcastModalInfoDescription: {
+    fontSize: 14,
+    marginBottom: 12,
+    lineHeight: 20,
+  },
+  podcastModalInfoDate: {
+    fontSize: 13,
+    fontWeight: '500',
+  },
   podcastModalMainTitle: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -12014,7 +12699,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingTop: 50,
+    paddingTop: Platform.OS === 'web' ? 12 : 50,
     paddingBottom: 15,
   },
   audioPlayerHeaderIconBtn: {
@@ -12023,17 +12708,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  audioPlayerHeaderIconBtnActive: {
-    backgroundColor: '#F8F9F6',
-    borderRadius: 5,
-  },
-  audioPlayerHeaderIconNew: {
-    fontSize: 24,
-    color: '#333',
-  },
   audioPlayerHeaderRight: {
     flexDirection: 'row',
-    gap: 15,
+    gap: 20,
   },
   audioPlayerContentNew: {
     flex: 1,
@@ -12042,180 +12719,95 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 30,
   },
-  audioPlayerContentText: {
-    marginBottom: 30,
-    minHeight: 200,
-  },
-  audioPlayerPage: {
-    padding: 20,
-    marginBottom: 20,
-    borderRadius: 5,
-    backgroundColor: '#f8f8f8',
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-  },
-  audioPlayerPageActive: {
-    backgroundColor: '#f0f8f0',
-    borderColor: '#0F5132',
-    borderWidth: 2,
-    shadowColor: '#0F5132',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  audioPlayerPageText: {
-    fontSize: 16,
-    lineHeight: 24,
-    textAlign: 'justify',
-  },
-  // Grande carte centrale
+  // Grande carte verte centrale
   audioPlayerCardNew: {
     marginTop: 10,
-    marginBottom: 30,
-    borderRadius: 5,
-    backgroundColor: '#f5f5f5',
+    marginBottom: 25,
+    borderRadius: 12,
+    overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,
-    overflow: 'hidden',
-  },
-  audioPlayerCardInner: {
-    padding: 20,
-    backgroundColor: '#f0f0f0',
-  },
-  audioPlayerCardBorder: {
-    borderWidth: 5,
-    borderColor: '#C9A24D',
-    borderRadius: 9,
-    padding: 25,
-    backgroundColor: '#fafafa',
-    position: 'relative',
-    shadowColor: '#C9A24D',
-    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowRadius: 8,
+    elevation: 5,
   },
-  audioPlayerCardImageContainer: {
+  audioPlayerCardImageBackground: {
     width: '100%',
-    height: 200,
-    marginBottom: 20,
-    borderRadius: 1,
-    overflow: 'hidden',
-    backgroundColor: '#e0e0e0',
+    minHeight: 280,
   },
-  audioPlayerCardImage: {
+  audioPlayerCardGradient: {
+    padding: 24,
+    minHeight: 280,
+    justifyContent: 'space-between',
+  },
+  audioPlayerCardTitleWhite: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#fff',
+    fontStyle: 'italic',
+    textAlign: 'center',
+    marginBottom: 16,
+    lineHeight: 22,
+  },
+  audioPlayerCardPortraitContainer: {
+    width: '100%',
+    height: 160,
+    borderRadius: 8,
+    overflow: 'hidden',
+    marginVertical: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  audioPlayerCardPortrait: {
     width: '100%',
     height: '100%',
   },
-  audioPlayerCardTextContainer: {
-    alignItems: 'center',
-  },
-  audioPlayerCardTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#C9A24D',
-    marginBottom: 8,
-    letterSpacing: 1,
-  },
-  audioPlayerCardTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 8,
-  },
-  audioPlayerCardTitle2: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#C9A24D',
-    letterSpacing: 0.5,
-  },
-  audioPlayerCardTitleAr: {
+  audioPlayerCardTitleArabic: {
     fontSize: 16,
-    color: '#C9A24D',
     fontWeight: '600',
-    fontFamily: 'Traditional Arabic',
+    color: '#fff',
+    textAlign: 'center',
+    marginBottom: 16,
+    lineHeight: 22,
+    fontFamily: Platform.OS === 'ios' ? 'Al Nile' : 'sans-serif',
   },
-  audioPlayerCardSubtitle: {
-    fontSize: 14,
-    color: '#0F5132',
-    marginBottom: 4,
-    fontWeight: '600',
-  },
-  audioPlayerCardSpeaker: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#0F5132',
-    letterSpacing: 0.5,
-  },
-  audioPlayerCardFooter: {
+  audioPlayerCardFooterNew: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    marginTop: 20,
-    paddingTop: 15,
-    borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
-  },
-  audioPlayerCardFooterLeft: {
-    flex: 1,
-  },
-  audioPlayerCardFooterLabel: {
-    fontSize: 10,
-    color: '#C9A24D',
-    fontWeight: '600',
-    marginBottom: 4,
-  },
-  audioPlayerCardFooterText: {
-    fontSize: 11,
-    color: '#0F5132',
-    fontWeight: '600',
-  },
-  audioPlayerCardFooterCenter: {
     alignItems: 'center',
-    flex: 1,
+    marginTop: 8,
   },
-  audioPlayerCardLogo: {
+  audioPlayerCardLogoWhite: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#0F5132',
-    marginBottom: 2,
-  },
-  audioPlayerCardLogoAr: {
-    fontSize: 12,
-    color: '#0F5132',
-    fontWeight: '600',
-  },
-  audioPlayerCardFooterRight: {
-    alignItems: 'flex-end',
-    flex: 1,
-  },
-  audioPlayerCardHeadphone: {
-    fontSize: 20,
-    marginBottom: 4,
-  },
-  audioPlayerCardStoreText: {
-    fontSize: 8,
-    color: '#666',
-    textAlign: 'right',
-    lineHeight: 10,
+    color: '#fff',
+    letterSpacing: 1,
   },
   // Info piste
   audioPlayerTrackInfoNew: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
     marginBottom: 20,
   },
-  audioPlayerTrackTitleNew: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
+  audioPlayerTrackInfoLeft: {
+    flex: 1,
+    marginRight: 12,
+  },
+  audioPlayerTrackArtistNew: {
+    fontSize: 14,
+    color: '#999',
     marginBottom: 4,
   },
-  audioPlayerTrackSubtitleNew: {
-    fontSize: 14,
-    color: '#666',
+  audioPlayerTrackTitleNew: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+  },
+  audioPlayerTrackMenuBtn: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   // Barre de progression
   audioPlayerProgressNew: {
@@ -12232,95 +12824,93 @@ const styles = StyleSheet.create({
   },
   audioPlayerTimeTextNew: {
     fontSize: 13,
-    color: '#0F5132',
-    fontWeight: '600',
+    color: '#333',
+    fontWeight: '500',
   },
   audioPlayerTimeRemainingNew: {
     fontSize: 13,
     color: '#666',
-    fontWeight: '600',
+    fontWeight: '500',
   },
   // Contrôles principaux
   audioPlayerMainControlsNew: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 20,
+    gap: 24,
     marginBottom: 25,
   },
   audioPlayerControlBtnNew: {
-    width: 45,
-    height: 45,
+    width: 44,
+    height: 44,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  audioPlayerControlIconNew: {
-    fontSize: 28,
-    color: '#333',
+  audioPlayer30sCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: '#333',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   audioPlayerRewindBtn: {
     alignItems: 'center',
-    gap: 4,
-  },
-  audioPlayerRewindIcon: {
-    fontSize: 24,
-    color: '#333',
+    gap: 6,
   },
   audioPlayerRewindText: {
     fontSize: 11,
-    color: '#666',
     fontWeight: '600',
+    color: '#333',
+    marginTop: 4,
   },
   audioPlayerForwardBtn: {
     alignItems: 'center',
-    gap: 4,
-  },
-  audioPlayerForwardIcon: {
-    fontSize: 24,
-    color: '#333',
+    gap: 6,
   },
   audioPlayerForwardText: {
     fontSize: 11,
-    color: '#666',
     fontWeight: '600',
+    color: '#333',
+    marginTop: 4,
   },
   audioPlayerPlayButtonNew: {
-    width: 70,
-    height: 70,
-    borderRadius: 5,
+    width: 72,
+    height: 72,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  audioPlayerPlayCircle: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
     backgroundColor: '#0F5132',
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#0F5132',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
+    shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 6,
-  },
-  audioPlayerPlayIconNew: {
-    fontSize: 36,
-    color: '#fff',
-    marginLeft: 3,
   },
   // Contrôles supplémentaires
   audioPlayerExtraControlsNew: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 30,
+    gap: 40,
   },
   audioPlayerExtraBtn: {
     alignItems: 'center',
     gap: 4,
   },
-  audioPlayerExtraIcon: {
-    fontSize: 20,
-    color: '#666',
-  },
   audioPlayerExtraText: {
     fontSize: 12,
-    color: '#666',
-    fontWeight: '600',
+    fontWeight: '500',
+    color: '#333',
+    marginTop: 4,
   },
   // Styles cours améliorés
   libraryHeaderModern: {
@@ -12806,7 +13396,6 @@ const styles = StyleSheet.create({
   // Styles nouveaux podcasts
   podcastsSection: {
     marginBottom: 30,
-    paddingHorizontal: 20,
   },
   podcastsSectionHeader: {
     flexDirection: 'row',
@@ -13932,9 +14521,35 @@ const styles = StyleSheet.create({
   assistantMessageBubble: {
     borderTopLeftRadius: 2,
   },
+  messageHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
   messageText: {
     fontSize: 15,
     lineHeight: 20,
+    flex: 1,
+  },
+  speakButton: {
+    padding: 8,
+    marginLeft: 8,
+    borderRadius: 16,
+    backgroundColor: 'rgba(0,0,0,0.05)',
+    alignSelf: 'flex-start',
+  },
+  micButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'transparent',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 8,
+  },
+  micButtonRecording: {
+    backgroundColor: '#ff0000',
   },
   thinkingContainer: {
     flexDirection: 'row',
@@ -14436,5 +15051,38 @@ const styles = StyleSheet.create({
     right: 8,
     zIndex: 10,
   },
+  customTabBar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingBottom: Platform.OS === 'web' ? 8 : 20,
+    borderTopWidth: 1,
+    ...(Platform.OS === 'web' && {
+      height: 60,
+    }),
+    zIndex: 1000,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 8,
+  },
+  customTabItem: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+  },
+  customTabLabel: {
+    fontSize: 10,
+    marginTop: 4,
+    textAlign: 'center',
+  },
 });
+
 
